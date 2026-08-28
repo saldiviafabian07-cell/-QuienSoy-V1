@@ -1,0 +1,2922 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="¿Quién soy? — reparte personajes secretos para jugar presencialmente con amigos.">
+  <title>¿Quién soy?</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+:root{--bg:#101214;--panel:#181a1e;--text:#f3f4f6;--muted:#9aa0aa;--border:rgba(255,255,255,.09);--shadow:0 18px 50px rgba(0,0,0,.25);--radius:18px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#0e1012 0%,#131519 100%);color:var(--text)}body{min-height:100dvh}
+button,input{font:inherit}button{cursor:pointer;border:0}.app{width:min(100%,680px);margin:0 auto;min-height:100dvh;padding:18px 16px 28px;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;min-height:42px}.brand{font-weight:800;letter-spacing:.08em;font-size:12px;color:#d7dbe1}.step{font-size:11px;color:#8e949d;background:#1b1e23;padding:6px 9px;border-radius:999px;border:1px solid var(--border)}
+.screen{display:none;flex:1;align-items:center}.screen.active{display:flex}.card{width:100%;background:rgba(25,27,31,.96);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:var(--radius);padding:22px}.hero{padding:34px 22px;text-align:center}.title-container{text-align:center;padding:26px 20px 22px;background:#1a1a1c;border-radius:14px}.game-title{font-family:Montserrat,Inter,ui-sans-serif,system-ui,sans-serif;font-size:clamp(2.8rem,12vw,4rem);font-weight:800;line-height:.95;color:#fff;margin:0;letter-spacing:-1.5px;text-transform:uppercase;text-shadow:2px 4px 10px rgba(0,0,0,.3)}.game-title .highlight{color:#eab308;position:relative;display:inline-block}.game-title .highlight::after{content:'';position:absolute;bottom:-5px;left:0;width:100%;height:4px;background:#eab308;border-radius:2px}
+.logo{font-size:clamp(46px,12vw,72px);line-height:.88;font-weight:950;letter-spacing:-.06em;margin:8px 0 18px;color:#f2f3f5}.subtitle{max-width:460px;margin:0 auto 28px;color:#aeb4bd;font-size:15px;line-height:1.55}
+.btn{width:100%;padding:15px 18px;border-radius:13px;font-weight:800;color:#111;background:#f1f2f4;box-shadow:none;transition:transform .12s ease,background .12s ease}.btn:active{transform:scale(.985)}.btn:hover{background:#fff}.btn.secondary{background:#202329;color:#dfe2e6;border:1px solid var(--border)}.btn.danger{background:#a63f4c;color:#fff}.btn.success{background:#2d7b5c;color:#fff}
+.actions{display:grid;gap:10px;margin-top:18px}.title{font-size:27px;line-height:1.08;margin:0 0 8px;letter-spacing:-.03em}.muted{color:var(--muted);line-height:1.45}.tiny{font-size:12px;margin:3px 0 0}
+.section{margin-top:20px}.label{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#8e949d;margin:0 0 9px}.counter{display:grid;grid-template-columns:52px 1fr 52px;gap:9px;align-items:center}.counter button{height:50px;border-radius:13px;background:#202329;color:#fff;border:1px solid var(--border);font-size:22px}.counter-value{height:50px;border-radius:13px;background:#1d2025;display:grid;place-items:center;font-size:21px;font-weight:850;border:1px solid var(--border)}
+.names{display:grid;gap:9px;max-height:40dvh;overflow:auto;padding-right:2px}.input{width:100%;background:#1d2025;color:#f5f6f7;border:1px solid var(--border);padding:13px 14px;border-radius:12px;outline:none}.input:focus{border-color:#a8adb5;box-shadow:0 0 0 3px rgba(255,255,255,.05)}
+.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chip{padding:10px 11px;border-radius:11px;background:#1c1f24;color:#c8cdd4;border:1px solid var(--border);font-weight:700;font-size:12px;text-align:left}.chip.selected{background:#eceef1;border-color:#eceef1;color:#15171a}.text-action{margin-top:8px;padding:0;background:none;color:#aeb4bc;font-size:12px;font-weight:700}
+.compact-row{display:flex;justify-content:space-between;align-items:center;gap:12px}.static-badge{font-size:10px;font-weight:800;letter-spacing:.08em;padding:8px 9px;border:1px solid var(--border);border-radius:999px;color:#aeb4bc;white-space:nowrap}.info{padding:12px 13px;border-radius:12px;background:#1b1e23;border:1px solid var(--border);color:#aeb4bc;font-size:12px;line-height:1.45}.select{width:100%;background:#1d2025;color:#f5f6f7;border:1px solid var(--border);padding:13px 14px;border-radius:12px;outline:none}.select:focus{border-color:#a8adb5;box-shadow:0 0 0 3px rgba(255,255,255,.05)}.settings-summary{display:grid;gap:6px;margin-top:12px;color:#b9bec6;font-size:12px;line-height:1.45}.settings-summary strong{color:#f1f2f4}.friend-list,.score-list,.final-list{display:grid;gap:8px;margin-top:16px}.friend-row,.score-row,.final-row{padding:12px;border-radius:12px;background:#1d2025;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}.friend-main,.score-main{min-width:0}.friend-name,.score-name{font-weight:850}.friend-character{color:#c5cad1;margin-top:4px;overflow-wrap:anywhere}.friend-category{font-size:11px;color:#858c97;margin-top:3px}.character-image{width:112px;height:112px;object-fit:cover;border-radius:14px;border:1px solid var(--border);background:#1d2025;margin:0 auto 15px;display:block}.image-placeholder{width:112px;height:112px;display:grid;place-items:center;border-radius:14px;border:1px dashed #4b515b;background:#1d2025;color:#808792;font-size:10px;font-weight:800;letter-spacing:.08em;text-align:center;margin:0 auto 15px}.score-points{font-weight:900;white-space:nowrap}.final-row{font-size:14px}.final-place{color:#858c97;font-size:12px;font-weight:850;min-width:25px}.final-name{font-weight:850;flex:1}.final-points{font-weight:900}.hidden{display:none!important}
+.center{text-align:center}.turn-name{font-size:clamp(36px,10vw,56px);font-weight:950;letter-spacing:-.05em;margin:10px 0}.privacy{font-size:17px;font-weight:850;line-height:1.2}.warn{font-size:14px;color:#d98a95;margin-top:8px}.personaje{font-size:clamp(36px,9vw,62px);font-weight:950;letter-spacing:-.05em;margin:20px 0 8px}
+.tag{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:#202329;color:#bfc5cd;border:1px solid var(--border);font-size:11px;font-weight:800}.reveal-box{background:#15171a;border:1px solid var(--border);padding:27px 18px;border-radius:16px;text-align:center;margin:15px 0}.timer{font-size:11px;color:#7f8690;margin-top:13px}
+.progress{height:5px;background:#202329;border-radius:999px;overflow:hidden;margin:13px 0 21px}.progress>div{height:100%;background:#dfe3e8;transition:width .25s ease}.summary{display:grid;gap:7px;margin-top:18px}.summary-row{padding:11px 12px;border-radius:11px;background:#1d2025;border:1px solid var(--border);display:flex;justify-content:space-between;gap:12px}.small{font-size:11px;color:#7f8690}.footer{padding-top:12px;text-align:center;color:#606772;font-size:10px}
+@media (min-width:700px){.app{padding:24px 20px}.card{padding:28px}.hero{padding:44px 34px}}
+@media (max-width:600px){.game-title{font-size:2.8rem}}
+.room-notice{display:none;margin-top:12px;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.4;border:1px solid var(--border);background:#1b1e23;color:#aeb4bc}.room-notice.show{display:block}.room-notice.success{color:#d8f4e6}.room-notice.error{color:#f5c9ce}.room-code-input{text-align:center;font-weight:900;letter-spacing:.16em;text-transform:uppercase}.room-code-big{font-size:36px;font-weight:950;letter-spacing:.16em}.copy-room{padding:10px 12px;border-radius:10px;background:#202329;color:#e6e9ed;border:1px solid var(--border);font-size:11px;font-weight:800}.lobby-list{display:grid;gap:8px;margin-top:16px}.lobby-player{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#1d2025}.player-icon{font-size:16px}.lobby-role{font-size:10px;color:#808792;text-transform:uppercase;letter-spacing:.08em}.lobby-count{margin-top:10px;font-size:12px;color:#8e949d;font-weight:800}.waiting-host{text-align:center;margin-top:14px;color:#8e949d;font-size:12px}.prep-card{padding:30px 20px 28px}.prep-small{font-size:11px;color:#7f8690;letter-spacing:.14em;font-weight:850;margin-top:24px}.prep-name{font-size:clamp(32px,10vw,52px);font-weight:950;letter-spacing:-.05em;margin-top:5px}.prep-title{font-size:clamp(34px,9vw,52px);letter-spacing:-.05em;margin:24px 0 8px}.prep-message{max-width:430px;margin:0 auto;color:#c3c8d0;font-size:17px;line-height:1.45}.prep-countdown{font-size:clamp(90px,29vw,160px);font-weight:950;line-height:.9;letter-spacing:-.08em;margin:22px 0 14px;animation:pulse .95s ease infinite}.prep-sub{margin:0;color:#8d949e;font-size:13px}.reveal-live{animation:fadeUp .45s ease both}.reveal-note{margin-top:8px}.reveal-live .actions{margin-top:18px}.reveal-live .btn{max-width:360px;margin:0 auto}.copy-room:active{transform:scale(.98)}
+
+
+.turn-card{padding:24px 20px 22px}
+.turn-label{font-size:12px;font-weight:850;letter-spacing:.12em;color:#8e949d;margin-top:18px}
+.turn-instruction{max-width:460px;margin:0 auto 20px}
+.countdown-wrap{display:none;margin:18px auto 4px;max-width:430px;padding:20px 16px 18px;border-radius:18px;background:#141619;border:1px solid var(--border)}
+.countdown-wrap.active{display:block;animation:fadeUp .25s ease both}
+.countdown-message{font-size:clamp(18px,4.8vw,24px);font-weight:850;letter-spacing:-.025em}
+.countdown{font-size:clamp(78px,24vw,132px);font-weight:950;line-height:.9;letter-spacing:-.07em;margin-top:14px;animation:pulse .95s ease infinite}
+.reveal-card{padding:22px 18px 20px}
+.reveal-header{margin-bottom:10px;text-align:left}
+.reveal-player-name{font-size:clamp(28px,8vw,44px);font-weight:950;letter-spacing:-.05em;line-height:.95;margin-top:5px}
+.reveal-box-main{padding:30px 16px 28px;margin:14px 0 16px;min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.reveal-kicker{font-size:12px;letter-spacing:.12em;font-weight:900;color:#8e949d}
+.reveal-card .personaje{font-size:clamp(42px,11vw,74px);line-height:.96;max-width:100%;overflow-wrap:anywhere;margin:16px 0 14px}
+.reveal-helper{margin:0;color:#9aa0aa;font-size:14px;line-height:1.45}
+.reveal-helper strong{color:#f2f3f5}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.04);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:380px){.card{padding:18px 14px}.reveal-box-main{min-height:210px;padding:24px 12px}.countdown-wrap{padding:16px 12px}}
+
+.lobby-player{grid-template-columns:1fr auto}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="brand">¿QUIÉN SOY?</div><div class="step" id="stepBadge"></div></div>
+
+  <section class="screen active" id="home">
+    <div class="card hero">
+      <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
+      <p class="subtitle">Crea una sala, comparte el código y juega con cada celular mirando hacia el grupo.</p>
+      <div class="actions">
+        <button class="btn" id="newGameBtn">CREAR SALA</button>
+        <button class="btn secondary" id="goJoinBtn">UNIRME A UNA SALA</button>
+      </div>
+      <div class="footer">Una sala · Varios celulares · Personajes sincronizados</div>
+    </div>
+  </section>
+
+  <section class="screen" id="setup">
+    <div class="card">
+      <div class="tag">ANFITRIÓN</div>
+      <h1 class="title" style="margin-top:16px">Crea tu sala</h1>
+      <p class="muted">Elige tu nombre y las temáticas. Los demás jugadores se unirán con un código.</p>
+      <div class="section">
+        <span class="label">Tu nombre</span>
+        <input class="input" id="hostNameInput" maxlength="30" placeholder="Ej. Luis">
+      </div>
+      <div class="section">
+        <span class="label">Temáticas</span>
+        <div class="chips" id="categoryBox"></div>
+        <button class="text-action" id="toggleCategoriesBtn" type="button">Seleccionar todas</button>
+      </div>
+      <div class="section">
+        <span class="label">Cantidad de rondas</span>
+        <div class="counter">
+          <button type="button" id="roundsMinusBtn" aria-label="Restar ronda">−</button>
+          <div class="counter-value" id="roundsValue">3</div>
+          <button type="button" id="roundsPlusBtn" aria-label="Sumar ronda">+</button>
+        </div>
+        <p class="muted tiny">Puedes jugar entre 1 y 20 rondas.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="createRoomBtn">CREAR SALA</button>
+        <button class="btn secondary" id="backHomeBtn">VOLVER</button>
+      </div>
+      <div class="room-notice" id="errorStock"></div>
+      <div class="room-notice" id="roomNotice"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="join">
+    <div class="card">
+      <div class="tag">JUGADOR</div>
+      <h1 class="title" style="margin-top:16px">Entrar a una sala</h1>
+      <p class="muted">Usa el código que te dio el anfitrión.</p>
+      <div class="section">
+        <span class="label">Código de sala</span>
+        <input class="input room-code-input" id="joinRoomCode" maxlength="5" placeholder="K7F2Q" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="section">
+        <span class="label">Tu nombre</span>
+        <input class="input" id="joinName" maxlength="30" placeholder="Ej. Diego">
+      </div>
+      <div class="actions">
+        <button class="btn" id="joinRoomBtn">ENTRAR A LA SALA</button>
+        <button class="btn secondary" id="goCreateBtn">CREAR UNA SALA</button>
+      </div>
+      <div class="room-notice" id="joinNotice"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="lobby">
+    <div class="card">
+      <div class="compact-row">
+        <div>
+          <span class="label">SALA</span>
+          <div class="room-code-big" id="roomCodeValue">K7F2Q</div>
+        </div>
+        <button class="copy-room" id="copyRoomBtn" type="button">COPIAR</button>
+      </div>
+      <div class="section">
+        <h1 class="title">Lobby</h1>
+        <p class="muted">Comparte el código y espera a que entren todos.</p>
+      </div>
+      <div class="lobby-list" id="lobbyList"></div>
+      <div class="lobby-count" id="lobbyCount">0 jugadores</div>
+      <div class="info">Todos deben tener su propio celular. El anfitrión configura las temáticas y las rondas antes de iniciar.</div>
+      <div class="settings-summary" id="settingsSummary"></div>
+      <div class="actions">
+        <button class="btn secondary" id="editSettingsBtn">CONFIGURAR SALA</button>
+        <button class="btn" id="startRoomBtn">INICIAR PARTIDA</button>
+        <button class="btn secondary" id="leaveRoomBtn">SALIR DE LA SALA</button>
+      </div>
+      <div class="waiting-host" id="waitingHost">Esperando al anfitrión…</div>
+      <div class="room-notice" id="lobbyNotice"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="prep">
+    <div class="card center prep-card">
+      <div class="small" id="prepRoundLabel">RONDA</div>
+      <div class="prep-small">PREPARACIÓN</div>
+      <h1 class="prep-title">PREPÁRATE</h1>
+      <p class="prep-message">Da vuelta el teléfono y entrégaselo a otra persona.</p>
+      <div class="prep-countdown" id="prepCountdown">10</div>
+      <p class="prep-sub">No se mostrará ningún personaje hasta llegar a 0.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="reveal">
+    <div class="card center reveal-card">
+      <div class="compact-row">
+        <div class="small" id="revealRoundLabel">RONDA</div>
+        <div class="tag" id="revealAudience">PARA TODOS</div>
+      </div>
+      <h1 class="title" style="margin-top:22px">PREPÁRENSE</h1>
+      <p class="muted">Otra persona debe mirar esta pantalla y colocar la carta. No mires.</p>
+      <div class="reveal-box reveal-box-main">
+        <div class="small reveal-kicker">COLOCA ESTA CARTA</div>
+        <div id="revealCharacterImageBox"></div>
+        <div class="personaje" id="revealCharacterName"></div>
+        <div class="tag" id="revealCharacterCategory"></div>
+      </div>
+      <div class="countdown-wrap active">
+        <div class="countdown-message">Cambio de pantalla en…</div>
+        <div class="countdown" id="revealCountdown">15</div>
+        <p class="prep-sub">Cuenta regresiva sincronizada para toda la sala.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="playing">
+    <div class="card center">
+      <div class="tag" id="playingRoundTag">RONDA LISTA</div>
+      <h1 class="title" style="margin-top:18px">JUEGUEN PRESENCIALMENTE</h1>
+      <p class="muted">Tu personaje está oculto. Estos son los personajes que sí puedes ver:</p>
+      <div class="friend-list" id="playingCharacterList"></div>
+      <p class="muted tiny">Dejen el celular y jueguen con preguntas y respuestas.</p>
+      <div class="actions">
+        <button class="btn" id="scoreRoundBtn">REGISTRAR RESULTADO</button>
+      </div>
+      <div class="waiting-host" id="playingWaiting">Esperando al anfitrión…</div>
+    </div>
+  </section>
+
+  <section class="screen" id="scoring">
+    <div class="card">
+      <div class="small" id="scoringRoundLabel">RONDA</div>
+      <h1 class="title" style="margin-top:10px">RESULTADO DE LA RONDA</h1>
+      <p class="muted">Selecciona el orden de llegada.</p>
+      <div id="scoringHostView">
+        <div class="section"><span class="label">1° lugar · +3</span><select class="select" id="firstPlaceSelect"></select></div>
+        <div class="section"><span class="label">2° lugar · +2</span><select class="select" id="secondPlaceSelect"></select></div>
+        <div class="section"><span class="label">3° lugar · +1</span><select class="select" id="thirdPlaceSelect"></select></div>
+        <div class="actions"><button class="btn" id="confirmResultBtn">CONFIRMAR RESULTADO</button></div>
+      </div>
+      <div class="info hidden" id="scoringWaiting">El anfitrión está registrando el resultado de la ronda.</div>
+      <div class="room-notice" id="scoringNotice"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="results">
+    <div class="card">
+      <div class="small" id="resultsRoundLabel">RONDA</div>
+      <h1 class="title" style="margin-top:10px">RESULTADO DE LA RONDA</h1>
+      <div class="score-list" id="roundResultList"></div>
+      <div class="section"><span class="label">Puntaje total</span><div class="score-list" id="roundScoreList"></div></div>
+      <div class="actions"><button class="btn" id="nextRoundBtn">SIGUIENTE RONDA</button></div>
+      <div class="waiting-host" id="resultsWaiting">Esperando al anfitrión…</div>
+    </div>
+  </section>
+
+  <section class="screen" id="finish">
+    <div class="card">
+      <div class="tag">PARTIDA FINALIZADA</div>
+      <h1 class="title" id="finishTitle" style="margin-top:18px">RESULTADOS FINALES</h1>
+      <p class="muted" id="finishText"></p>
+      <div class="final-list" id="finalList"></div>
+      <div class="section center" id="winnerBox"></div>
+      <div class="actions">
+        <button class="btn" id="restartBtn">NUEVA PARTIDA</button>
+        <button class="btn secondary" id="finishHomeBtn">SALIR</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+    window.baseDeDatos = [
+  {
+    "id": 1,
+    "nombre": "Homero Simpson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 2,
+    "nombre": "Marge Simpson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 3,
+    "nombre": "Bart Simpson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 4,
+    "nombre": "Lisa Simpson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 5,
+    "nombre": "Maggie Simpson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 6,
+    "nombre": "Sr. Burns",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 7,
+    "nombre": "Ned Flanders",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 8,
+    "nombre": "Moe Szyslak",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 9,
+    "nombre": "Krusty el Payaso",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 10,
+    "nombre": "Milhouse Van Houten",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 11,
+    "nombre": "Jefe Gorgory",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 12,
+    "nombre": "Apu Nahasapeemapetilon",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 13,
+    "nombre": "Nelson Muntz",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 14,
+    "nombre": "Director Skinner",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 15,
+    "nombre": "Barney Gumble",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 16,
+    "nombre": "El Abuelo (Abraham Simpson)",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 17,
+    "nombre": "Bob Patiño",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 18,
+    "nombre": "Rafa Gorgory",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 19,
+    "nombre": "Patty Bouvier",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 20,
+    "nombre": "Selma Bouvier",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 21,
+    "nombre": "Waylon Smithers",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 22,
+    "nombre": "Lenny Leonard",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 23,
+    "nombre": "Carl Carlson",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 24,
+    "nombre": "Edna Krabappel",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 25,
+    "nombre": "Otto Mann",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 26,
+    "nombre": "Profesor Frink",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 27,
+    "nombre": "Troy McClure",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 28,
+    "nombre": "Dr. Hibbert",
+    "categoria": "Los Simpson",
+    "dificultad": "facil"
+  },
+  {
+    "id": 29,
+    "nombre": "Malcolm",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 30,
+    "nombre": "Lois",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 31,
+    "nombre": "Hal",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 32,
+    "nombre": "Reese",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 33,
+    "nombre": "Dewey",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 34,
+    "nombre": "Francis",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 35,
+    "nombre": "Stevie Kenarban",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 36,
+    "nombre": "Craig Feldspar",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 37,
+    "nombre": "La abuela Ida",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 38,
+    "nombre": "Piama",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 39,
+    "nombre": "Abe Kenarban",
+    "categoria": "Malcolm in the Middle",
+    "dificultad": "facil"
+  },
+  {
+    "id": 40,
+    "nombre": "Michael Jackson",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 41,
+    "nombre": "Bad Bunny",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 42,
+    "nombre": "Shakira",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 43,
+    "nombre": "Daddy Yankee",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 44,
+    "nombre": "Karol G",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 45,
+    "nombre": "Billie Eilish",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 46,
+    "nombre": "Chayanne",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 47,
+    "nombre": "Duki",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 48,
+    "nombre": "Quevedo",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 49,
+    "nombre": "Kidd Voodoo",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 50,
+    "nombre": "Kanye West",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 51,
+    "nombre": "Wisin y Yandel",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 52,
+    "nombre": "Marcianeke",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 53,
+    "nombre": "Pailita",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 54,
+    "nombre": "Paloma Mami",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 55,
+    "nombre": "Pablo Chill-E",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 56,
+    "nombre": "Cris Mj",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 57,
+    "nombre": "Young Cister",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 58,
+    "nombre": "Easykid",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 59,
+    "nombre": "Drake",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 60,
+    "nombre": "Ozuna",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 61,
+    "nombre": "J Balvin",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 62,
+    "nombre": "FloyyMenor",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 63,
+    "nombre": "Polimá Westcoast",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 64,
+    "nombre": "Maluma",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 65,
+    "nombre": "Anuel AA",
+    "categoria": "Cantantes",
+    "dificultad": "facil"
+  },
+  {
+    "id": 66,
+    "nombre": "Jerry (Tom y Jerry)",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 67,
+    "nombre": "Tom (Tom y Jerry)",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 68,
+    "nombre": "Scooby-Doo",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 69,
+    "nombre": "Shaggy",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 70,
+    "nombre": "Pato Lucas",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 71,
+    "nombre": "Phineas",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 72,
+    "nombre": "Ferb",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 73,
+    "nombre": "Finn el Humano",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 74,
+    "nombre": "Jake el Perro",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 75,
+    "nombre": "Mordecai",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 76,
+    "nombre": "Rigby",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 77,
+    "nombre": "Gumball Watterson",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 78,
+    "nombre": "Ben 10",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 79,
+    "nombre": "Johnny Bravo",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 80,
+    "nombre": "Dexter",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 81,
+    "nombre": "Coraje, el Perro Cobarde",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 82,
+    "nombre": "Bombón",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 83,
+    "nombre": "Burbuja",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 84,
+    "nombre": "Bellota",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 85,
+    "nombre": "Puro Hueso",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 86,
+    "nombre": "Billy",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 87,
+    "nombre": "Mandy",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 88,
+    "nombre": "Ed",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 89,
+    "nombre": "Steven Universe",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 90,
+    "nombre": "Bob Esponja",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 91,
+    "nombre": "Patricio Estrella",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 92,
+    "nombre": "Calamardo Tentáculos",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 93,
+    "nombre": "Don Cangrejo",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 94,
+    "nombre": "Timmy Turner",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 95,
+    "nombre": "Cosmo",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 96,
+    "nombre": "Wanda",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 97,
+    "nombre": "Arnold",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 98,
+    "nombre": "Helga Pataki",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 99,
+    "nombre": "Carly Shay (iCarly)",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 100,
+    "nombre": "El Chavo",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 101,
+    "nombre": "Don Ramón",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 102,
+    "nombre": "Ñoño",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 103,
+    "nombre": "Quico",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 104,
+    "nombre": "Doña Florinda",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 105,
+    "nombre": "Señor Barriga",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 106,
+    "nombre": "Profesor Jirafales",
+    "categoria": "Personajes de Dibujos Animados",
+    "dificultad": "facil"
+  },
+  {
+    "id": 107,
+    "nombre": "Cristiano Ronaldo",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 108,
+    "nombre": "Lionel Messi",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 109,
+    "nombre": "Alexis Sánchez",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 110,
+    "nombre": "Arturo Vidal",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 111,
+    "nombre": "Neymar",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 112,
+    "nombre": "Kylian Mbappé",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 113,
+    "nombre": "Claudio Bravo",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 114,
+    "nombre": "Ronaldinho",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 115,
+    "nombre": "Erling Haaland",
+    "categoria": "Futbolistas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 116,
+    "nombre": "Harry Potter",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 117,
+    "nombre": "Jack Sparrow",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 118,
+    "nombre": "Joker / El Guasón",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 119,
+    "nombre": "Shrek",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 120,
+    "nombre": "Batman",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 121,
+    "nombre": "Remy (Ratatouille)",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 122,
+    "nombre": "Miles Morales",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 123,
+    "nombre": "Baymax",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 124,
+    "nombre": "Po (Kung Fu Panda)",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 125,
+    "nombre": "Mr. Increíble",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 126,
+    "nombre": "Elastigirl",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 127,
+    "nombre": "Nick Wilde (Zootopia)",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 128,
+    "nombre": "Coraline",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 129,
+    "nombre": "Buzz Lightyear",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 130,
+    "nombre": "Woody",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 131,
+    "nombre": "El Gato con Botas",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 132,
+    "nombre": "Burro (Shrek)",
+    "categoria": "Películas",
+    "dificultad": "facil"
+  },
+  {
+    "id": 133,
+    "nombre": "Felipe Camiroaga",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 134,
+    "nombre": "Pamela Díaz (\"La Fiera\")",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 135,
+    "nombre": "Patricia Maldonado",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 136,
+    "nombre": "Junior Playboy",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 137,
+    "nombre": "Kike Morandé",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 138,
+    "nombre": "Martín Cárcamo",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 139,
+    "nombre": "Sebastián Piñera",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 140,
+    "nombre": "José Antonio Kast",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 141,
+    "nombre": "Karol Dance",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 142,
+    "nombre": "El Papi Micky",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 143,
+    "nombre": "René Puente",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 144,
+    "nombre": "Diego González",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 145,
+    "nombre": "Naya Fácil",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 146,
+    "nombre": "JB The Voice",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 147,
+    "nombre": "Carlitos Vera",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 148,
+    "nombre": "Don Francisco",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 149,
+    "nombre": "Pedro Pascal",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 150,
+    "nombre": "Bombo Fica",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 151,
+    "nombre": "Luis Jara",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 152,
+    "nombre": "Flaitiano",
+    "categoria": "Personajes Chilenos 🇨🇱",
+    "dificultad": "facil"
+  },
+  {
+    "id": 153,
+    "nombre": "Goku",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 154,
+    "nombre": "Vegeta",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 155,
+    "nombre": "Naruto Uzumaki",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 156,
+    "nombre": "Light Yagami",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 157,
+    "nombre": "L",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 158,
+    "nombre": "Eren Yeager",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 159,
+    "nombre": "Levi Ackerman",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 160,
+    "nombre": "Saitama",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 161,
+    "nombre": "Pikachu",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 162,
+    "nombre": "Ash Ketchum",
+    "categoria": "Anime — Nivel Fácil",
+    "dificultad": "facil"
+  },
+  {
+    "id": 163,
+    "nombre": "ElRubius",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 164,
+    "nombre": "Ibai Llanos",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 165,
+    "nombre": "AuronPlay",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 166,
+    "nombre": "Luisito Comunica",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 167,
+    "nombre": "Vegetta777",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 168,
+    "nombre": "Germán Garmendia (HolaSoyGerman)",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 169,
+    "nombre": "Dylantero Sin Imaginación",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 170,
+    "nombre": "Fernanfloo",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 171,
+    "nombre": "TheGrefg",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 172,
+    "nombre": "ElMariana",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 173,
+    "nombre": "IShowSpeed",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 174,
+    "nombre": "MrBeast",
+    "categoria": "Youtubers / Streamers",
+    "dificultad": "facil"
+  },
+  {
+    "id": 175,
+    "nombre": "Steve (Minecraft)",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 176,
+    "nombre": "Crash Bandicoot",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 177,
+    "nombre": "Kratos",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 178,
+    "nombre": "Mario",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 179,
+    "nombre": "Sonic",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 180,
+    "nombre": "Sub-Zero",
+    "categoria": "Personajes de Videojuegos 🎮",
+    "dificultad": "facil"
+  },
+  {
+    "id": 181,
+    "nombre": "Spider-Man",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 182,
+    "nombre": "Batman",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 183,
+    "nombre": "Superman",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 184,
+    "nombre": "Iron Man",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 185,
+    "nombre": "Capitán América",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 186,
+    "nombre": "Thor",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 187,
+    "nombre": "Flash",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 188,
+    "nombre": "Hulk",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 189,
+    "nombre": "Wolverine",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 190,
+    "nombre": "Deadpool",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 191,
+    "nombre": "Aquaman",
+    "categoria": "Superhéroes 🦸",
+    "dificultad": "facil"
+  },
+  {
+    "id": 192,
+    "nombre": "Thanos",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 193,
+    "nombre": "Duende Verde (Green Goblin)",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 194,
+    "nombre": "Venom",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 195,
+    "nombre": "Loki",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 196,
+    "nombre": "Scar (El Rey León)",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 197,
+    "nombre": "Joker / El Guasón",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 198,
+    "nombre": "Voldemort",
+    "categoria": "Villanos 😈",
+    "dificultad": "facil"
+  },
+  {
+    "id": 199,
+    "nombre": "Ricardo Milos",
+    "categoria": "Otros / Random 🤡",
+    "dificultad": "facil"
+  },
+  {
+    "id": 200,
+    "nombre": "Jeffrey Epstein",
+    "categoria": "Otros / Random 🤡",
+    "dificultad": "facil"
+  },
+  {
+    "id": 201,
+    "nombre": "Itachi Uchiha",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 202,
+    "nombre": "Madara Uchiha",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 203,
+    "nombre": "Jiraiya",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 204,
+    "nombre": "Pain",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 205,
+    "nombre": "Gaara",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 206,
+    "nombre": "Orochimaru",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 207,
+    "nombre": "Kurama",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 208,
+    "nombre": "Hisoka",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 209,
+    "nombre": "Killua Zoldyck",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 210,
+    "nombre": "Gon Freecss",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 211,
+    "nombre": "Meruem",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 212,
+    "nombre": "Ryuk",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 213,
+    "nombre": "Misa Amane",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 214,
+    "nombre": "Near",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 215,
+    "nombre": "Mikasa Ackerman",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 216,
+    "nombre": "Armin Arlert",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 217,
+    "nombre": "Reiner Braun",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 218,
+    "nombre": "Erwin Smith",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 219,
+    "nombre": "Dabi",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 220,
+    "nombre": "Shigaraki",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 221,
+    "nombre": "Sukuna",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 222,
+    "nombre": "Edward Elric",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 223,
+    "nombre": "Alphonse Elric",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 224,
+    "nombre": "Denji",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 225,
+    "nombre": "Makima",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 226,
+    "nombre": "Power",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  },
+  {
+    "id": 227,
+    "nombre": "Kirito",
+    "categoria": "Anime — Nivel Medio / Arriesgado 🍥",
+    "dificultad": "dificil"
+  }
+];
+
+const personajes = [
+  { nombre: "Homero Simpson", imagen: "img/001-HomeroSimpson.png" },
+  { nombre: "Marge Simpson", imagen: "img/002-MargeSimpson.jpg" },
+  { nombre: "Bart Simpson", imagen: "img/003-BartSimpson.png" },
+  { nombre: "Lisa Simpson", imagen: "img/004-LisaSimpson.png" },
+  { nombre: "Maggie Simpson", imagen: "img/005-MaggieSimpson.png" },
+  { nombre: "Sr Burns", imagen: "img/006-SrBurns.png" },
+  { nombre: "Ned Flanders", imagen: "img/007-NedFlanders.png" },
+  { nombre: "Moe Szyslak", imagen: "img/008-MoeSzyslak.png" },
+  { nombre: "Krusty el Payaso", imagen: "img/009-KrustyelPayaso.png" },
+  { nombre: "Milhouse Van Houten", imagen: "img/010-MilhouseVanHouten.png" },
+  { nombre: "Jefe Gorgory", imagen: "img/011-JefeGorgory.png" },
+  { nombre: "Apu Nahasapeemapetilon", imagen: "img/012-ApuNahasapeemapetilon.webp" },
+  { nombre: "Nelson Muntz", imagen: "img/013-NelsonMuntz.png" },
+  { nombre: "Director Skinner", imagen: "img/014-DirectorSkinner.png" },
+  { nombre: "Barney Gumble", imagen: "img/015-BarneyGumble.png" },
+  { nombre: "El Abuelo Abraham Simpson", imagen: "img/016-ElAbueloAbrahamSimpson.png" },
+  { nombre: "Bob Patiño", imagen: "img/017-BobPatiño.png" },
+  { nombre: "Rafa Gorgory", imagen: "img/018-RafaGorgory.png" },
+  { nombre: "Patty Bouvier", imagen: "img/019-PattyBouvier.png" },
+  { nombre: "Selma Bouvier", imagen: "img/020-selma-bouvier.png" },
+  { nombre: "Waylon Smithers", imagen: "img/021-WaylonSmithers.png" },
+  { nombre: "Lenny", imagen: "img/022-lenny.jpg" },
+  { nombre: "Carl Carlson", imagen: "img/023-carlcarlson.jpg" },
+  { nombre: "Edna Krabappel", imagen: "img/024-EdnaKrabappel.png" },
+  { nombre: "Otto", imagen: "img/025-Otto.webp" },
+  { nombre: "Profesor Frink", imagen: "img/026-ProfesorFrink.png" },
+  { nombre: "Troy McClure", imagen: "img/027-TroyMcClure.png" },
+  { nombre: "Dr Hibbert", imagen: "img/028-DrHibbert.png" },
+  { nombre: "Malcolm", imagen: "img/029-malcolm.webp" },
+  { nombre: "Lois", imagen: "img/030-Lois.jpg" },
+  { nombre: "Hal", imagen: "img/031-Hal.jpg" },
+  { nombre: "Reese", imagen: "img/032-Reese.jpg" },
+  { nombre: "Dewey", imagen: "img/033-Dewey.jpg" },
+  { nombre: "Francis", imagen: "img/034-Francis.jpg" },
+  { nombre: "Stevie Kenarban", imagen: "img/035-StevieKenarban.jpg" },
+  { nombre: "Craig Feldspar", imagen: "img/036-CraigFeldspar.jpg" },
+  { nombre: "La Abuela Ida", imagen: "img/037-LaAbuelaIda.jpg" },
+  { nombre: "Piama", imagen: "img/038-Piama.jpg" },
+  { nombre: "Abe Kenarban", imagen: "img/039-AbeKenarban.jpg" },
+  { nombre: "Michael Jackson", imagen: "img/040-MichaelJackson.jpg" },
+  { nombre: "Bad Bunny", imagen: "img/041-BadBunny.jpg" },
+  { nombre: "Shakira", imagen: "img/042-Shakira.jpg" },
+  { nombre: "Daddy Yankee", imagen: "img/043-DaddyYankee.jpg" },
+  { nombre: "Karol G", imagen: "img/044-KarolG.jpg" },
+  { nombre: "Billie Eilish", imagen: "img/045-BillieEilish.jpg" },
+  { nombre: "Chayanne", imagen: "img/046-Chayanne.jpg" },
+  { nombre: "Duki", imagen: "img/047-Duki.jpg" },
+  { nombre: "Quevedo", imagen: "img/048-Quevedo.jpg" },
+  { nombre: "Kidd Voodoo", imagen: "img/049-KiddVoodoo.jpg" },
+  { nombre: "Kanye West", imagen: "img/050-KanyeWest.jpg" },
+  { nombre: "Wisin y Yandel", imagen: "img/051-WisinyYandel.jpg" },
+  { nombre: "Marcianeke", imagen: "img/052-Marcianeke.jpg" },
+  { nombre: "Pailita", imagen: "img/053-Pailita.jpg" },
+  { nombre: "Paloma Mami", imagen: "img/054-PalomaMami.jpg" },
+  { nombre: "Pablo Chill E", imagen: "img/055-PabloChillE.jpg" },
+  { nombre: "Cris Mj", imagen: "img/056-CrisMj.jpg" },
+  { nombre: "Young Cister", imagen: "img/057-YoungCister.jpg" },
+  { nombre: "Easykid", imagen: "img/058-Easykid.jpg" },
+  { nombre: "Drake", imagen: "img/059-Drake.jpg" },
+  { nombre: "Ozuna", imagen: "img/060-Ozuna.jpg" },
+  { nombre: "J Balvin", imagen: "img/061-JBalvin.jpg" },
+  { nombre: "Floyy Menor", imagen: "img/062-FloyyMenor.jpg" },
+  { nombre: "Polima Westcoast", imagen: "img/063-PolimaWestcoast.jpg" },
+  { nombre: "Maluma", imagen: "img/064-Maluma.jpg" },
+  { nombre: "Anuel AA", imagen: "img/065-AnuelAA.jpg" },
+  { nombre: "Jerry", imagen: "img/066-Jerry.jpg" },
+  { nombre: "Tom", imagen: "img/067-Tom.png" },
+  { nombre: "Scooby Doo", imagen: "img/068-ScoobyDoo.png" },
+  { nombre: "Shaggy", imagen: "img/069-Shaggy.png" },
+  { nombre: "Pato Lucas", imagen: "img/070-PatoLucas.png" },
+  { nombre: "Phineas", imagen: "img/071-Phineas.png" },
+  { nombre: "Ferb", imagen: "img/072-Ferb.jpg" },
+  { nombre: "Finn el Humano", imagen: "img/073-FinnelHumano.png" },
+  { nombre: "Jake el Perro", imagen: "img/074-JakeelPerro.jpg" },
+  { nombre: "Mordecai", imagen: "img/075-Mordecai.jpg" },
+  { nombre: "Rigby", imagen: "img/076-Rigby.jpg" },
+  { nombre: "Gumball Watterson", imagen: "img/077-GumballWatterson.jpg" },
+  { nombre: "Ben 10", imagen: "img/078-ben-10.jpg" },
+  { nombre: "Ben 10", imagen: "img/078-Ben10.jpg" },
+  { nombre: "Johnny Bravo", imagen: "img/079-JohnnyBravo.jpg" },
+  { nombre: "Dexter", imagen: "img/080-Dexter.jpg" },
+  { nombre: "Coraje", imagen: "img/081-Coraje.jpg" },
+  { nombre: "Bombón", imagen: "img/082-Bombon.png" },
+  { nombre: "Bellota", imagen: "img/084-bellota.png" },
+  { nombre: "Puro Hueso", imagen: "img/085-PuroHueso.jpg" },
+  { nombre: "Billy", imagen: "img/086-Billy.jpg" },
+  { nombre: "Mandy", imagen: "img/087-Mandy.jpg" },
+  { nombre: "Ed", imagen: "img/088-Ed.jpg" },
+  { nombre: "Steven Universe", imagen: "img/089-StevenUniverse.webp" },
+  { nombre: "Bob Esponja", imagen: "img/090-BobEsponja.png" },
+  { nombre: "Deadpool", imagen: "img/090-Deadpool.webp" },
+  { nombre: "Patricio Estrella", imagen: "img/091-PatricioEstrella.png" },
+  { nombre: "Calamardo Tentáculos", imagen: "img/092-CalamardoTentaculos.jpg" },
+  { nombre: "Don Cangrejo", imagen: "img/093-DonCangrejo.png" },
+  { nombre: "Timmy Turner", imagen: "img/094-TimmyTurner.png" },
+  { nombre: "Cosmo", imagen: "img/095-Cosmo.jpg" },
+  { nombre: "Wanda", imagen: "img/096-Wanda.webp" },
+  { nombre: "Arnold", imagen: "img/097-Arnold.jpg" },
+  { nombre: "Helga Pataki", imagen: "img/098-HelgaPataki.jpg" },
+  { nombre: "Carly Shay", imagen: "img/099-CarlyShay.jpg" },
+  { nombre: "El Chavo", imagen: "img/100-ElChavo.jpg" },
+  { nombre: "Don Ramón", imagen: "img/101-DonRamon.jpg" },
+  { nombre: "Ñoño", imagen: "img/102-Nono.jpg" },
+  { nombre: "Quico", imagen: "img/103-Quico.jpg" },
+  { nombre: "Doña Florinda", imagen: "img/104-DonaFlorinda.jpg" },
+  { nombre: "Señor Barriga", imagen: "img/105-SenorBarriga.jpg" },
+  { nombre: "Profesor Jirafales", imagen: "img/106-ProfesorJirafales.jpg" },
+  { nombre: "Cristiano Ronaldo", imagen: "img/107-CristianoRonaldo.jpg" },
+  { nombre: "Lionel Messi", imagen: "img/108-LionelMessi.jpg" },
+  { nombre: "Alexis Sánchez", imagen: "img/109-AlexisSanchez.jpg" },
+  { nombre: "Arturo Vidal", imagen: "img/110-ArturoVidal.jpg" },
+  { nombre: "Neymar", imagen: "img/111-Neymar.jpg" },
+  { nombre: "Kylian Mbappé", imagen: "img/112-KylianMbappe.jpg" },
+  { nombre: "Claudio Bravo", imagen: "img/113-ClaudioBravo.jpg" },
+  { nombre: "Ronaldinho", imagen: "img/114-Ronaldinho.jpg" },
+  { nombre: "Erling Haaland", imagen: "img/115-ErlingHaaland.jpg" },
+  { nombre: "Harry Potter", imagen: "img/116-HarryPotter.jpg" },
+  { nombre: "Jack Sparrow", imagen: "img/117-JackSparrow.jpg" },
+  { nombre: "Joker", imagen: "img/118-Joker.jpg" },
+  { nombre: "Shrek", imagen: "img/119-Shrek.png" },
+  { nombre: "Batman", imagen: "img/120-Batman.jpg" },
+  { nombre: "Remy", imagen: "img/121-Remy.jpg" },
+  { nombre: "Miles Morales", imagen: "img/122-MilesMorales.png" },
+  { nombre: "Baymax", imagen: "img/123-Baymax.jpg" },
+  { nombre: "Po", imagen: "img/124-Po.png" },
+  { nombre: "Mr Increíble", imagen: "img/125-MrIncreible.png" },
+  { nombre: "Elastigirl", imagen: "img/126-Elastigirl.png" },
+  { nombre: "Nick Wilde", imagen: "img/127-nick-wilde-zootopia.webp" },
+  { nombre: "Coraline", imagen: "img/128-coraline.jpg" },
+  { nombre: "Buzz Lightyear", imagen: "img/129-BuzzLightyear.jpg" },
+  { nombre: "Woody", imagen: "img/130-Woody.jpg" },
+  { nombre: "El Gato Con Botas", imagen: "img/131-ElGatoConBotas.jpg" },
+  { nombre: "Burro", imagen: "img/132-Burro.png" },
+  { nombre: "Felipe Camiroaga", imagen: "img/133-FelipeCamiroaga.jpg" },
+  { nombre: "Pamela Díaz", imagen: "img/134-pameladiaz.jpg" },
+  { nombre: "Patricia Maldonado", imagen: "img/135-patriciamaldonado.jpg" },
+  { nombre: "Junior Playboy", imagen: "img/136-juniorplayboy.jpg" },
+  { nombre: "Kike Morandé", imagen: "img/137-KikeMorande.jpg" },
+  { nombre: "Martín Cárcamo", imagen: "img/138-MartinCarcamo.jpg" },
+  { nombre: "JB The Voice", imagen: "img/139-jbthevoice.webp" },
+  { nombre: "José Antonio Kast", imagen: "img/140-JoseAntonioKast.jpg" },
+  { nombre: "Flaitiano", imagen: "img/141-flaitiano.jpg" },
+  { nombre: "Karol Dance", imagen: "img/141-KarolDance.jpg" },
+  { nombre: "Papy Micky", imagen: "img/143-papymicky.jpg" },
+  { nombre: "Diego González", imagen: "img/144-diegogonzalez.webp" },
+  { nombre: "Naya Fácil", imagen: "img/145-NayaFacil.jpg" },
+  { nombre: "René Puente", imagen: "img/146-renepuente.jpg" },
+  { nombre: "Carlitos Vera", imagen: "img/147-CarlitosVera.jpg" },
+  { nombre: "Don Francisco", imagen: "img/148-DonFrancisco.jpg" },
+  { nombre: "Pedro Pascal", imagen: "img/149-PedroPascal.jpg" },
+  { nombre: "Bombo Fica", imagen: "img/150-BomboFica.jpg" },
+  { nombre: "Luis Jara", imagen: "img/151-LuisJara.jpg" },
+  { nombre: "Carlitos Vera", imagen: "img/152-carlitosvera.jpg" },
+  { nombre: "Goku", imagen: "img/153-Goku.jpg" },
+  { nombre: "Vegeta", imagen: "img/154-Vegeta.jpg" },
+  { nombre: "Naruto Uzumaki", imagen: "img/155-NarutoUzumaki.png" },
+  { nombre: "Light Yagami", imagen: "img/156-LightYagami.jpg" },
+  { nombre: "L", imagen: "img/157-L.jpg" },
+  { nombre: "Eren Yeager", imagen: "img/158-ErenYeager.jpg" },
+  { nombre: "Levi Ackerman", imagen: "img/159-LeviAckerman.jpg" },
+  { nombre: "Saitama", imagen: "img/160-Saitama.jpg" },
+  { nombre: "Pikachu", imagen: "img/161-Pikachu.png" },
+  { nombre: "Ash Ketchum", imagen: "img/162-AshKetchum.png" },
+  { nombre: "El Rubius", imagen: "img/163-ElRubius.jpg" },
+  { nombre: "Ibai Llanos", imagen: "img/164-IbaiLlanos.jpg" },
+  { nombre: "AuronPlay", imagen: "img/165-AuronPlay.jpg" },
+  { nombre: "Luisito Comunica", imagen: "img/166-LuisitoComunica.jpg" },
+  { nombre: "Vegetta777", imagen: "img/167-Vegetta777.jpg" },
+  { nombre: "Germán Garmendia", imagen: "img/168-GermanGarmendia.png" },
+  { nombre: "Dylantero Sin Imaginación", imagen: "img/169-DylanteroSinImaginacion.jpg" },
+  { nombre: "Fernanfloo", imagen: "img/170-Fernanfloo.jpg" },
+  { nombre: "TheGrefg", imagen: "img/171-TheGrefg.jpg" },
+  { nombre: "El Mariana", imagen: "img/172-ElMariana.jpg" },
+  { nombre: "IShowSpeed", imagen: "img/173-IShowSpeed.jpg" },
+  { nombre: "MrBeast", imagen: "img/174-MrBeast.jpg" },
+  { nombre: "Steve", imagen: "img/175-Steve.jpg" },
+  { nombre: "Crash Bandicoot", imagen: "img/176-CrashBandicoot.webp" },
+  { nombre: "Kratos", imagen: "img/177-Kratos.jpg" },
+  { nombre: "Mario", imagen: "img/178-Mario.png" },
+  { nombre: "Sonic", imagen: "img/179-Sonic.png" },
+  { nombre: "Sub Zero", imagen: "img/180-SubZero.jpg" },
+  { nombre: "Spider Man", imagen: "img/181-SpiderMan.png" },
+  { nombre: "Batman", imagen: "img/182-batman.jpg" },
+  { nombre: "Superman", imagen: "img/183-Superman.png" },
+  { nombre: "Iron Man", imagen: "img/184-IronMan.png" },
+  { nombre: "Capitán América", imagen: "img/185-CapitanAmerica.jpg" },
+  { nombre: "Thor", imagen: "img/186-Thor.png" },
+  { nombre: "Flash", imagen: "img/187-Flash.jpg" },
+  { nombre: "Hulk", imagen: "img/188-Hulk.png" },
+  { nombre: "Wolverine", imagen: "img/189-Wolverine.jpg" },
+  { nombre: "Aquaman", imagen: "img/191-Aquaman.jpg" },
+  { nombre: "Thanos", imagen: "img/192-Thanos.jpg" },
+  { nombre: "Duende Verde", imagen: "img/193-DuendeVerde.jpg" },
+  { nombre: "Venom", imagen: "img/194-Venom.jpg" },
+  { nombre: "Loki", imagen: "img/195-Loki.jpg" },
+  { nombre: "Scar", imagen: "img/196-Scar.png" },
+  { nombre: "Joker", imagen: "img/197-joker-el-guasón.jpg" },
+  { nombre: "Voldemort", imagen: "img/198-Voldemort.jpg" },
+  { nombre: "Ricardo Milos", imagen: "img/199-RicardoMilos.jpg" },
+  { nombre: "Jeffrey Epstein", imagen: "img/200-JefreyEpstein.jpg" },
+  { nombre: "Itachi Uchiha", imagen: "img/201-ItachiUchiha.jpg" },
+  { nombre: "Madara Uchiha", imagen: "img/202-MadaraUchiha.jpg" },
+  { nombre: "Jiraiya", imagen: "img/203-Jiraiya.jpg" },
+  { nombre: "Pain", imagen: "img/204-Pain.jpg" },
+  { nombre: "Gaara", imagen: "img/205-Gaara.jpg" },
+  { nombre: "Orochimaru", imagen: "img/206-Orochimaru.jpg" },
+  { nombre: "Kurama", imagen: "img/207-Kurama.jpg" },
+  { nombre: "Hisoka", imagen: "img/208-Hisoka.jpg" },
+  { nombre: "Killua Zoldyck", imagen: "img/209-KilluaZoldyck.jpg" },
+  { nombre: "Gon Freecss", imagen: "img/210-GonFreecss.png" },
+  { nombre: "Meruem", imagen: "img/211-Meruem.jpg" },
+  { nombre: "Ryuk", imagen: "img/212-Ryuk.jpg" },
+  { nombre: "Misa Amane", imagen: "img/213-MisaAmane.jpg" },
+  { nombre: "Near", imagen: "img/214-Near.jpg" },
+  { nombre: "Mikasa Ackerman", imagen: "img/215-MikasaAckerman.jpg" },
+  { nombre: "Armin Arlert", imagen: "img/216-ArminArlert.jpg" },
+  { nombre: "Reiner Braun", imagen: "img/217-ReinerBraun.jpg" },
+  { nombre: "Erwin Smith", imagen: "img/218-ErwinSmith.jpg" },
+  { nombre: "Dabi", imagen: "img/219-Dabi.jpg" },
+  { nombre: "Shigaraki", imagen: "img/220-Shigaraki.jpg" },
+  { nombre: "Sukuna", imagen: "img/221-Sukuna.jpg" },
+  { nombre: "Edward Elric", imagen: "img/222-EdwardElric.jpg" },
+  { nombre: "Alphonse Elric", imagen: "img/223-AlphonseElric.jpg" },
+  { nombre: "Denji", imagen: "img/224-Denji.jpg" },
+  { nombre: "Makima", imagen: "img/225-Makima.png" },
+  { nombre: "Power", imagen: "img/226-Power.png" },
+  { nombre: "Kirito", imagen: "img/227-Kirito.jpg" }
+];
+  
+  function normalizarNombrePersonaje(nombre){
+    return String(nombre||'')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+      .toLowerCase().replace(/[()¿?¡!.,'"/]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  }
+  
+  const aliasImagenes = {
+    'el abuelo abraham simpson':'el abuelo abraham simpson',
+    'lenny':'lenny',
+    'otto mann':'otto',
+    'jerry tom y jerry':'jerry',
+    'tom tom y jerry':'tom',
+    'scooby doo':'scooby doo',
+    'coraje el perro cobarde':'coraje',
+    'carly shay icarly':'carly shay',
+    'joker el guason':'joker',
+    'remy ratatouille':'remy',
+    'po kung fu panda':'po',
+    'burro shrek':'burro',
+    'scar el rey leon':'scar',
+    'steve minecraft':'steve',
+    'elrubius':'el rubius',
+    'german garmendia holasoygerman':'german garmendia',
+    'spider man':'spider man',
+    'jose antonio kast':'jose antonio kast',
+    'papi micky':'papy micky'
+  };
+
+  const imagenesPorNombre = new Map();
+  personajes.forEach(item=>imagenesPorNombre.set(normalizarNombrePersonaje(item.nombre), item.imagen));
+
+  window.baseDeDatos.forEach(character=>{
+    const key = normalizarNombrePersonaje(character.nombre);
+    const direct = imagenesPorNombre.get(key);
+    if(direct){ character.imagen = direct; return; }
+    const alias = aliasImagenes[key];
+    if(alias){
+      const mapped = imagenesPorNombre.get(normalizarNombrePersonaje(alias));
+      if(mapped){ character.imagen = mapped; return; }
+    }
+  });
+  
+  </script>
+
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script>
+if(false){(() => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmAKpjAWZcoI-KdfqpJgaRj7OezoyDjF5g",
+    authDomain: "adivina-quien-v7.firebaseapp.com",
+    databaseURL: "https://adivina-quien-v7-default-rtdb.firebaseio.com",
+    projectId: "adivina-quien-v7",
+    storageBucket: "adivina-quien-v7.firebasestorage.app",
+    messagingSenderId: "61261772594",
+    appId: "1:61261772594:web:d002b1d8f1b9b4b77d892b",
+    measurementId: "G-4KTVL0ZW3G"
+  };
+
+  const firebaseApp = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database(firebaseApp);
+  const baseDeDatos = window.baseDeDatos || [];
+  const screens = ['home','setup','join','lobby','prep','pass','reveal','finish'];
+  const state = {
+    mode: null,
+    roomCode: '',
+    playerId: getOrCreatePlayerId(),
+    playerName: '',
+    hostName: '',
+    categories: [],
+    difficulty: 'media',
+    roomRef: null,
+    roomListener: null,
+    myAssignment: null,
+    countdownTimer: null,
+    roomUnsubscribed: false
+  };
+
+  const $ = id => document.getElementById(id);
+  const setText = (id, text) => { const el=$(id); if(el) el.textContent = text ?? ''; };
+  const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function getOrCreatePlayerId(){
+    const key='adivina_quien_player_id';
+    let id=localStorage.getItem(key);
+    if(!id){ id='p_'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem(key,id); }
+    return id;
+  }
+  function roomCode(){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let s=''; for(let i=0;i<5;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    return s;
+  }
+  function show(id){
+    clearNotice();
+    screens.forEach(s => { const el=$(s); if(el) el.classList.toggle('active', s===id); });
+    const labels={home:'',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',pass:'PARTIDA',reveal:'PARTIDA',finish:'FINAL'};
+    setText('stepBadge',labels[id]||'');
+  }
+  function notice(msg, type='', target='roomNotice'){
+    const el=$(target); if(!el) return;
+    el.textContent=msg||''; el.className='room-notice'+(msg?' show ':'')+(type?' '+type:'');
+  }
+  function clearNotice(){
+    ['roomNotice','joinNotice','lobbyNotice'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='room-notice';}});
+  }
+  function clearCountdown(){if(state.countdownTimer){clearInterval(state.countdownTimer);state.countdownTimer=null;}}
+
+  function renderCategories(){
+    const cats=[...new Set(baseDeDatos.map(p=>p.categoria))];
+    $('categoryBox').innerHTML='';
+    cats.forEach(cat=>{
+      const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=cat;
+      b.onclick=()=>{ b.classList.toggle('selected'); updateSelectedCategories(); };
+      $('categoryBox').appendChild(b);
+    });
+  }
+  function updateSelectedCategories(){
+    state.categories=[...document.querySelectorAll('#categoryBox .chip.selected')].map(x=>x.textContent);
+    const total=document.querySelectorAll('#categoryBox .chip').length;
+    $('toggleCategoriesBtn').textContent=state.categories.length===total?'Quitar selección':'Seleccionar todas';
+  }
+  function setDifficulty(v){ state.difficulty=v; document.querySelectorAll('.diff').forEach(b=>b.classList.toggle('selected',b.dataset.diff===v)); }
+  function shuffle(arr){
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  }
+  function difficultyPool(selectedDifficulty,pool,players){
+    const exact=pool.filter(p=>p.dificultad===selectedDifficulty);
+    if(exact.length>=players) return exact;
+    if(selectedDifficulty==='media') return [...exact,...pool.filter(p=>p.dificultad==='facil')];
+    if(selectedDifficulty==='dificil') return [...exact,...pool.filter(p=>p.dificultad==='media'),...pool.filter(p=>p.dificultad==='facil')];
+    return exact.length?exact:pool;
+  }
+
+  function normalizeRoomPlayers(data){
+    const players=data?.players||{};
+    return Object.entries(players).map(([id,p])=>({id,...p})).sort((a,b)=>(a.joinedAt||0)-(b.joinedAt||0));
+  }
+  function renderLobby(data){
+    const players=normalizeRoomPlayers(data);
+    const isHost=state.mode==='host';
+    setText('roomCodeValue',state.roomCode);
+    setText('lobbyCount',`${players.length} / 20 jugadores`);
+    $('lobbyList').innerHTML=players.map(p=>`<div class="lobby-player"><span class="player-icon">${p.host?'👑':'🟢'}</span><span>${escapeHtml(p.name)}</span><span class="lobby-role">${p.host?'anfitrión':'listo'}</span></div>`).join('');
+    $('startRoomBtn').style.display=isHost?'block':'none';
+    $('startRoomBtn').disabled=!isHost || players.length<2 || !data?.game || data.game.phase!=='lobby';
+    $('waitingHost').style.display=isHost?'none':'block';
+    if(!isHost) $('waitingHost').textContent='Esperando al anfitrión…';
+  }
+
+  function listenToRoom(){
+    stopRoomListener();
+    if(!state.roomRef) return;
+    state.roomListener=snap=>handleRoomSnapshot(snap.val());
+    state.roomRef.on('value',state.roomListener,err=>{
+      console.error(err);
+      notice('No se pudo leer la sala. Revisa las reglas de Realtime Database.','error','lobbyNotice');
+    });
+  }
+  function stopRoomListener(){
+    if(state.roomRef && state.roomListener){state.roomRef.off('value',state.roomListener);}
+    state.roomListener=null;
+  }
+
+  function handleRoomSnapshot(data){
+    if(!data){
+      state.roomRef=null; stopRoomListener();
+      notice('La sala ya no existe o el anfitrión la cerró.','error','joinNotice');
+      $('joinRoomBtn').disabled=false;
+      show('join');
+      return;
+    }
+    const players=normalizeRoomPlayers(data);
+    const me=players.find(p=>p.id===state.playerId);
+    if(state.mode==='player' && !me && data.game?.phase==='lobby'){
+      notice('Tu conexión con la sala se perdió. Intenta entrar de nuevo.','error','joinNotice');
+      $('joinRoomBtn').disabled=false; show('join'); return;
+    }
+    if(data.settings){ state.categories=data.settings.categories||state.categories; state.difficulty=data.settings.difficulty||state.difficulty; }
+    if(data.game?.phase==='lobby'){
+      state.myAssignment=null; renderLobby(data); show('lobby'); return;
+    }
+    if(data.game?.phase==='prep'){
+      const assignment=data.game.assignments?.[state.playerId];
+      if(!assignment){ notice('La partida comenzó, pero no se encontró tu personaje.','error','lobbyNotice'); return; }
+      state.myAssignment=assignment; renderPrep(data.game.startsAt,data.game.revealAt); show('prep'); scheduleReveal(data.game.revealAt); return;
+    }
+    if(data.game?.phase==='reveal'){
+      const assignment=data.game.assignments?.[state.playerId];
+      if(!assignment){ return; }
+      state.myAssignment=assignment; renderReveal(); show('reveal'); clearCountdown(); return;
+    }
+  }
+
+  async function createRoom(){
+    const hostName=($('hostNameInput').value||'').trim().slice(0,30) || 'Anfitrión';
+    if(!state.categories.length){ notice('Selecciona al menos una temática.','error'); return; }
+    state.mode='host'; state.hostName=hostName; state.playerName=hostName;
+    state.roomCode=roomCode(); state.roomRef=db.ref('rooms/'+state.roomCode);
+    $('createRoomBtn').disabled=true;
+    try{
+      const existing=await state.roomRef.once('value');
+      if(existing.exists()){ state.roomCode=roomCode(); state.roomRef=db.ref('rooms/'+state.roomCode); }
+      const now=firebase.database.ServerValue.TIMESTAMP;
+      const initial={
+        hostId:state.playerId,
+        hostName,
+        createdAt:now,
+        settings:{categories:state.categories,difficulty:state.difficulty},
+        players:{[state.playerId]:{name:hostName,host:true,joinedAt:now}},
+        game:{phase:'lobby',round:0}
+      };
+      await state.roomRef.set(initial);
+      await state.roomRef.child('players/'+state.playerId).onDisconnect().remove();
+      await state.roomRef.onDisconnect().remove();
+      listenToRoom();
+      renderLobby(initial);
+      show('lobby');
+      notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
+    }catch(err){
+      console.error('Firebase create room',err);
+      $('createRoomBtn').disabled=false;
+      notice('No se pudo crear la sala. Comprueba que Realtime Database esté creada y sus reglas permitan leer/escribir.','error');
+    }
+  }
+
+  async function joinRoom(){
+    const code=($('joinRoomCode').value||'').trim().toUpperCase();
+    const name=($('joinName').value||'').trim().slice(0,30);
+    if(!/^[A-Z2-9]{5}$/.test(code)){notice('Escribe un código de 5 caracteres.','error','joinNotice');return;}
+    if(!name){notice('Escribe tu nombre.','error','joinNotice');return;}
+    state.mode='player';state.roomCode=code;state.playerName=name;state.roomRef=db.ref('rooms/'+code);
+    $('joinRoomBtn').disabled=true; notice('Buscando la sala…','','joinNotice');
+    try{
+      const snap=await state.roomRef.once('value');
+      if(!snap.exists()){notice('No existe una sala con ese código. Verifica el código.','error','joinNotice');$('joinRoomBtn').disabled=false;return;}
+      const data=snap.val(); const players=normalizeRoomPlayers(data);
+      if(data.game?.phase && data.game.phase!=='lobby'){notice('La partida ya comenzó. Espera a la próxima partida.','error','joinNotice');$('joinRoomBtn').disabled=false;return;}
+      if(players.length>=20 && !players.some(p=>p.id===state.playerId)){notice('La sala está llena.','error','joinNotice');$('joinRoomBtn').disabled=false;return;}
+      await state.roomRef.child('players/'+state.playerId).set({name,host:false,joinedAt:firebase.database.ServerValue.TIMESTAMP});
+      await state.roomRef.child('players/'+state.playerId).onDisconnect().remove();
+      listenToRoom();
+      show('lobby');
+      notice('Conectado. Esperando al anfitrión.','success','lobbyNotice');
+    }catch(err){
+      console.error('Firebase join room',err);
+      $('joinRoomBtn').disabled=false;
+      notice('No se pudo entrar a la sala. Revisa Realtime Database y sus reglas.','error','joinNotice');
+    }
+  }
+
+  async function startGame(){
+    if(state.mode!=='host'||!state.roomRef)return;
+    const snap=await state.roomRef.once('value'); const data=snap.val(); if(!data)return;
+    const players=normalizeRoomPlayers(data);
+    if(players.length<2){notice('Necesitas al menos 2 jugadores para comenzar.','error','lobbyNotice');return;}
+    const cats=data.settings?.categories||state.categories; const diff=data.settings?.difficulty||state.difficulty;
+    let pool=baseDeDatos.filter(p=>cats.includes(p.categoria)); pool=shuffle(difficultyPool(diff,pool,players.length));
+    if(pool.length<players.length){notice(`No hay suficientes personajes únicos. Hay ${pool.length} disponibles y necesitas ${players.length}.`,'error','lobbyNotice');return;}
+    const assignments={};
+    players.forEach((p,i)=>{assignments[p.id]={player:p.name,character:pool[i]};});
+    const startsAt=Date.now()+5000, revealAt=startsAt+5000;
+    await state.roomRef.child('game').set({phase:'prep',round:(data.game?.round||0)+1,startsAt,revealAt,assignments});
+  }
+
+  function renderPrep(startsAt,revealAt){
+    setText('prepRoomCode',state.roomCode);
+    setText('prepPlayerName',state.myAssignment?.player||state.playerName||state.hostName);
+    setText('prepMessage','Pon tu celular frente a ti con la pantalla visible para los demás.');
+    setText('prepSub','La partida comienza en…');
+    const sec=Math.max(0,Math.ceil((revealAt-Date.now())/1000)-0); setText('prepCountdown',sec||0);
+  }
+  function scheduleReveal(revealAt){
+    clearCountdown();
+    const tick=()=>{
+      const sec=Math.max(0,Math.ceil((revealAt-Date.now())/1000));
+      setText('prepCountdown',sec);
+      if(Date.now()>=revealAt){clearCountdown(); show('reveal'); renderReveal();}
+    };
+    tick(); state.countdownTimer=setInterval(tick,100);
+  }
+  function renderReveal(){
+    const a=state.myAssignment; if(!a)return;
+    setText('revealPlayer',a.player);
+    setText('characterName',a.character?.nombre||'');
+    setText('characterCategory',a.character?.categoria||'');
+    setText('doNotTell',a.player);
+  }
+
+  async function newGame(){
+    if(!state.roomRef)return;
+    clearCountdown(); state.myAssignment=null;
+    try{ await state.roomRef.child('game').set({phase:'lobby',round:firebase.database.ServerValue.increment(1)}); }
+    catch(err){ console.error(err); notice('No se pudo iniciar la nueva partida.','error','lobbyNotice'); }
+  }
+
+  async function leaveRoom(){
+    clearCountdown();
+    try{
+      if(state.roomRef && state.mode==='player') await state.roomRef.child('players/'+state.playerId).remove();
+      if(state.roomRef && state.mode==='host') await state.roomRef.remove();
+    }catch(e){ console.warn(e); }
+    stopRoomListener(); state.roomRef=null; state.mode=null; state.roomCode=''; state.myAssignment=null;
+    $('joinRoomBtn').disabled=false; $('createRoomBtn').disabled=false; show('home');
+  }
+
+  async function copyRoom(){
+    try{await navigator.clipboard.writeText(state.roomCode);notice('Código copiado.','success','lobbyNotice');}
+    catch(e){notice('Código: '+state.roomCode,'success','lobbyNotice');}
+  }
+
+  $('newGameBtn').onclick=()=>{state.mode='host';state.categories=[];$('hostNameInput').value='';document.querySelectorAll('#categoryBox .chip').forEach(c=>c.classList.remove('selected'));$('toggleCategoriesBtn').textContent='Seleccionar todas';setDifficulty('media');show('setup');};
+  $('goJoinBtn').onclick=()=>{show('join');};
+  $('goCreateBtn').onclick=()=>{show('setup');};
+  $('backHomeBtn').onclick=leaveRoom;
+  $('createRoomBtn').onclick=createRoom;
+  $('joinRoomBtn').onclick=joinRoom;
+  $('startRoomBtn').onclick=startGame;
+  $('copyRoomBtn').onclick=copyRoom;
+  $('leaveRoomBtn').onclick=leaveRoom;
+  $('restartBtn').onclick=newGame;
+  $('newGameFromReveal').onclick=newGame;
+  $('finishHomeBtn').onclick=leaveRoom;
+  $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')];const selectAll=chips.some(c=>!c.classList.contains('selected'));chips.forEach(c=>c.classList.toggle('selected',selectAll));updateSelectedCategories();};
+  document.querySelectorAll('.diff').forEach(b=>b.onclick=()=>setDifficulty(b.dataset.diff));
+
+  // Legacy implementation intentionally disabled. The implementation below keeps its room architecture and replaces only the game flow.
+})();}
+</script>
+
+<script>
+(() => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmAWpjAWZcoI-KdfqpJgaRj7OezoyDjF5g",
+    authDomain: "adivina-quien-v7.firebaseapp.com",
+    databaseURL: "https://adivina-quien-v7-default-rtdb.firebaseio.com",
+    projectId: "adivina-quien-v7",
+    storageBucket: "adivina-quien-v7.firebasestorage.app",
+    messagingSenderId: "61261772594",
+    appId: "1:61261772594:web:d002b1d8f1b9b4b77d892b",
+    measurementId: "G-4KTVL0ZW3G"
+  };
+
+  const firebaseApp = firebase.initializeApp(firebaseConfig, 'adivina-quien-final');
+  const db = firebase.database(firebaseApp);
+  const baseDeDatos = window.baseDeDatos || [];
+  const screens = ['home','setup','join','lobby','prep','reveal','playing','scoring','results','finish'];
+  const SESSION_KEY = 'adivina_quien_session';
+  const PLAYER_KEY = 'adivina_quien_player_id';
+  const PREPARATION_DURATION_MS = 10000;
+  const CHARACTER_DISPLAY_DURATION_MS = 15000;
+  const SESSION_BACKUP_KEY = 'adivina_quien_session_backup';
+  const state = {
+    mode:null, roomCode:'', playerId:getOrCreatePlayerId(), playerName:'', hostName:'',
+     categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
+     myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
+     wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
+     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false},
+    restoring:false
+  };
+
+  const $ = id => document.getElementById(id);
+  const setText = (id,text) => { const el=$(id); if(el) el.textContent = text ?? ''; };
+  const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cleanUiText = s => String(s ?? '').replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F]/gu,'').replace(/\s{2,}/g,' ').trim();
+  const serverNow = () => Date.now() + (Number(state.serverTimeOffset)||0);
+  const nameKey = name => String(name||'').trim().toLocaleLowerCase('es');
+  const isHost = data => Boolean(data && data.hostId === state.playerId);
+
+  function getOrCreatePlayerId(){
+    let id=localStorage.getItem(PLAYER_KEY);
+    if(!id){id='p_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(PLAYER_KEY,id);}
+    return id;
+  }
+  function roomCode(){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let value='';
+    for(let i=0;i<5;i++) value+=chars[Math.floor(Math.random()*chars.length)];
+    return value;
+  }
+  // ============================================================
+  // RECUPERACIÓN DE SESIÓN
+  // ============================================================
+  function saveSessionInfo(roomId, playerName, playerId){
+    const session={
+      roomId:String(roomId||''),
+      playerName:String(playerName||''),
+      playerId:String(playerId||''),
+      // Alias internos para mantener compatibilidad con la V7 actual.
+      roomCode:String(roomId||''),
+      name:String(playerName||''),
+      mode:state.mode||null
+    };
+    try{
+      const serialized=JSON.stringify(session);
+      sessionStorage.setItem('aq_roomId',session.roomId);
+      sessionStorage.setItem('aq_playerName',session.playerName);
+      sessionStorage.setItem('aq_playerId',session.playerId);
+      sessionStorage.setItem(SESSION_KEY,serialized);
+      // Respaldo para recuperar tras cierre completo de la pestaña.
+      localStorage.setItem(SESSION_BACKUP_KEY,serialized);
+    }catch(error){
+      console.warn('save session',error);
+    }
+  }
+
+  function readSession(){
+    try{
+      const aqRoomId=sessionStorage.getItem('aq_roomId');
+      const aqPlayerName=sessionStorage.getItem('aq_playerName');
+      const aqPlayerId=sessionStorage.getItem('aq_playerId');
+      if(aqRoomId&&aqPlayerName&&aqPlayerId){
+        return {roomId:aqRoomId,playerName:aqPlayerName,playerId:aqPlayerId};
+      }
+      const active=sessionStorage.getItem(SESSION_KEY);
+      if(active)return JSON.parse(active);
+      const backup=localStorage.getItem(SESSION_BACKUP_KEY);
+      return backup?JSON.parse(backup):null;
+    }catch(error){
+      console.warn('read session',error);
+      return null;
+    }
+  }
+
+  function saveSession(){
+    saveSessionInfo(state.roomCode,state.playerName,state.playerId);
+  }
+
+  function clearSession(){
+    try{
+      sessionStorage.removeItem('aq_roomId');
+      sessionStorage.removeItem('aq_playerName');
+      sessionStorage.removeItem('aq_playerId');
+      sessionStorage.removeItem(SESSION_KEY);
+    }catch(error){}
+    try{localStorage.removeItem(SESSION_BACKUP_KEY);}catch(error){}
+  }
+
+  function hasActiveCountdown(){
+    const active=['prep','reveal'];
+    return active.some(id=>$(id)?.classList.contains('active'));
+  }
+  async function requestScreenWakeLock(){
+    if(!('wakeLock' in navigator))return;
+    if(document.visibilityState!=='visible')return;
+    if(state.wakeLock && !state.wakeLock.released)return;
+    try{
+      state.wakeLock=await navigator.wakeLock.request('screen');
+    }catch(error){
+      console.warn('Wake Lock no disponible',error);
+      state.wakeLock=null;
+    }
+  }
+  async function releaseScreenWakeLock(){
+    const lock=state.wakeLock;
+    if(!lock)return;
+    state.wakeLock=null;
+    try{
+      if(!lock.released)await lock.release();
+    }catch(error){
+      console.warn('No se pudo liberar Wake Lock',error);
+    }finally{
+      if(state.wakeLock===lock)state.wakeLock=null;
+    }
+  }
+  const countdownSound = new Audio('assets/campana.mp3');
+  countdownSound.preload='auto';
+  countdownSound.playsInline=true;
+  countdownSound.volume=1;
+
+  function preloadCountdownSound(){
+    try{
+      countdownSound.load();
+      const previousVolume=countdownSound.volume;
+      countdownSound.volume=0;
+      const warmup=countdownSound.play();
+      if(warmup&&typeof warmup.then==='function'){
+        warmup.then(()=>{
+          countdownSound.pause();
+          countdownSound.currentTime=0;
+          countdownSound.volume=previousVolume;
+          state.soundUnlocked=true;
+        }).catch(()=>{countdownSound.volume=previousVolume;});
+      }else{
+        countdownSound.pause();
+        countdownSound.currentTime=0;
+        countdownSound.volume=previousVolume;
+      }
+    }catch(error){console.warn('No se pudo precargar el sonido del temporizador',error);}
+  }
+
+  function playCountdownSound(){
+    try{
+      countdownSound.pause();
+      countdownSound.currentTime=0;
+      const promise=countdownSound.play();
+      if(promise&&typeof promise.catch==='function')promise.catch(error=>console.warn('El navegador bloqueó el sonido',error));
+    }catch(error){console.warn('No se pudo reproducir el sonido',error);}
+  }
+
+  function feedbackAtZero(key){
+    if(state.countdownFeedbackKey===key)return;
+    state.countdownFeedbackKey=key;
+    playCountdownSound();
+    try{
+      if('vibrate' in navigator)navigator.vibrate([200,100,200]);
+    }catch(error){console.warn('Vibración no disponible',error);}
+  }
+  function show(id){
+    clearNotice();
+    screens.forEach(screen=>{const el=$(screen);if(el)el.classList.toggle('active',screen===id);});
+    const labels={home:'',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
+    setText('stepBadge',labels[id]||'');
+    if(id!=='prep'&&id!=='reveal')void releaseScreenWakeLock();
+  }
+  function notice(msg,type='',target='roomNotice'){
+    const el=$(target);if(!el)return;
+    el.textContent=msg||'';el.className='room-notice'+(msg?' show ':'')+(type?' '+type:'');
+  }
+  function clearNotice(){
+    ['roomNotice','joinNotice','lobbyNotice','scoringNotice'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='room-notice';}});
+  }
+  function clearCountdown(){if(state.countdownTimer){clearInterval(state.countdownTimer);state.countdownTimer=null;}}
+  function setBusy(key,value){state.busy[key]=value;}
+  function setTotalRounds(value){
+    state.totalRounds=Math.min(20,Math.max(1,Number(value)||3));
+    setText('roundsValue',state.totalRounds);
+    void refreshSetupStockValidation();
+  }
+  function setCategorySelection(categories){
+    const selected=new Set(categories||[]);
+    document.querySelectorAll('#categoryBox .chip').forEach(chip=>chip.classList.toggle('selected',selected.has(chip.dataset.category)));
+    updateSelectedCategories();
+  }
+  function renderCategories(){
+    const cats=[...new Set(baseDeDatos.map(p=>String(p.categoria||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    $('categoryBox').innerHTML='';
+    cats.forEach(category=>{
+      const button=document.createElement('button');button.type='button';button.className='chip';button.dataset.category=category;button.textContent=cleanUiText(category);
+      button.onclick=()=>{button.classList.toggle('selected');updateSelectedCategories();};
+      $('categoryBox').appendChild(button);
+    });
+    setCategorySelection(state.categories);
+  }
+  function updateSelectedCategories(){
+    state.categories=[...document.querySelectorAll('#categoryBox .chip.selected')].map(x=>x.dataset.category);
+    const chips=[...document.querySelectorAll('#categoryBox .chip')];
+    $('toggleCategoriesBtn').textContent=chips.length&&state.categories.length===chips.length?'Quitar selección':'Seleccionar todas';
+    void refreshSetupStockValidation();
+  }
+  function shuffle(items){
+    const result=[...items];
+    for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
+    return result;
+  }
+  function characterKey(character,index=0){
+    if(character && character.id!==undefined && character.id!==null)return String(character.id);
+    return `${character?.categoria||''}|${character?.nombre||''}|${index}`;
+  }
+  function uniqueCharacters(characters){
+    const seen=new Set();
+    return characters.filter((character,index)=>{const key=characterKey(character,index);if(seen.has(key))return false;seen.add(key);return true;});
+  }
+  function characterPool(categories){
+    return uniqueCharacters(baseDeDatos.filter(character=>categories.includes(character.categoria)));
+  }
+  function createAssignments(players,categories,recentKeys){
+    const pool=characterPool(categories);const recent=new Set(recentKeys||[]);
+    const fresh=shuffle(pool.filter(character=>!recent.has(characterKey(character))));
+    const old=shuffle(pool.filter(character=>recent.has(characterKey(character))));
+    const available=[...fresh,...old];
+    if(available.length<players.length)return null;
+    const assignments={};const usedKeys=[];
+    players.forEach((player,index)=>{
+      const character=available[index];const key=characterKey(character);
+      usedKeys.push(key);
+      assignments[player.id]={playerId:player.id,player:player.name,character};
+    });
+    return {assignments,usedKeys};
+  }
+  function normalizeRoomPlayers(data){
+    return Object.entries(data?.players||{}).map(([id,player])=>({id,...player})).sort((a,b)=>(Number(a.joinedAt)||0)-(Number(b.joinedAt)||0));
+  }
+  function playerNames(data,game){
+    const names={...(game?.playerNames||{})};
+    normalizeRoomPlayers(data).forEach(player=>{names[player.id]=player.name;});
+    return names;
+  }
+  function selectedRoomConfig(data){
+    const categories=Array.isArray(data?.settings?.categories)?data.settings.categories:state.categories;
+    const totalRounds=Math.min(20,Math.max(1,Number(data?.settings?.totalRounds||data?.game?.totalRounds||state.totalRounds)||3));
+    return {categories,totalRounds};
+  }
+  function validateCardStock(playersCount,categories,totalRounds){
+    const players=Math.max(0,Number(playersCount)||0);
+    const rounds=Math.max(1,Number(totalRounds)||1);
+    const cards=characterPool(categories||[]);
+    const totalRequired=players*rounds;
+    const totalAvailable=cards.length;
+    const valid=totalRequired<=totalAvailable;
+    return {available:totalAvailable,required:totalRequired,valid};
+  }
+
+  function applyCardStockValidation(validation,target='errorStock'){
+    const startButton=$('startRoomBtn')||$('btnStartGame');
+    const errorContainer=$(target)||$('errorStock')||$('lobbyNotice');
+    if(!errorContainer)return validation.valid;
+    if(!validation.valid){
+      if(startButton)startButton.disabled=true;
+      errorContainer.textContent=`Stock insuficiente. Necesitas ${validation.required} cartas (Jugadores × Rondas), pero la temática tiene ${validation.available}.`;
+      errorContainer.className='room-notice show error';
+      errorContainer.style.display='block';
+      return false;
+    }
+    errorContainer.textContent='';
+    errorContainer.className='room-notice';
+    errorContainer.style.display='none';
+    return true;
+  }
+
+  async function refreshSetupStockValidation(){
+    let playersCount=1;
+    if(state.roomRef&&state.configEditing&&state.mode==='host'){
+      try{
+        const snapshot=await state.roomRef.once('value');
+        playersCount=Math.max(1,normalizeRoomPlayers(snapshot.val()).length);
+      }catch(error){
+        playersCount=1;
+      }
+    }
+    const validation=validateCardStock(playersCount,state.categories,state.totalRounds);
+    const button=$('createRoomBtn');
+    if(button)button.disabled=!state.categories.length||!validation.valid;
+    return applyCardStockValidation(validation,'errorStock');
+  }
+
+  function getCardStockMessage(validation){
+    return `No hay suficientes personajes únicos para esta configuración. Hay ${validation.available} disponibles y necesitas ${validation.required} (${Math.max(0,validation.required-validation.available)} faltantes).`;
+  }
+  function renderLobby(data){
+    const players=normalizeRoomPlayers(data), host=isHost(data), config=selectedRoomConfig(data);
+    state.categories=config.categories;state.totalRounds=config.totalRounds;
+    setText('roomCodeValue',state.roomCode);setText('lobbyCount',`${players.length} / 20 jugadores`);
+    $('lobbyList').innerHTML=players.map(player=>{const online=player.status!=='offline';return `<div class="lobby-player"><span>${escapeHtml(cleanUiText(player.name))}</span><span class="lobby-role">${player.id===data.hostId?'anfitrión':(online?'online':'offline')}</span></div>`;}).join('');
+    $('settingsSummary').innerHTML=`<div><strong>Temáticas:</strong> ${config.categories.length?config.categories.map(category=>escapeHtml(cleanUiText(category))).join(', '):'sin seleccionar'}</div><div><strong>Rondas:</strong> ${config.totalRounds}</div>`;
+    const stock=validateCardStock(players.length,config.categories,config.totalRounds);
+    $('startRoomBtn').style.display=host?'block':'none';
+    $('startRoomBtn').disabled=!host||players.length<2||data.game?.phase!=='lobby'||!stock.valid;
+    $('editSettingsBtn').style.display=host?'block':'none';
+    $('waitingHost').style.display=host?'none':'block';
+    if(!host)setText('waitingHost','Esperando al anfitrión…');
+    if(host&&data.game?.phase==='lobby'&&players.length>=2&&!stock.valid){
+      notice(getCardStockMessage(stock),'error','lobbyNotice');
+    }
+  }
+  function openSettings(editing=false){
+    state.configEditing=editing;
+    $('hostNameInput').value=state.playerName||state.hostName||'';
+    $('createRoomBtn').textContent=editing?'GUARDAR CONFIGURACIÓN':'CREAR SALA';
+    setCategorySelection(state.categories);setTotalRounds(state.totalRounds);show('setup');void refreshSetupStockValidation();
+  }
+  function listenToRoom(){
+    stopRoomListener();if(!state.roomRef)return;
+    const ref=state.roomRef;
+    state.roomListener=snapshot=>handleRoomSnapshot(snapshot.val());
+    ref.on('value',state.roomListener,error=>{console.error(error);notice('No se pudo leer la sala. Revisa las reglas de Realtime Database.','error','lobbyNotice');});
+  }
+  function stopRoomListener(){
+    const ref=state.roomRef;if(ref&&state.roomListener)ref.off('value',state.roomListener);
+    state.roomListener=null;
+  }
+  function attachRoom(code){state.roomCode=code;state.roomRef=db.ref('rooms/'+code);}
+  async function installDisconnect(){
+    if(!state.roomRef)return null;
+    const playerRef=state.roomRef.child('players/'+state.playerId);
+    try{
+      await playerRef.onDisconnect().update({status:'offline',connected:false});
+      await playerRef.update({status:'online',connected:true});
+    }catch(error){console.warn('No se pudo configurar la reconexión del jugador',error);}
+    return playerRef;
+  }
+  function handleRoomSnapshot(data){
+    if(!data){
+      const oldRef=state.roomRef;stopRoomListener();state.roomRef=null;clearSession();
+      notice('La sala ya no existe o el anfitrión la cerró.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
+    }
+    const players=normalizeRoomPlayers(data),me=players.find(player=>player.id===state.playerId);
+    const host=isHost(data);if(host)state.mode='host';else if(me)state.mode='player';
+    if(me){state.playerName=me.name;state.hostName=data.hostName||state.hostName;saveSession();}
+    if(!me){
+      if(state.restoring)return;
+      notice('Tu conexión con la sala se perdió. Intenta entrar de nuevo.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
+    }
+    const config=selectedRoomConfig(data);state.categories=config.categories;state.totalRounds=config.totalRounds;
+    const game=data.game||{phase:'lobby'};state.myAssignment=game.assignments?.[state.playerId]||null;
+    if(game.phase==='lobby'){clearCountdown();renderLobby(data);show('lobby');return;}
+    if(game.phase==='preparing'){renderPreparation(game);show('prep');schedulePreparation(game);return;}
+    if(game.phase==='reveal'){renderReveal(game,data);show('reveal');scheduleReveal(game);return;}
+    if(game.phase==='friends'){clearCountdown();renderPlaying(game,data);show('playing');migrateLegacyFriendsPhase(game);return;}
+    if(game.phase==='playing'){clearCountdown();renderPlaying(game,data);show('playing');return;}
+    if(game.phase==='scoring'){clearCountdown();renderScoring(game,data);show('scoring');return;}
+    if(game.phase==='results'){clearCountdown();renderResults(game,data);show('results');return;}
+    if(game.phase==='finished'){
+      // Una sesión guardada de una partida ya terminada no debe secuestrar la portada.
+      // Se limpia la sesión persistida y el usuario queda en el inicio para crear/unirse a otra sala.
+      clearCountdown();
+      clearSession();
+      stopRoomListener();
+      state.roomRef=null;
+      state.roomCode='';
+      state.mode=null;
+      state.playerName='';
+      state.hostName='';
+      state.myAssignment=null;
+      show('home');
+      return;
+    }
+  }
+  async function createRoom(){
+    if(state.configEditing){await saveRoomSettings();return;}
+    if(state.busy.create)return;
+    const hostName=($('hostNameInput').value||'').trim().slice(0,30);
+    if(!hostName){notice('Escribe tu nombre.','error');return;}
+    if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
+    const pool=characterPool(state.categories);if(pool.length<2){notice('Las temáticas seleccionadas deben tener al menos 2 personajes diferentes.','error');return;}
+    preloadCountdownSound();setBusy('create',true);$('createRoomBtn').disabled=true;
+    state.mode='host';state.hostName=hostName;state.playerName=hostName;state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
+    let code=roomCode(),ref=db.ref('rooms/'+code);
+    try{
+      for(let attempt=0;attempt<5;attempt++){
+        const existing=await ref.once('value');if(!existing.exists())break;
+        code=roomCode();ref=db.ref('rooms/'+code);
+      }
+      state.roomCode=code;state.roomRef=ref;
+      const timestamp=firebase.database.ServerValue.TIMESTAMP;
+      const scores={[state.playerId]:0};const playerNames={[state.playerId]:hostName};
+      const initial={hostId:state.playerId,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
+      await state.roomRef.set(initial);await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();renderLobby(initial);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
+    }catch(error){console.error('Firebase create room',error);state.roomRef=null;$('createRoomBtn').disabled=false;notice('No se pudo crear la sala. Comprueba Realtime Database y sus reglas.','error');}
+    finally{setBusy('create',false);}
+  }
+  async function saveRoomSettings(){
+    if(state.busy.create||!state.roomRef||state.mode!=='host')return;
+    const phase=(await state.roomRef.child('game/phase').once('value')).val();if(phase!=='lobby'){notice('La configuración solo puede cambiarse en el lobby.','error');return;}
+    if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
+    const players=normalizeRoomPlayers((await state.roomRef.once('value')).val());
+    const stock=validateCardStock(players.length,state.categories,state.totalRounds);
+    if(!stock.valid){notice(getCardStockMessage(stock),'error');return;}
+    setBusy('create',true);$('createRoomBtn').disabled=true;
+    try{state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));await state.roomRef.update({settings:{categories:state.categories,totalRounds:state.totalRounds},'game/totalRounds':state.totalRounds});state.configEditing=false;show('lobby');}
+    catch(error){console.error(error);notice('No se pudo guardar la configuración.','error');}
+    finally{$('createRoomBtn').disabled=false;setBusy('create',false);}
+  }
+  async function joinRoom(){
+    if(state.busy.join)return;
+    const code=($('joinRoomCode').value||'').trim().toUpperCase(),name=($('joinName').value||'').trim().slice(0,30);
+    if(!/^[A-Z2-9]{5}$/.test(code)){notice('Escribe un código de 5 caracteres.','error','joinNotice');return;}
+    if(!name){notice('Escribe tu nombre.','error','joinNotice');return;}
+    preloadCountdownSound();
+    setBusy('join',true);$('joinRoomBtn').disabled=true;notice('Buscando la sala…','','joinNotice');
+    state.mode='player';state.playerName=name;attachRoom(code);
+    try{
+      const snapshot=await state.roomRef.once('value');
+      if(!snapshot.exists()){notice('No existe una sala con ese código. Verifica el código.','error','joinNotice');return;}
+      const data=snapshot.val(),players=normalizeRoomPlayers(data);
+      const currentPlayer=players.find(player=>player.id===state.playerId);
+      const offlineMatch=players.find(player=>player.id!==state.playerId&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
+      const sameNameOnline=players.find(player=>player.id!==state.playerId&&nameKey(player.name)===nameKey(name)&&player.status!=='offline');
+      const reconnecting=Boolean(offlineMatch||currentPlayer);
+      const targetId=(offlineMatch||currentPlayer)?.id||state.playerId;
+
+      if(data.game?.phase&&data.game.phase!=='lobby'&&!reconnecting){
+        notice('La partida ya comenzó. Espera a la próxima partida.','error','joinNotice');return;
+      }
+      if(players.length>=20&&!reconnecting){
+        notice('La sala está llena.','error','joinNotice');return;
+      }
+      if(sameNameOnline){
+        notice('Ese nombre ya está en la sala y está conectado. Elige otro.','error','joinNotice');return;
+      }
+
+      if(offlineMatch){
+        // Reconexión por nombre: recupera exactamente el ID anterior.
+        // No modificamos game/assignments, así que conserva su personaje original.
+        state.playerId=offlineMatch.id;
+        localStorage.setItem(PLAYER_KEY,state.playerId);
+        state.playerName=offlineMatch.name||name;
+        await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,status:'online',connected:true});
+      }else{
+        state.playerId=targetId;
+        await state.roomRef.child('players/'+state.playerId).update({name,host:Boolean(currentPlayer?.host),status:'online',connected:true});
+      }
+
+      await installDisconnect();
+      saveSessionInfo(state.roomCode,state.playerName,state.playerId);
+      listenToRoom();
+      show('lobby');
+      notice(reconnecting?'Reconectado. Tu personaje y la partida se mantienen.':'Conectado. Esperando al anfitrión.','success','lobbyNotice');
+    }catch(error){console.error('Firebase join room',error);notice('No se pudo entrar a la sala. Revisa Realtime Database y sus reglas.','error','joinNotice');}
+    finally{setBusy('join',false);if(!state.roomListener)$('joinRoomBtn').disabled=false;}
+  }
+
+  async function startGame(){
+    if(state.busy.start||!state.roomRef||state.mode!=='host')return;
+    setBusy('start',true);$('startRoomBtn').disabled=true;
+    try{
+      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;
+      const players=normalizeRoomPlayers(data),config=selectedRoomConfig(data);
+      if(players.length<2){notice('Necesitas al menos 2 jugadores para comenzar.','error','lobbyNotice');return;}
+      if(config.categories.length<1){notice('Selecciona al menos una temática.','error','lobbyNotice');return;}
+      const stock=validateCardStock(players.length,config.categories,config.totalRounds);
+      if(!stock.valid){
+        notice(getCardStockMessage(stock),'error','lobbyNotice');
+        renderLobby(data);
+        return;
+      }
+      const selection=createAssignments(players,config.categories,data.game?.recentCharacterIds||[]);
+      if(!selection){notice(`No hay suficientes personajes únicos: hay ${characterPool(config.categories).length} y necesitas ${players.length}.`,'error','lobbyNotice');return;}
+      const currentRound=(Number(data.game?.currentRound||data.game?.round)||0)+1,totalRounds=config.totalRounds;
+      const scores={...(data.game?.scores||{})};const names={};players.forEach(player=>{if(scores[player.id]===undefined)scores[player.id]=0;names[player.id]=player.name;});
+      const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
+      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='lobby')return;return nextGame;});
+      if(!result.committed)notice('La partida ya estaba iniciándose.','error','lobbyNotice');
+    }catch(error){console.error('Firebase start game',error);notice('No se pudo iniciar la partida.','error','lobbyNotice');}
+    finally{setBusy('start',false);}
+  }
+  function imageSource(character){
+    if(!character)return '';
+    return [character.imagen,character.image,character.foto,character.img,character.src,character.imageUrl,character.url].find(value=>typeof value==='string'&&value.trim())||'';
+  }
+  function placeholder(){return '<div class="image-placeholder">SIN IMAGEN</div>';}
+  function renderCharacterImage(boxId,character){
+    const box=$(boxId);if(!box)return;
+    box.innerHTML='';const source=imageSource(character);
+    if(!source){box.innerHTML=placeholder();return;}
+    const image=document.createElement('img');image.className='character-image';image.alt='';image.src=source;image.onerror=()=>{box.innerHTML=placeholder();};box.appendChild(image);
+  }
+  function renderPreparation(game){
+    setText('prepRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
+  }
+  function schedulePreparation(game){
+    clearCountdown();void (async()=>{await releaseScreenWakeLock();await requestScreenWakeLock();})();
+    const prepEndsAt=Number(game.prepEndsAt??game.revealAt),key=`prep:${game.currentRound}:${prepEndsAt}`;
+    if(!Number.isFinite(prepEndsAt))return;
+    state.transitionKey='';state.countdownFeedbackKey='';
+    const tick=()=>{
+      const now=serverNow(),seconds=Math.max(0,Math.ceil((prepEndsAt-now)/1000));
+      setText('prepCountdown',seconds);
+      if(now>=prepEndsAt){
+        clearCountdown();
+        void (async()=>{
+          try{
+            await transitionPreparationToReveal(game,key);
+          }finally{
+            await releaseScreenWakeLock();
+          }
+        })();
+      }
+    };
+    tick();state.countdownTimer=setInterval(tick,250);
+  }
+  async function transitionPreparationToReveal(game,key){
+    if(state.transitionKey===key||!state.roomRef)return;state.transitionKey=key;
+    try{
+      await state.roomRef.child('game').transaction(current=>{
+        const prepEndsAt=Number(current?.prepEndsAt??current?.revealAt);
+        if(!current||current.phase!=='preparing'||current.currentRound!==game.currentRound||prepEndsAt!==Number(game.prepEndsAt??game.revealAt)||serverNow()<prepEndsAt)return;
+        const configuredRevealEndsAt=Number(current.revealEndsAt),revealEndsAt=Number.isFinite(configuredRevealEndsAt)&&configuredRevealEndsAt>prepEndsAt?configuredRevealEndsAt:prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
+        return {...current,phase:'reveal',revealAt:prepEndsAt,revealEndsAt};
+      });
+    }catch(error){console.warn('preparation transition',error);state.transitionKey='';}
+  }
+  function renderReveal(game){
+    const character=game.assignments?.[state.playerId]?.character;
+    setText('revealRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
+    setText('revealAudience','PARA TODOS');
+    renderCharacterImage('revealCharacterImageBox',character);
+    setText('revealCharacterName',cleanUiText(character?.nombre||''));
+    setText('revealCharacterCategory',cleanUiText(character?.categoria||''));
+  }
+  function scheduleReveal(game){
+    clearCountdown();void (async()=>{await releaseScreenWakeLock();await requestScreenWakeLock();})();
+    const revealEndsAt=Number(game.revealEndsAt??game.revealAt),key=`reveal:${game.currentRound}:${revealEndsAt}`;
+    if(!Number.isFinite(revealEndsAt))return;
+    state.transitionKey='';state.countdownFeedbackKey='';
+    const tick=()=>{
+      const now=serverNow(),seconds=Math.max(0,Math.ceil((revealEndsAt-now)/1000));
+      setText('revealCountdown',seconds);
+      if(now>=revealEndsAt){
+        feedbackAtZero(key);
+        clearCountdown();
+        void (async()=>{
+          try{
+            await transitionRevealToPlaying(game,key);
+          }finally{
+            await releaseScreenWakeLock();
+          }
+        })();
+      }
+    };
+    tick();state.countdownTimer=setInterval(tick,250);
+  }
+  async function transitionRevealToPlaying(game,key){
+    if(state.transitionKey===key||!state.roomRef)return;state.transitionKey=key;
+    try{
+      await state.roomRef.child('game').transaction(current=>{
+        const revealEndsAt=Number(current?.revealEndsAt??current?.revealAt);
+        if(!current||current.phase!=='reveal'||current.currentRound!==game.currentRound||revealEndsAt!==Number(game.revealEndsAt??game.revealAt)||serverNow()<revealEndsAt)return;
+        return {...current,phase:'playing',revealedAt:serverNow(),currentTurn:'',turnIndex:-1,turnOrder:[],revealEndsAt:null,friendsStartedAt:null};
+      });
+    }catch(error){console.warn('reveal transition',error);state.transitionKey='';}
+  }
+  async function migrateLegacyFriendsPhase(game){
+    if(!state.roomRef)return;
+    try{
+      await state.roomRef.child('game').transaction(current=>{
+        if(!current||current.phase!=='friends'||current.currentRound!==game.currentRound)return;
+        return {...current,phase:'playing',currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null};
+      });
+    }catch(error){console.warn('legacy friends transition',error);}
+  }
+  function renderPlaying(game,data){
+    // Regla principal: el jugador actual nunca aparece en esta lista, por lo que su propio personaje queda oculto.
+    const names=playerNames(data,game),companions=normalizeRoomPlayers(data).filter(player=>player.id!==state.playerId);
+    setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);
+    $('playingCharacterList').innerHTML=companions.map(player=>{
+      const character=game.assignments?.[player.id]?.character;
+      return `<div class="friend-row"><div class="friend-main"><div class="friend-name">${escapeHtml(cleanUiText(names[player.id]||player.name))}</div><div class="friend-character">${escapeHtml(cleanUiText(character?.nombre||'Sin personaje'))}</div><div class="friend-category">${escapeHtml(cleanUiText(character?.categoria||''))}</div></div></div>`;
+    }).join('');
+    const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'Registra el resultado cuando terminen de jugar.':'Esperando al anfitrión…');
+  }
+  async function openScoring(){
+    if(state.busy.score||!state.roomRef) return;setBusy('score',true);$('scoreRoundBtn').disabled=true;
+    try{const data=(await state.roomRef.once('value')).val();if(!data||!isHost(data)||data.game?.phase!=='playing')return;const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='playing')return;return {...game,phase:'scoring'};});if(!result.committed)notice('El resultado ya está siendo registrado.','error','lobbyNotice');}
+    catch(error){console.error(error);notice('No se pudo abrir el registro del resultado.','error','lobbyNotice');}
+    finally{setBusy('score',false);}
+  }
+  function fillPlaceSelect(id,players,allowEmpty){
+    const select=$(id);select.innerHTML='';const first=document.createElement('option');first.value='';first.textContent=allowEmpty?'SIN ASIGNAR':'Selecciona un jugador';select.appendChild(first);
+    players.forEach(player=>{const option=document.createElement('option');option.value=player.id;option.textContent=cleanUiText(player.name);select.appendChild(option);});
+  }
+  function renderScoring(game,data){
+    const host=isHost(data);setText('scoringRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);$('scoringHostView').classList.toggle('hidden',!host);$('scoringWaiting').classList.toggle('hidden',host);
+    if(host){const players=normalizeRoomPlayers(data);fillPlaceSelect('firstPlaceSelect',players,false);fillPlaceSelect('secondPlaceSelect',players,false);fillPlaceSelect('thirdPlaceSelect',players,players.length<3);$('thirdPlaceSelect').value='';setText('scoringNotice','');}
+  }
+  async function confirmResult(){
+    if(state.busy.confirm||!state.roomRef)return;const first=$('firstPlaceSelect').value,second=$('secondPlaceSelect').value,third=$('thirdPlaceSelect').value;
+    if(!first||!second){notice('Debes seleccionar el 1° y el 2° lugar.','error','scoringNotice');return;}
+    const data=(await state.roomRef.once('value')).val(),players=normalizeRoomPlayers(data),valid=new Set(players.map(player=>player.id));
+    if(!valid.has(first)||!valid.has(second)||(third&&!valid.has(third))){notice('Todos los puestos deben pertenecer a la sala.','error','scoringNotice');return;}
+    if(first===second||(third&&(first===third||second===third))){notice('Cada puesto debe ser para un jugador diferente.','error','scoringNotice');return;}
+    if(players.length>=3&&!third){notice('Selecciona el 3° lugar.','error','scoringNotice');return;}
+    setBusy('confirm',true);$('confirmResultBtn').disabled=true;
+    try{
+      const names=playerNames(data,data.game),places={first:{playerId:first,name:cleanUiText(names[first]),points:3},second:{playerId:second,name:cleanUiText(names[second]),points:2},third:third?{playerId:third,name:cleanUiText(names[third]),points:1}:null};
+      const result=await state.roomRef.child('game').transaction(game=>{
+        if(!game||game.phase!=='scoring'||game.roundResults)return;
+        const scores={...(game.scores||{})};Object.keys(names).forEach(id=>{if(scores[id]===undefined)scores[id]=0;});
+        scores[first]=(Number(scores[first])||0)+3;scores[second]=(Number(scores[second])||0)+2;if(third)scores[third]=(Number(scores[third])||0)+1;
+        return {...game,phase:'results',scores,roundResults:{round:game.currentRound,places,completedAt:serverNow()}};
+      });
+      if(!result.committed)notice('El resultado ya fue confirmado.','error','scoringNotice');
+    }catch(error){console.error('confirm result',error);notice('No se pudo confirmar el resultado.','error','scoringNotice');}
+    finally{setBusy('confirm',false);}
+  }
+  function sortedScoreRows(game,data){
+    const names=playerNames(data,game),scores=game.scores||{};return Object.keys(scores).map(id=>({id,name:cleanUiText(names[id]||id),score:Number(scores[id])||0})).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'es'));
+  }
+  function renderResults(game,data){
+    const result=game.roundResults||{},places=[result.places?.first,result.places?.second,result.places?.third].filter(Boolean);setText('resultsRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
+    $('roundResultList').innerHTML=places.map((place,index)=>`<div class="score-row"><div class="score-main"><div class="score-name">${index+1}° ${escapeHtml(place.name)}</div></div><div class="score-points">+${place.points}</div></div>`).join('');
+    $('roundScoreList').innerHTML=sortedScoreRows(game,data).map(row=>`<div class="score-row"><div class="score-name">${escapeHtml(row.name)}</div><div class="score-points">${row.score}</div></div>`).join('');
+    const host=isHost(data),last=Number(game.currentRound)>=Number(game.totalRounds);$('nextRoundBtn').classList.toggle('hidden',!host);$('nextRoundBtn').disabled=false;setText('nextRoundBtn',last?'VER RESULTADOS FINALES':'SIGUIENTE RONDA');setText('resultsWaiting',host?'Continúa cuando todos hayan visto el resultado.':'Esperando al anfitrión…');
+  }
+  async function nextRound(){
+    if(state.busy.next||!state.roomRef||state.mode!=='host')return;setBusy('next',true);$('nextRoundBtn').disabled=true;
+    try{
+      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data)||data.game?.phase!=='results')return;
+      if(Number(data.game.currentRound)>=Number(data.game.totalRounds)){await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results')return;return {...game,phase:'finished'};});return;}
+      const players=normalizeRoomPlayers(data),config=selectedRoomConfig(data);
+      const stock=validateCardStock(players.length,config.categories,config.totalRounds);
+      if(!stock.valid){notice(getCardStockMessage(stock),'error','lobbyNotice');return;}
+      const selection=createAssignments(players,config.categories,data.game.recentCharacterIds||[]);if(!selection){notice('No hay suficientes personajes para comenzar la siguiente ronda.','error','lobbyNotice');return;}
+      const currentRound=Number(data.game.currentRound)+1,names={...(data.game.playerNames||{})};players.forEach(player=>{names[player.id]=player.name;});
+      const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
+      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results'||game.currentRound!==data.game.currentRound)return;return nextGame;});
+    }catch(error){console.error('next round',error);notice('No se pudo comenzar la siguiente ronda.','error','lobbyNotice');}
+    finally{setBusy('next',false);}
+  }
+  function renderFinished(game,data){
+    const rows=sortedScoreRows(game,data),top=rows[0]?.score??0,winners=rows.filter(row=>row.score===top);setText('finishText',`Puntaje acumulado después de ${game.totalRounds} rondas.`);
+    $('finalList').innerHTML=rows.map((row,index)=>`<div class="final-row"><span class="final-place">${index+1}°</span><span class="final-name">${escapeHtml(row.name)}</span><span class="final-points">${row.score} puntos</span></div>`).join('');
+    if(winners.length>1){$('winnerBox').innerHTML='<div class="tag">EMPATE</div><p class="muted">'+winners.map(row=>`${escapeHtml(row.name)} — ${row.score} puntos`).join('<br>')+'</p>';}else{$('winnerBox').innerHTML='<div class="small">GANADOR</div><div class="personaje" style="margin:8px 0 0">'+escapeHtml(winners[0]?.name||'')+'</div>';}
+    const host=isHost(data);$('restartBtn').classList.toggle('hidden',!host);
+  }
+  async function newGame(){
+    if(state.busy.restart||!state.roomRef||state.mode!=='host')return;setBusy('restart',true);$('restartBtn').disabled=true;clearCountdown();
+    try{
+      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(player=>{scores[player.id]=0;names[player.id]=player.name;});
+      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
+    }catch(error){console.error('new game',error);notice('No se pudo preparar la nueva partida.','error','lobbyNotice');}
+    finally{setBusy('restart',false);$('restartBtn').disabled=false;}
+  }
+  async function leaveRoom(){
+    clearCountdown();const ref=state.roomRef,mode=state.mode;try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host')await ref.remove();}catch(error){console.warn(error);}
+    stopRoomListener();state.roomRef=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show('home');
+  }
+  async function copyRoom(){try{await navigator.clipboard.writeText(state.roomCode);notice('Código copiado.','success','lobbyNotice');}catch(error){notice('Código: '+state.roomCode,'success','lobbyNotice');}}
+  async function reconnectPlayer(roomId,playerName,playerId){
+    console.log('Intentando reconectar a la sala:',roomId);
+    state.restoring=true;
+    state.playerId=playerId;
+    state.playerName=playerName;
+    state.mode=null;
+    attachRoom(String(roomId).toUpperCase());
+    try{
+      const snapshot=await state.roomRef.once('value');
+      if(!snapshot.exists()){
+        clearSession();state.roomRef=null;state.roomCode='';show('home');return false;
+      }
+      const data=snapshot.val(),me=data.players?.[state.playerId];
+      if(!me){
+        // Recuperación compatible con la V7: versiones anteriores podían eliminar
+        // al jugador mediante onDisconnect(). Si todavía tenemos la sesión local,
+        // restauramos su registro con el mismo playerId para conservar su partida.
+        const wasHost=data.hostId===state.playerId;
+        await state.roomRef.child('players/'+state.playerId).set({
+          name:playerName,
+          host:wasHost,
+          joinedAt:firebase.database.ServerValue.TIMESTAMP,
+          reconnectedAt:firebase.database.ServerValue.TIMESTAMP,
+          status:'online',
+          connected:true
+        });
+      }
+      const freshSnapshot=me?snapshot:await state.roomRef.once('value');
+      const freshData=freshSnapshot.val(),freshMe=freshData.players?.[state.playerId];
+      if(!freshMe){
+        clearSession();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show('home');return false;
+      }
+      state.mode=freshData.hostId===state.playerId?'host':'player';
+      state.playerName=freshMe.name||playerName;
+      state.hostName=freshData.hostName||state.hostName;
+      await installDisconnect();
+      saveSessionInfo(roomId,state.playerName,playerId);
+      listenToRoom();
+      return true;
+    }catch(error){
+      console.warn('reconnect player',error);
+      clearSession();state.roomRef=null;state.roomCode='';state.mode=null;show('home');
+      return false;
+    }finally{
+      state.restoring=false;
+    }
+  }
+
+  async function restoreSession(){
+    const session=readSession();
+    const roomId=session?.roomId||session?.roomCode;
+    const playerName=session?.playerName||session?.name;
+    const playerId=session?.playerId;
+    if(!roomId||!playerName||!playerId)return;
+    await reconnectPlayer(roomId,playerName,playerId);
+  }
+  $('newGameBtn').onclick=()=>{state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';setTotalRounds(3);$('hostNameInput').value='';setCategorySelection([]);openSettings(false);};
+  $('goJoinBtn').onclick=()=>show('join');$('goCreateBtn').onclick=()=>{state.configEditing=false;openSettings(false);};$('backHomeBtn').onclick=()=>state.configEditing?show('lobby'):leaveRoom();
+  $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=leaveRoom;
+  $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=leaveRoom;
+  $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>chip.classList.toggle('selected',selectAll));updateSelectedCategories();};
+  $('roundsMinusBtn').onclick=()=>setTotalRounds(state.totalRounds-1);$('roundsPlusBtn').onclick=()=>setTotalRounds(state.totalRounds+1);
+  db.ref('.info/serverTimeOffset').on('value',snapshot=>{state.serverTimeOffset=Number(snapshot.val())||0;});
+  document.addEventListener('visibilitychange',async()=>{
+    if(document.visibilityState==='hidden'){
+      await releaseScreenWakeLock();
+      return;
+    }
+    if(document.visibilityState==='visible'&&hasActiveCountdown()){
+      await requestScreenWakeLock();
+    }
+  });
+  renderCategories();setTotalRounds(3);show('home');
+  window.addEventListener('DOMContentLoaded',()=>{void restoreSession();});
+})();
+</script>
+</body>
+</html>
