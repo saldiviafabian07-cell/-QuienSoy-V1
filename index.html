@@ -99,6 +99,13 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
 .friend-character-media{width:88px;height:88px}
 .friend-character-media .character-image,.friend-character-media .image-placeholder{width:88px;height:88px;border-radius:14px}
 @media (max-width:600px){.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:138px;height:138px}.friend-character-media{width:82px;height:82px}.friend-character-media .character-image,.friend-character-media .image-placeholder{width:82px;height:82px}}
+.account-area{margin:18px auto 0;padding:14px;border:1px solid var(--border);border-radius:14px;background:#17191d;max-width:520px}
+.account-kicker,.account-section-title{font-size:10px;font-weight:900;letter-spacing:.12em;color:#8e949d;text-transform:uppercase}.account-kicker{text-align:left;margin-bottom:9px}
+.account-actions{display:flex;align-items:center;gap:10px}.account-actions .btn{flex:1}.account-actions .text-action{margin:0;white-space:nowrap}.account-user-line{display:flex;align-items:center;gap:8px;text-align:left;margin-bottom:10px}.account-user-line strong{flex:1;font-size:17px}.account-online-label{font-size:10px;color:#76d19c;text-transform:uppercase;letter-spacing:.08em}
+.presence-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#7d848f;box-shadow:0 0 0 3px rgba(125,132,143,.12);flex:none}.presence-dot.online{background:#45b97c;box-shadow:0 0 0 3px rgba(69,185,124,.12)}.presence-dot.offline{background:#d96a78;box-shadow:0 0 0 3px rgba(217,106,120,.12)}
+.account-card{max-width:620px!important}.profile-panel{padding:18px;border:1px solid var(--border);border-radius:14px;background:#1d2025}.profile-username{font-size:28px;font-weight:950;letter-spacing:-.04em}.profile-status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:#aeb4bc}.profile-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.profile-stats>div{display:grid;gap:3px;padding:13px;border:1px solid var(--border);border-radius:12px;background:#1b1e23;text-align:center}.profile-stats strong{font-size:23px}.profile-stats span{font-size:10px;color:#8e949d;text-transform:uppercase;letter-spacing:.08em}
+.friends-list,.requests-list,.invite-list{display:grid;gap:8px;margin-top:10px}.account-friend-row,.request-row,.invite-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px;background:#1d2025;text-align:left}.account-friend-name,.request-name,.invite-room{font-weight:850}.account-friend-state{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:11px;color:#8e949d}.row-actions{display:flex;gap:7px;align-items:center}.small-btn{padding:9px 10px;border-radius:10px;background:#202329;color:#e6e9ed;border:1px solid var(--border);font-size:10px;font-weight:850;white-space:nowrap}.small-btn.danger{background:#4a2229;color:#f5c9ce}.small-btn.success{background:#245b43;color:#d8f4e6}.search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.search-row .btn{width:auto;min-width:94px}.search-result{display:grid;gap:10px;margin-top:10px;padding:12px;border:1px solid rgba(234,179,8,.38);border-radius:12px;background:rgba(234,179,8,.08);text-align:left}.search-result .row-actions{justify-content:flex-start}.empty-state{padding:14px;border:1px dashed #454b55;border-radius:12px;color:#8e949d;font-size:12px;text-align:center}.invite-panel{margin-top:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#17191d}.invite-panel .friends-list{margin-top:8px}.invite-panel .text-action{margin-top:10px}
+@media (max-width:520px){.account-actions{align-items:stretch;flex-direction:column}.account-actions .text-action{padding:8px}.search-row{grid-template-columns:1fr}.search-row .btn{width:100%}.account-friend-row,.request-row,.invite-row{grid-template-columns:1fr}.row-actions{justify-content:flex-start;flex-wrap:wrap}}
   </style>
 </head>
 <body>
@@ -115,6 +122,16 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   <section class="screen active" id="home">
     <div class="card hero">
       <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
+      <div class="account-area" id="accountArea" role="region" aria-live="polite">
+        <div id="loggedOutView">
+          <div class="account-kicker">JUEGA CON TU CUENTA</div>
+          <div class="account-actions"><button class="btn secondary" id="loginBtn" type="button">INICIAR SESIÓN</button><button class="text-action" id="registerBtn" type="button">CREAR CUENTA</button></div>
+        </div>
+        <div class="hidden" id="loggedInView">
+          <div class="account-user-line"><span class="presence-dot" id="accountPresenceDot"></span><strong id="accountUsername">@usuario</strong><span class="account-online-label" id="accountOnlineLabel">online</span></div>
+          <div class="account-actions"><button class="btn secondary" id="profileBtn" type="button">MI PERFIL</button></div>
+        </div>
+      </div>
       <div class="recovery-banner hidden" id="sessionRecoveryBanner" role="region" aria-labelledby="sessionRecoveryTitle">
         <strong id="sessionRecoveryTitle">Hay una partida guardada</strong>
         <span>Si quieres volver a ella, hazlo manualmente.</span>
@@ -125,6 +142,59 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
         <button class="btn" id="newGameBtn" type="button">CREAR SALA</button>
         <button class="btn secondary" id="goJoinBtn" type="button">UNIRME A UNA SALA</button>
       </div>
+    </div>
+  </section>
+
+  <section class="screen" id="authRegister">
+    <div class="card account-card">
+      <div class="tag">CUENTA</div><h1 class="title" style="margin-top:16px">Crear cuenta</h1>
+      <div class="section"><label class="label" for="registerUsername">Nombre de usuario</label><input class="input" id="registerUsername" minlength="3" maxlength="20" placeholder="Ej. Fabian07" autocomplete="username" autocapitalize="none" spellcheck="false"><p class="muted tiny">Usa entre 3 y 20 caracteres: letras, números, punto, guion o guion bajo.</p></div>
+      <div class="section"><label class="label" for="registerEmail">Correo electrónico</label><input class="input" id="registerEmail" type="email" placeholder="tu@email.com" autocomplete="email" inputmode="email"></div>
+      <div class="section"><label class="label" for="registerPassword">Contraseña</label><input class="input" id="registerPassword" type="password" minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
+      <div class="section"><label class="label" for="registerPasswordConfirm">Confirmar contraseña</label><input class="input" id="registerPasswordConfirm" type="password" minlength="6" placeholder="Repite tu contraseña" autocomplete="new-password"></div>
+      <div class="actions"><button class="btn" id="createAccountBtn" type="button">CREAR CUENTA</button><button class="btn secondary" id="toLoginBtn" type="button">YA TENGO CUENTA</button><button class="text-action" id="registerBackBtn" type="button">VOLVER</button></div>
+      <div class="room-notice" id="registerNotice" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="authLogin">
+    <div class="card account-card">
+      <div class="tag">CUENTA</div><h1 class="title" style="margin-top:16px">Iniciar sesión</h1>
+      <div class="section"><label class="label" for="loginEmail">Correo electrónico</label><input class="input" id="loginEmail" type="email" placeholder="tu@email.com" autocomplete="email" inputmode="email"></div>
+      <div class="section"><label class="label" for="loginPassword">Contraseña</label><input class="input" id="loginPassword" type="password" placeholder="Tu contraseña" autocomplete="current-password"></div>
+      <div class="actions"><button class="btn" id="signInBtn" type="button">INICIAR SESIÓN</button><button class="btn secondary" id="toRegisterBtn" type="button">CREAR CUENTA</button><button class="text-action" id="loginBackBtn" type="button">VOLVER</button></div>
+      <div class="room-notice" id="loginNotice" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="profile">
+    <div class="card account-card">
+      <div class="tag">CUENTA</div><h1 class="title" style="margin-top:16px">Mi perfil</h1>
+      <div class="profile-panel"><div class="profile-username" id="profileUsername">@usuario</div><div class="muted" id="profileEmail">correo</div><div class="profile-status"><span class="presence-dot" id="profilePresenceDot"></span><span id="profileStatusText">offline</span></div></div>
+      <div class="profile-stats"><div><strong id="profileFriendCount">0</strong><span>amigos</span></div><div><strong id="profileRequestCount">0</strong><span>solicitudes</span></div></div>
+      <div class="section"><div class="account-section-title">INVITACIONES A SALAS</div><div class="invite-list" id="profileInviteList"></div></div>
+      <div class="actions"><button class="btn" id="profileFriendsBtn" type="button">AMIGOS</button><button class="btn secondary" id="profileRequestsBtn" type="button">SOLICITUDES</button><button class="btn danger" id="signOutBtn" type="button">CERRAR SESIÓN</button><button class="text-action" id="profileBackBtn" type="button">VOLVER</button></div>
+      <div class="room-notice" id="profileNotice" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="friends">
+    <div class="card account-card">
+      <div class="tag">CUENTA</div><h1 class="title" style="margin-top:16px">Amigos</h1>
+      <div class="account-section-title">MIS AMIGOS</div><div class="friends-list" id="friendsList" role="list" aria-live="polite"></div>
+      <div class="section friend-search-panel"><div class="account-section-title">AGREGAR AMIGO</div><div class="search-row"><input class="input" id="friendSearchInput" maxlength="20" placeholder="@usuario" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="btn" id="searchFriendBtn" type="button">BUSCAR</button></div><div id="friendSearchResult"></div></div>
+      <div class="section"><div class="account-section-title">INVITACIONES A SALAS</div><div class="invite-list" id="friendsInviteList"></div></div>
+      <div class="actions"><button class="btn secondary" id="friendsRequestsBtn" type="button">VER SOLICITUDES</button><button class="text-action" id="friendsBackBtn" type="button">VOLVER AL PERFIL</button></div>
+      <div class="room-notice" id="friendsNotice" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="requests">
+    <div class="card account-card">
+      <div class="tag">CUENTA</div><h1 class="title" style="margin-top:16px">Solicitudes</h1>
+      <div class="requests-list" id="requestsList" role="list" aria-live="polite"></div>
+      <div class="actions"><button class="btn secondary" id="requestsFriendsBtn" type="button">AMIGOS</button><button class="text-action" id="requestsBackBtn" type="button">VOLVER AL PERFIL</button></div>
+      <div class="room-notice" id="requestsNotice" role="status" aria-live="polite"></div>
     </div>
   </section>
 
@@ -201,10 +271,12 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="settings-summary" id="settingsSummary"></div>
       <div class="actions">
         <button class="btn secondary" id="editSettingsBtn">CONFIGURAR SALA</button>
+        <button class="btn secondary" id="inviteFriendsBtn" type="button">INVITAR AMIGOS</button>
         <button class="btn" id="startRoomBtn">INICIAR PARTIDA</button>
         <button class="btn secondary" id="leaveRoomBtn">SALIR DE LA SALA</button>
       </div>
       <div class="waiting-host" id="waitingHost">Esperando al anfitrión…</div>
+      <div class="invite-panel hidden" id="lobbyInvitePanel"><div class="account-section-title">INVITAR AMIGOS</div><div class="friends-list" id="lobbyFriendsList"></div><button class="text-action" id="closeInvitePanelBtn" type="button">CERRAR</button></div>
       <div class="room-notice" id="lobbyNotice" role="status" aria-live="polite"></div>
     </div>
   </section>
@@ -1949,6 +2021,7 @@ const personajes = [
 
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script>
 (() => {
   /*
@@ -1972,8 +2045,10 @@ const personajes = [
 
   const firebaseApp = firebase.initializeApp(firebaseConfig, 'adivina-quien-final');
   const db = firebase.database(firebaseApp);
+  const auth = firebase.auth(firebaseApp);
+  const authPersistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error=>{console.warn('No se pudo activar la persistencia de sesión',error);});
   const baseDeDatos = window.baseDeDatos || [];
-  const screens = ['home','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
+  const screens = ['home','authRegister','authLogin','profile','friends','requests','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
   const SESSION_KEY = 'adivina_quien_session';
   const PLAYER_KEY = 'adivina_quien_player_id';
   const PREPARATION_DURATION_MS = 10000;
@@ -1981,12 +2056,12 @@ const personajes = [
   const STARTING_TRANSITION_DURATION_MS = 1800;
   const SESSION_BACKUP_KEY = 'adivina_quien_session_backup';
   const state = {
-    mode:null, roomCode:'', playerId:getOrCreatePlayerId(), playerName:'', hostName:'',
+    mode:null, roomCode:'', legacyPlayerId:getOrCreatePlayerId(), playerId:getOrCreatePlayerId(), playerName:'', hostName:'',
      categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
      myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
      wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
-     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false},
-    restoring:false
+     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false},
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:''
   };
 
   const $ = id => document.getElementById(id);
@@ -2020,7 +2095,8 @@ const personajes = [
       // Alias internos para mantener compatibilidad con la V7 actual.
       roomCode:String(roomId||''),
       name:String(playerName||''),
-      mode:state.mode||null
+      mode:state.mode||null,
+      accountUid:accountUid()||null
     };
     try{
       const serialized=JSON.stringify(session);
@@ -2041,12 +2117,18 @@ const personajes = [
       const aqPlayerName=sessionStorage.getItem('aq_playerName');
       const aqPlayerId=sessionStorage.getItem('aq_playerId');
       if(aqRoomId&&aqPlayerName&&aqPlayerId){
-        return {roomId:aqRoomId,playerName:aqPlayerName,playerId:aqPlayerId};
+        const active=sessionStorage.getItem(SESSION_KEY);let parsed={};try{parsed=active?JSON.parse(active):{};}catch(error){}
+        return {...parsed,roomId:aqRoomId,playerName:aqPlayerName,playerId:aqPlayerId};
       }
       const active=sessionStorage.getItem(SESSION_KEY);
       if(active)return JSON.parse(active);
-      // No recuperar automáticamente una sesión desde localStorage al abrir la portada.
-      // Así una sesión vieja no puede cambiar la pantalla varios segundos/minutos después.
+      const backup=localStorage.getItem(SESSION_BACKUP_KEY);
+      if(backup){
+        const parsed=JSON.parse(backup);
+        // Las cuentas sí pueden recuperar automáticamente su sala tras cerrar Safari;
+        // los invitados sin cuenta conservan el botón manual para evitar sorpresas.
+        if(accountUid()&&parsed.accountUid===accountUid())return parsed;
+      }
       return null;
     }catch(error){
       console.warn('read session',error);
@@ -2142,9 +2224,9 @@ const personajes = [
   function show(id){
     clearNotice();
     screens.forEach(screen=>{const el=$(screen);if(el)el.classList.toggle('active',screen===id);});
-    const labels={home:'',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',starting:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
+    const labels={home:'',authRegister:'CUENTA',authLogin:'CUENTA',profile:'CUENTA',friends:'CUENTA',requests:'CUENTA',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',starting:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
     setText('stepBadge',labels[id]||'');
-    const pageTitles={home:'¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',starting:'Comienza la partida · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
+    const pageTitles={home:'¿Quién soy?',authRegister:'Crear cuenta · ¿Quién soy?',authLogin:'Iniciar sesión · ¿Quién soy?',profile:'Mi perfil · ¿Quién soy?',friends:'Amigos · ¿Quién soy?',requests:'Solicitudes · ¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',starting:'Comienza la partida · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
     document.title=pageTitles[id]||'¿Quién soy?';
     const active=$(id);
     if(active){
@@ -2158,7 +2240,7 @@ const personajes = [
     el.textContent=msg||'';el.className='room-notice'+(msg?' show ':'')+(type?' '+type:'');
   }
   function clearNotice(){
-    ['roomNotice','joinNotice','lobbyNotice','scoringNotice'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='room-notice';}});
+    ['roomNotice','joinNotice','lobbyNotice','scoringNotice','registerNotice','loginNotice','profileNotice','friendsNotice','requestsNotice'].forEach(id=>{const el=$(id);if(el){el.textContent='';el.className='room-notice';}});
   }
   function clearCountdown(){if(state.countdownTimer){clearInterval(state.countdownTimer);state.countdownTimer=null;}}
   function setBusy(key,value){state.busy[key]=value;}
@@ -2180,6 +2262,230 @@ const personajes = [
     if(status==='offline')pill.classList.add('offline');
     if(status==='reconnecting')pill.classList.add('reconnecting');
     label.textContent=text;
+  }
+
+  // ============================================================
+  // CUENTAS, AMIGOS, PRESENCIA E INVITACIONES
+  // ============================================================
+  const USERNAME_PATTERN=/^[A-Za-z0-9][A-Za-z0-9._-]{1,18}[A-Za-z0-9]$/;
+  function normalizeUsername(value){return String(value||'').trim().replace(/^@+/,'').toLowerCase();}
+  function visibleUsername(value){const clean=String(value||'').trim().replace(/^@+/,'');return clean?'@'+clean:'@usuario';}
+  function accountUid(){return state.authUser&&!state.authUser.isAnonymous?state.authUser.uid:'';}
+  function backendUid(){return auth.currentUser?.uid||'';}
+  function roomIdentity(){const uid=accountUid();state.playerId=uid||state.legacyPlayerId;return state.playerId;}
+  function findAccountRoomPlayer(players){const uid=accountUid();return (uid&&players.find(player=>player.accountUid===uid))||players.find(player=>player.id===state.playerId)||players.find(player=>player.id===state.legacyPlayerId)||null;}
+  async function ensureRoomAuth(){await authPersistenceReady;if(auth.currentUser)return auth.currentUser;if(state.anonymousSignInStarted)throw new Error('La autenticación todavía no está disponible.');state.anonymousSignInStarted=true;try{return (await auth.signInAnonymously()).user;}finally{state.anonymousSignInStarted=false;}}
+  async function markRoomMembership(){const uid=backendUid();if(!uid||!state.roomCode)return;try{await db.ref(`roomMembers/${state.roomCode}/${uid}`).set(true);}catch(error){console.warn('No se pudo registrar la membresía de la sala',error);}}
+  function pairKey(first,second){return [String(first),String(second)].sort().join('__');}
+  function accountUsername(){return state.profile?.username||state.authUser?.displayName||state.authUser?.email?.split('@')[0]||'usuario';}
+  function accountNotice(id,message,type=''){const el=$(id);if(!el)return;el.textContent=message||'';el.className='room-notice'+(message?' show ':'')+(type?' '+type:'');}
+  function accountError(error){
+    const messages={
+      'auth/email-already-in-use':'Ese correo ya está registrado.','auth/invalid-email':'El correo no es válido.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Espera un momento y vuelve a probar.','auth/unauthorized-domain':'Autoriza este dominio en Firebase Authentication.','auth/api-key-not-valid':'La configuración de Firebase no es válida para esta aplicación.','username-taken':'Ese nombre de usuario ya está ocupado.'
+    };
+    return messages[error?.code]||'No se pudo completar la operación. Revisa tu conexión e inténtalo nuevamente.';
+  }
+  function setPresenceUi(online){
+    state.presenceOnline=Boolean(online);
+    const text=online?'online':'offline';
+    ['accountPresenceDot','profilePresenceDot'].forEach(id=>{const el=$(id);if(el){el.classList.toggle('online',online);el.classList.toggle('offline',!online);}});
+    setText('accountOnlineLabel',text);setText('profileStatusText',text);
+    renderFriendsList();
+  }
+  function renderAccountUI(){
+    const logged=Boolean(accountUid()),loggedOut=$('loggedOutView'),loggedIn=$('loggedInView');
+    if(loggedOut)loggedOut.classList.toggle('hidden',logged);
+    if(loggedIn)loggedIn.classList.toggle('hidden',!logged);
+    ['hostNameInput','joinName'].forEach(id=>{const field=$(id);if(field)field.readOnly=logged;});
+    if(!logged){setPresenceUi(false);return;}
+    const username=accountUsername(),email=state.authUser?.email||'';
+    setText('accountUsername',visibleUsername(username));setText('profileUsername',visibleUsername(username));setText('profileEmail',email);
+    ['hostNameInput','joinName'].forEach(id=>{const field=$(id);if(field){field.readOnly=true;field.value=state.profile?.username||username;}});
+    setText('profileFriendCount',Object.keys(state.friendData||{}).length);setText('profileRequestCount',Object.keys(state.requestData||{}).length);
+    setPresenceUi(state.presenceOnline);renderFriendsList();renderRequestsList();renderInviteList('profileInviteList');
+  }
+  function stopOwnPresence(){
+    const presence=state.accountPresenceRef;if(!presence)return;
+    presence.connectedRef.off('value',presence.handler);
+    presence.ref.update({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP}).catch(()=>{});
+    state.accountPresenceRef=null;state.presenceOnline=false;
+  }
+  function startOwnPresence(user){
+    stopOwnPresence();
+    const ref=db.ref('presence/'+user.uid),connectedRef=db.ref('.info/connected');
+    const handler=async snapshot=>{
+      const connected=snapshot.val()===true;setPresenceUi(connected);
+      if(!connected)return;
+      const profileName=state.profile?.username||user.displayName||'usuario';
+      try{
+        await ref.onDisconnect().set({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP,username:profileName});
+        await ref.set({online:true,lastSeen:firebase.database.ServerValue.TIMESTAMP,username:profileName});
+      }catch(error){console.warn('No se pudo actualizar la presencia de la cuenta',error);}
+    };
+    state.accountPresenceRef={ref,connectedRef,handler};connectedRef.on('value',handler);
+  }
+  function stopAccountListeners(){
+    const uid=state.accountListenerUid||accountUid();
+    if(state.profileListener&&uid)db.ref('users/'+uid).off('value',state.profileListener);
+    if(state.friendListener&&uid)db.ref('friends/'+uid).off('value',state.friendListener);
+    if(state.requestListener&&uid)db.ref('friendRequests/received/'+uid).off('value',state.requestListener);
+    if(state.inviteListener&&uid)db.ref('roomInvites/'+uid).off('value',state.inviteListener);
+    Object.values(state.friendProfileRefs||{}).forEach(item=>item.ref.off('value',item.handler));
+    Object.values(state.friendPresenceRefs||{}).forEach(item=>item.ref.off('value',item.handler));
+    state.profileListener=null;state.friendListener=null;state.requestListener=null;state.inviteListener=null;state.accountListenerUid='';state.friendProfileRefs={};state.friendPresenceRefs={};state.friendProfiles={};state.friendPresence={};state.friendData={};state.requestData={};state.inviteData={};state.profile=null;stopOwnPresence();
+  }
+  function bindFriendDetails(){
+    const ids=new Set(Object.keys(state.friendData||{}));
+    Object.keys(state.friendProfileRefs||{}).forEach(uid=>{if(!ids.has(uid)){state.friendProfileRefs[uid].ref.off('value',state.friendProfileRefs[uid].handler);delete state.friendProfileRefs[uid];delete state.friendProfiles[uid];}});
+    Object.keys(state.friendPresenceRefs||{}).forEach(uid=>{if(!ids.has(uid)){state.friendPresenceRefs[uid].ref.off('value',state.friendPresenceRefs[uid].handler);delete state.friendPresenceRefs[uid];delete state.friendPresence[uid];}});
+    ids.forEach(uid=>{
+      if(!state.friendProfileRefs[uid]){const ref=db.ref('publicUsers/'+uid),handler=snapshot=>{state.friendProfiles[uid]=snapshot.val()||{};renderFriendsList();renderLobbyFriends();};state.friendProfileRefs[uid]={ref,handler};ref.on('value',handler);}
+      if(!state.friendPresenceRefs[uid]){const ref=db.ref('presence/'+uid),handler=snapshot=>{state.friendPresence[uid]=snapshot.val()||{};renderFriendsList();renderLobbyFriends();};state.friendPresenceRefs[uid]={ref,handler};ref.on('value',handler);}
+    });
+    renderFriendsList();renderLobbyFriends();
+  }
+  function emptyAccountList(id,message){const list=$(id);if(!list)return;list.replaceChildren();const item=document.createElement('div');item.className='empty-state';item.textContent=message;list.appendChild(item);}
+  function renderFriendsList(){
+    const list=$('friendsList');if(!list)return;list.replaceChildren();
+    const ids=Object.keys(state.friendData||{});
+    if(!ids.length){emptyAccountList('friendsList','Todavía no tienes amigos.');return;}
+    ids.forEach(uid=>{
+      const profile=state.friendProfiles[uid]||{},presence=state.friendPresence[uid]||{},row=document.createElement('div');row.className='account-friend-row';row.setAttribute('role','listitem');
+      const info=document.createElement('div'),name=document.createElement('div'),status=document.createElement('div'),dot=document.createElement('span'),remove=document.createElement('button');
+      name.className='account-friend-name';name.textContent=visibleUsername(profile.username||uid);status.className='account-friend-state';dot.className='presence-dot '+(presence.online?'online':'offline');status.append(dot,document.createTextNode(presence.online?'online':'offline'));info.append(name,status);
+      remove.className='small-btn danger';remove.type='button';remove.textContent='ELIMINAR';remove.addEventListener('click',()=>void removeFriend(uid));row.append(info,remove);list.appendChild(row);
+    });
+  }
+  function renderRequestsList(){
+    const list=$('requestsList');if(!list)return;list.replaceChildren();
+    const requests=Object.values(state.requestData||{});
+    if(!requests.length){emptyAccountList('requestsList','No tienes solicitudes pendientes.');return;}
+    requests.forEach(request=>{
+      const fromUid=request.fromUid||request.uid,row=document.createElement('div');row.className='request-row';row.setAttribute('role','listitem');
+      const name=document.createElement('div');name.className='request-name';name.textContent=visibleUsername(request.fromUsername||fromUid);
+      const actions=document.createElement('div');actions.className='row-actions';
+      const accept=document.createElement('button');accept.className='small-btn success';accept.type='button';accept.textContent='ACEPTAR';accept.addEventListener('click',()=>void acceptFriendRequest(fromUid));
+      const reject=document.createElement('button');reject.className='small-btn danger';reject.type='button';reject.textContent='RECHAZAR';reject.addEventListener('click',()=>void rejectFriendRequest(fromUid));actions.append(accept,reject);row.append(name,actions);list.appendChild(row);
+    });
+  }
+  function renderInviteList(id){
+    const list=$(id);if(!list)return;list.replaceChildren();const invites=Object.values(state.inviteData||{});
+    if(!invites.length){emptyAccountList(id,'No tienes invitaciones pendientes.');return;}
+    invites.forEach(invite=>{
+      const room=String(invite.roomCode||''),row=document.createElement('div');row.className='invite-row';
+      const textNode=document.createElement('div'),roomNode=document.createElement('div'),from=document.createElement('div');roomNode.className='invite-room';roomNode.textContent='Sala '+room;from.className='muted tiny';from.textContent='Invita '+visibleUsername(invite.fromUsername||invite.fromUid);textNode.append(roomNode,from);
+      const actions=document.createElement('div');actions.className='row-actions';const enter=document.createElement('button');enter.className='small-btn success';enter.type='button';enter.textContent='ENTRAR';enter.addEventListener('click',()=>void acceptRoomInvite(room));const ignore=document.createElement('button');ignore.className='small-btn danger';ignore.type='button';ignore.textContent='IGNORAR';ignore.addEventListener('click',()=>void ignoreRoomInvite(room));actions.append(enter,ignore);row.append(textNode,actions);list.appendChild(row);
+    });
+  }
+  function renderLobbyFriends(){
+    const list=$('lobbyFriendsList');if(!list)return;list.replaceChildren();const ids=Object.keys(state.friendData||{});
+    if(!ids.length){emptyAccountList('lobbyFriendsList','No tienes amigos para invitar.');return;}
+    const players=state.roomRef?normalizeRoomPlayers(state.lastRoomData||{}):[];
+    ids.forEach(uid=>{
+      const profile=state.friendProfiles[uid]||{},presence=state.friendPresence[uid]||{},row=document.createElement('div');row.className='account-friend-row';
+      const info=document.createElement('div'),name=document.createElement('div'),status=document.createElement('div'),dot=document.createElement('span'),invite=document.createElement('button');name.className='account-friend-name';name.textContent=visibleUsername(profile.username||uid);status.className='account-friend-state';dot.className='presence-dot '+(presence.online?'online':'offline');status.append(dot,document.createTextNode(presence.online?'online':'offline'));info.append(name,status);invite.className='small-btn success';invite.type='button';invite.textContent=players.some(player=>player.accountUid===uid)?'ENVIADO':'INVITAR';invite.disabled=players.some(player=>player.accountUid===uid);invite.addEventListener('click',()=>void sendRoomInvite(uid));row.append(info,invite);list.appendChild(row);
+    });
+  }
+  async function ensureUserProfile(user){
+    const ref=db.ref('users/'+user.uid),snapshot=await ref.once('value');
+    if(snapshot.exists()){
+      const profile=snapshot.val(),username=String(profile.username||'').trim(),key=normalizeUsername(username);
+      if(USERNAME_PATTERN.test(username)&&key){
+        const claim=await db.ref('usernames/'+key).transaction(current=>current===null||current===user.uid?user.uid:undefined);
+        if(claim.committed)await db.ref('publicUsers/'+user.uid).update({username,usernameLower:key});
+      }
+      return profile;
+    }
+    let candidate=normalizeUsername(user.displayName||'');if(!USERNAME_PATTERN.test(candidate))candidate=('user'+user.uid.replace(/[^A-Za-z0-9]/g,'')).slice(0,20);if(!USERNAME_PATTERN.test(candidate))candidate='usuario'+user.uid.slice(0,8);
+    for(let attempt=0;attempt<10;attempt++){
+      const key=attempt?`${candidate.slice(0,18)}${attempt}`:candidate,claim=await db.ref('usernames/'+key).transaction(current=>current===null?user.uid:undefined);
+      if(!claim.committed)continue;
+      const profile={username:key,email:user.email||'',createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};
+      await db.ref().update({['users/'+user.uid]:profile,['publicUsers/'+user.uid]:{username:key,usernameLower:key,createdAt:profile.createdAt}});await user.updateProfile({displayName:key});return profile;
+    }
+    throw {code:'username-taken'};
+  }
+  async function startAccountListeners(user){
+    stopAccountListeners();
+    const uid=user.uid;
+    state.accountListenerUid=uid;
+    state.profileListener=snapshot=>{state.profile=snapshot.val()||null;renderAccountUI();};db.ref('users/'+uid).on('value',state.profileListener);
+    state.friendListener=snapshot=>{state.friendData=snapshot.val()||{};bindFriendDetails();renderAccountUI();};db.ref('friends/'+uid).on('value',state.friendListener);
+    state.requestListener=snapshot=>{state.requestData=snapshot.val()||{};renderRequestsList();renderAccountUI();};db.ref('friendRequests/received/'+uid).on('value',state.requestListener);
+    state.inviteListener=snapshot=>{state.inviteData=snapshot.val()||{};renderInviteList('profileInviteList');renderInviteList('friendsInviteList');};db.ref('roomInvites/'+uid).on('value',state.inviteListener);
+    startOwnPresence(user);renderFriendsList();renderRequestsList();renderInviteList('profileInviteList');
+  }
+  async function registerAccount(){
+    const username=String($('registerUsername').value||'').trim().replace(/^@+/,'');
+    const key=normalizeUsername(username),email=String($('registerEmail').value||'').trim(),password=$('registerPassword').value||'',confirm=$('registerPasswordConfirm').value||'';
+    if(!USERNAME_PATTERN.test(username)||username.length<3||username.length>20){accountNotice('registerNotice','El nombre debe tener entre 3 y 20 caracteres y terminar en letra o número.','error');return;}
+    if(!email){accountNotice('registerNotice','Escribe tu correo electrónico.','error');return;}
+    if(password.length<6){accountNotice('registerNotice','La contraseña debe tener al menos 6 caracteres.','error');return;}
+    if(password!==confirm){accountNotice('registerNotice','Las contraseñas no coinciden.','error');return;}
+    setButtonBusy('createAccountBtn','account',true,'CREANDO CUENTA…');
+    let createdUser=null,claimed=false;
+    try{
+      await authPersistenceReady;
+      const credentials=await auth.createUserWithEmailAndPassword(email,password);createdUser=credentials.user;
+      const claim=await db.ref('usernames/'+key).transaction(current=>current===null?createdUser.uid:undefined);if(!claim.committed)throw {code:'username-taken'};claimed=true;
+      const profile={username,email:createdUser.email||email,createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};
+      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});show('home');
+    }catch(error){if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});accountNotice('registerNotice',accountError(error),'error');}
+    finally{setButtonBusy('createAccountBtn','account',false);}
+  }
+  async function loginAccount(){
+    const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}
+    setButtonBusy('signInBtn','account',true,'INICIANDO…');
+    try{await authPersistenceReady;await auth.signInWithEmailAndPassword(email,password);show('home');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
+  }
+  async function logoutAccount(){
+    if(state.roomRef){accountNotice('profileNotice','Sal de la sala antes de cerrar sesión para conservar la partida.','error');return;}
+    setButtonBusy('signOutBtn','account',true,'CERRANDO…');try{await auth.signOut();show('home');}catch(error){accountNotice('profileNotice','No se pudo cerrar la sesión.','error');}finally{setButtonBusy('signOutBtn','account',false);}
+  }
+  async function searchFriend(){
+    if(!accountUid()){show('authLogin');return;}
+    const key=normalizeUsername($('friendSearchInput').value);state.searchTarget=null;
+    if(!USERNAME_PATTERN.test(key)){accountNotice('friendsNotice','Escribe un nombre válido de 3 a 20 caracteres.','error');return;}
+    setButtonBusy('searchFriendBtn','account',true,'BUSCANDO…');
+    try{
+      const snapshot=await db.ref('publicUsers').orderByChild('usernameLower').equalTo(key).limitToFirst(1).once('value'),found=Object.entries(snapshot.val()||{})[0];
+      if(!found){accountNotice('friendsNotice','No se encontró ese usuario.','error');return;}
+      const target={uid:found[0],...(found[1]||{})};if(target.uid===accountUid()){accountNotice('friendsNotice','No puedes agregarte a ti mismo.','error');return;}
+      if(state.friendData[target.uid]){accountNotice('friendsNotice','Ese usuario ya es tu amigo.','error');return;}
+      const [sent,received]=await Promise.all([db.ref(`friendRequests/sent/${accountUid()}/${target.uid}`).once('value'),db.ref(`friendRequests/received/${accountUid()}/${target.uid}`).once('value')]);if(sent.exists()||received.exists()){accountNotice('friendsNotice','Ya existe una solicitud entre ambos.','error');return;}
+      state.searchTarget=target;const result=$('friendSearchResult');result.replaceChildren();const box=document.createElement('div');box.className='search-result';const textNode=document.createElement('strong');textNode.textContent=`¿Quieres enviar una solicitud de amistad a ${visibleUsername(target.username)}?`;const actions=document.createElement('div');actions.className='row-actions';const send=document.createElement('button');send.className='small-btn success';send.type='button';send.textContent='ENVIAR SOLICITUD';send.addEventListener('click',()=>void sendFriendRequest());const cancel=document.createElement('button');cancel.className='small-btn';cancel.type='button';cancel.textContent='CANCELAR';cancel.addEventListener('click',clearFriendSearch);actions.append(send,cancel);box.append(textNode,actions);result.appendChild(box);
+    }catch(error){accountNotice('friendsNotice','No se pudo buscar el usuario.','error');}finally{setButtonBusy('searchFriendBtn','account',false);}
+  }
+  function clearFriendSearch(){state.searchTarget=null;const result=$('friendSearchResult');if(result)result.replaceChildren();}
+  async function sendFriendRequest(){
+    const target=state.searchTarget;if(!target||!accountUid())return;const uid=accountUid();if(target.uid===uid)return;
+    try{
+      const linkPath='friendLinks/'+pairKey(uid,target.uid),payload={fromUid:uid,fromUsername:accountUsername(),toUid:target.uid,toUsername:target.username,createdAt:firebase.database.ServerValue.TIMESTAMP};const updates={};updates[linkPath]={...payload,status:'pending'};updates[`friendRequests/received/${target.uid}/${uid}`]=payload;updates[`friendRequests/sent/${uid}/${target.uid}`]=payload;await db.ref().update(updates);accountNotice('friendsNotice','Solicitud enviada.','success');clearFriendSearch();
+    }catch(error){accountNotice('friendsNotice','No se pudo enviar la solicitud. Puede que ya exista.','error');}
+  }
+  async function acceptFriendRequest(fromUid){
+    const uid=accountUid();if(!uid||!fromUid)return;const linkRef=db.ref('friendLinks/'+pairKey(uid,fromUid));
+    try{
+      const result=await linkRef.transaction(link=>link&&link.status==='pending'&&link.toUid===uid?{...link,status:'accepted',acceptedAt:firebase.database.ServerValue.TIMESTAMP}:undefined);if(!result.committed){accountNotice('requestsNotice','La solicitud ya no está disponible.','error');return;}
+      const updates={};updates[`friends/${uid}/${fromUid}`]=true;updates[`friends/${fromUid}/${uid}`]=true;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;await db.ref().update(updates);accountNotice('requestsNotice','Ahora son amigos.','success');
+    }catch(error){accountNotice('requestsNotice','No se pudo aceptar la solicitud.','error');}
+  }
+  async function rejectFriendRequest(fromUid){
+    const uid=accountUid();if(!uid||!fromUid)return;const updates={};updates[`friendLinks/${pairKey(uid,fromUid)}`]=null;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;
+    try{await db.ref().update(updates);accountNotice('requestsNotice','Solicitud rechazada.','success');}catch(error){accountNotice('requestsNotice','No se pudo rechazar la solicitud.','error');}
+  }
+  async function removeFriend(friendUid){
+    const uid=accountUid();if(!uid||!friendUid)return;const updates={};updates[`friends/${uid}/${friendUid}`]=null;updates[`friends/${friendUid}/${uid}`]=null;updates[`friendLinks/${pairKey(uid,friendUid)}`]=null;
+    try{await db.ref().update(updates);accountNotice('friendsNotice','Amigo eliminado.','success');}catch(error){accountNotice('friendsNotice','No se pudo eliminar al amigo.','error');}
+  }
+  async function sendRoomInvite(friendUid){
+    const uid=accountUid();if(!uid||!state.roomCode||!state.friendData[friendUid])return;const payload={roomCode:state.roomCode,fromUid:uid,toUid:friendUid,fromUsername:accountUsername(),createdAt:firebase.database.ServerValue.TIMESTAMP};
+    try{await db.ref(`roomInvites/${friendUid}/${state.roomCode}`).set(payload);accountNotice('lobbyNotice','Invitación enviada.','success');renderLobbyFriends();}catch(error){accountNotice('lobbyNotice','No se pudo enviar la invitación.','error');}
+  }
+  async function ignoreRoomInvite(roomCode){if(!accountUid())return;try{await db.ref(`roomInvites/${accountUid()}/${roomCode}`).remove();}catch(error){accountNotice('profileNotice','No se pudo quitar la invitación.','error');}}
+  async function acceptRoomInvite(roomCode){
+    const invite=state.inviteData?.[roomCode];if(!invite)return;$('joinRoomCode').value=roomCode;$('joinName').value=state.profile?.username||accountUsername();state.pendingInviteRoom=roomCode;show('join');await joinRoom();
+    if(state.roomRef&&state.roomCode===roomCode&&accountUid())await db.ref(`roomInvites/${accountUid()}/${roomCode}`).remove().catch(()=>{});
   }
   function setTotalRounds(value){
     state.totalRounds=Math.min(20,Math.max(1,Number(value)||3));
@@ -2298,6 +2604,7 @@ const personajes = [
     return `No hay suficientes personajes únicos para esta configuración. Hay ${validation.available} disponibles y necesitas ${validation.required} (${Math.max(0,validation.required-validation.available)} faltantes).`;
   }
   function renderLobby(data){
+    state.lastRoomData=data||null;
     const players=normalizeRoomPlayers(data), host=isHost(data), config=selectedRoomConfig(data);
     state.categories=config.categories;state.totalRounds=config.totalRounds;
     setText('roomCodeValue',state.roomCode);setText('lobbyCount',`${players.length} / 20 jugadores`);
@@ -2307,8 +2614,10 @@ const personajes = [
     $('startRoomBtn').style.display=host?'block':'none';
     $('startRoomBtn').disabled=!host||players.length<2||data.game?.phase!=='lobby'||!stock.valid;
     $('editSettingsBtn').style.display=host?'block':'none';
+    const inviteButton=$('inviteFriendsBtn');if(inviteButton){inviteButton.classList.toggle('hidden',!accountUid());inviteButton.disabled=!accountUid();}
     $('waitingHost').style.display=host?'none':'block';
     if(!host)setText('waitingHost','Esperando al anfitrión…');
+    renderLobbyFriends();
     if(host&&data.game?.phase==='lobby'&&players.length>=2&&!stock.valid){
       notice(getCardStockMessage(stock),'error','lobbyNotice');
     }
@@ -2324,12 +2633,25 @@ const personajes = [
     const ref=state.roomRef;
     state.roomListener=snapshot=>handleRoomSnapshot(snapshot.val());
     ref.on('value',state.roomListener,error=>{console.error(error);notice('No se pudo leer la sala. Revisa las reglas de Realtime Database.','error','lobbyNotice');});
+    listenToAssignments();
   }
   function stopRoomListener(){
     const ref=state.roomRef;if(ref&&state.roomListener)ref.off('value',state.roomListener);
     state.roomListener=null;
   }
   function attachRoom(code){state.roomCode=code;state.roomRef=db.ref('rooms/'+code);}
+  function stopAssignmentListeners(){
+    if(state.privateAssignmentRef&&state.privateAssignmentListener)state.privateAssignmentRef.off('value',state.privateAssignmentListener);
+    if(state.publicAssignmentRef&&state.publicAssignmentListener)state.publicAssignmentRef.off('value',state.publicAssignmentListener);
+    state.privateAssignmentRef=null;state.privateAssignmentListener=null;state.publicAssignmentRef=null;state.publicAssignmentListener=null;state.privateAssignment=null;state.publicAssignments={};
+  }
+  function listenToAssignments(){
+    stopAssignmentListeners();if(!state.roomRef||!state.roomCode||!state.playerId||state.lastRoomData&&!state.lastRoomData.secureAssignments)return;
+    const privateRef=db.ref(`privateAssignments/${state.roomCode}/${state.playerId}`),publicRef=db.ref(`publicAssignments/${state.roomCode}`);
+    const privateListener=snapshot=>{state.privateAssignment=snapshot.val()||null;if(state.lastRoomData?.secureAssignments){state.myAssignment=state.privateAssignment;if(state.lastRoomData.game?.phase==='reveal')renderReveal(state.lastRoomData.game);}};
+    const publicListener=snapshot=>{state.publicAssignments=snapshot.val()||{};if(state.lastRoomData?.secureAssignments&&['playing','scoring','results','finished'].includes(state.lastRoomData.game?.phase))renderPlaying(state.lastRoomData.game,state.lastRoomData);};
+    state.privateAssignmentRef=privateRef;state.privateAssignmentListener=privateListener;state.publicAssignmentRef=publicRef;state.publicAssignmentListener=publicListener;privateRef.on('value',privateListener);publicRef.on('value',publicListener);
+  }
   async function installDisconnect(){
     if(!state.roomRef || !state.playerId)return null;
     const playerRef=state.roomRef.child('players/'+state.playerId);
@@ -2358,15 +2680,19 @@ const personajes = [
           const snapshot=await state.roomRef.once('value');
           if(snapshot.exists()){
             const data=snapshot.val();
-            const me=data.players?.[state.playerId];
+            const players=normalizeRoomPlayers(data),matched=findAccountRoomPlayer(players);
+            if(matched&&matched.id!==state.playerId)state.playerId=matched.id;
+            const me=matched||data.players?.[state.playerId];
             if(!me){
               const wasHost=data.hostId===state.playerId;
               await state.roomRef.child('players/'+state.playerId).set({
                 name:state.playerName,host:wasHost,joinedAt:firebase.database.ServerValue.TIMESTAMP,
-                reconnectedAt:firebase.database.ServerValue.TIMESTAMP,status:'online',connected:true
+                accountUid:accountUid()||null,authUid:backendUid()||null,reconnectedAt:firebase.database.ServerValue.TIMESTAMP,status:'online',connected:true
               });
+            }else if(accountUid()&&me.accountUid!==accountUid()||backendUid()&&me.authUid!==backendUid()){
+              await state.roomRef.child('players/'+state.playerId).update({accountUid:accountUid()||null,authUid:backendUid()||null});
             }
-            await installDisconnect();
+            state.lastRoomData=data;await markRoomMembership();await installDisconnect();
             saveSessionInfo(state.roomCode,state.playerName,state.playerId);
             listenToRoom();
             setConnectionStatus('online','Conectado');
@@ -2386,11 +2712,14 @@ const personajes = [
   }
 
   function handleRoomSnapshot(data){
+    state.lastRoomData=data||null;
     if(!data){
-      const oldRef=state.roomRef;stopRoomListener();state.roomRef=null;clearSession();
+      const oldRef=state.roomRef;stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;clearSession();
       notice('La sala ya no existe o el anfitrión la cerró.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
     }
-    const players=normalizeRoomPlayers(data),me=players.find(player=>player.id===state.playerId);
+    const players=normalizeRoomPlayers(data),accountPlayer=findAccountRoomPlayer(players);
+    if(accountPlayer&&accountPlayer.id!==state.playerId)state.playerId=accountPlayer.id;
+    const me=accountPlayer||players.find(player=>player.id===state.playerId);
     const host=isHost(data);if(host)state.mode='host';else if(me)state.mode='player';
     if(me){state.playerName=me.name;state.hostName=data.hostName||state.hostName;saveSession();}
     if(!me){
@@ -2398,7 +2727,7 @@ const personajes = [
       notice('Tu conexión con la sala se perdió. Intenta entrar de nuevo.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
     }
     const config=selectedRoomConfig(data);state.categories=config.categories;state.totalRounds=config.totalRounds;
-    const game=data.game||{phase:'lobby'};state.myAssignment=game.assignments?.[state.playerId]||null;
+    const game=data.game||{phase:'lobby'};if(!data.secureAssignments)state.myAssignment=game.assignments?.[state.playerId]||null;else if(state.privateAssignment)state.myAssignment=state.privateAssignment;
     if(game.phase==='lobby'){clearCountdown();renderLobby(data);show('lobby');return;}
     if(game.phase==='preparing'){renderPreparation(game);show('prep');schedulePreparation(game);return;}
     if(game.phase==='reveal'){renderReveal(game,data);show('reveal');scheduleReveal(game);return;}
@@ -2409,6 +2738,7 @@ const personajes = [
     if(game.phase==='results'){clearCountdown();renderResults(game,data);show('results');return;}
     if(game.phase==='finished'){
       clearCountdown();
+      if(state.autoRestoring){state.autoRestoring=false;clearSession();stopRoomListener();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show('home');return;}
       renderFinished(game,data);
       show('finish');
       return;
@@ -2417,12 +2747,13 @@ const personajes = [
   async function createRoom(){
     if(state.configEditing){await saveRoomSettings();return;}
     if(state.busy.create)return;
-    const hostName=($('hostNameInput').value||'').trim().slice(0,30);
+    const hostName=(accountUid()?accountUsername():($('hostNameInput').value||'').trim()).slice(0,30);
     if(!hostName){notice('Escribe tu nombre.','error');return;}
     if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
     const pool=characterPool(state.categories);if(pool.length<2){notice('Las temáticas seleccionadas deben tener al menos 2 personajes diferentes.','error');return;}
+    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){notice('No se pudo activar la conexión segura para la sala. Habilita el proveedor Anónimo en Firebase Authentication.','error');return;}}
     preloadCountdownSound();setBusy('create',true);setButtonBusy('createRoomBtn','create',true,state.configEditing?'GUARDANDO…':'CREANDO SALA…');
-    state.mode='host';state.hostName=hostName;state.playerName=hostName;state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
+    state.mode='host';roomIdentity();state.hostName=hostName;state.playerName=hostName;state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
     let code=roomCode(),ref=db.ref('rooms/'+code);
     try{
       for(let attempt=0;attempt<5;attempt++){
@@ -2432,8 +2763,8 @@ const personajes = [
       state.roomCode=code;state.roomRef=ref;
       const timestamp=firebase.database.ServerValue.TIMESTAMP;
       const scores={[state.playerId]:0};const playerNames={[state.playerId]:hostName};
-      const initial={hostId:state.playerId,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
-      await state.roomRef.set(initial);await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();renderLobby(initial);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
+      const initial={hostId:state.playerId,hostAuthUid:backendUid()||null,secureAssignments:true,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,accountUid:accountUid()||null,authUid:backendUid()||null,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
+      await state.roomRef.set(initial);await markRoomMembership();await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);state.lastRoomData=initial;listenToRoom();renderLobby(initial);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
     }catch(error){console.error('Firebase create room',error);state.roomRef=null;notice('No se pudo crear la sala. Comprueba Realtime Database y sus reglas.','error');}
     finally{setBusy('create',false);setButtonBusy('createRoomBtn','create',false);}
   }
@@ -2451,19 +2782,19 @@ const personajes = [
   }
   async function joinRoom(){
     if(state.busy.join)return;
-    const code=($('joinRoomCode').value||'').trim().toUpperCase(),name=($('joinName').value||'').trim().slice(0,30);
+    const code=($('joinRoomCode').value||'').trim().toUpperCase(),name=(accountUid()?accountUsername():($('joinName').value||'').trim()).slice(0,30);
     if(!/^[A-Z2-9]{5}$/.test(code)){notice('Escribe un código de 5 caracteres.','error','joinNotice');return;}
     if(!name){notice('Escribe tu nombre.','error','joinNotice');return;}
+    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){notice('No se pudo activar la conexión segura para la sala. Habilita el proveedor Anónimo en Firebase Authentication.','error','joinNotice');return;}}
     preloadCountdownSound();
     setBusy('join',true);setButtonBusy('joinRoomBtn','join',true,'BUSCANDO SALA…');notice('Buscando la sala…','','joinNotice');
-    state.mode='player';state.playerName=name;attachRoom(code);
+    state.mode='player';roomIdentity();state.playerName=name;attachRoom(code);
     try{
       const snapshot=await state.roomRef.once('value');
       if(!snapshot.exists()){notice('No existe una sala con ese código. Verifica el código.','error','joinNotice');return;}
-      const data=snapshot.val(),players=normalizeRoomPlayers(data);
-      const currentPlayer=players.find(player=>player.id===state.playerId);
-      const offlineMatch=players.find(player=>player.id!==state.playerId&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
-      const sameNameOnline=players.find(player=>player.id!==state.playerId&&nameKey(player.name)===nameKey(name)&&player.status!=='offline');
+      const data=snapshot.val();state.lastRoomData=data;const players=normalizeRoomPlayers(data),currentPlayer=findAccountRoomPlayer(players);
+      const offlineMatch=!currentPlayer&&players.find(player=>player.id!==state.playerId&&(!accountUid()||player.accountUid===accountUid())&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
+      const sameNameOnline=players.find(player=>player.id!==state.playerId&&player.id!==currentPlayer?.id&&nameKey(player.name)===nameKey(name)&&player.status!=='offline');
       const reconnecting=Boolean(offlineMatch||currentPlayer);
       const targetId=(offlineMatch||currentPlayer)?.id||state.playerId;
 
@@ -2483,13 +2814,13 @@ const personajes = [
         state.playerId=offlineMatch.id;
         localStorage.setItem(PLAYER_KEY,state.playerId);
         state.playerName=offlineMatch.name||name;
-        await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,status:'online',connected:true});
+        await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,accountUid:accountUid()||null,authUid:backendUid()||null,status:'online',connected:true});
       }else{
         state.playerId=targetId;
-        await state.roomRef.child('players/'+state.playerId).update({name,host:Boolean(currentPlayer?.host),status:'online',connected:true});
+        await state.roomRef.child('players/'+state.playerId).update({name,accountUid:accountUid()||null,authUid:backendUid()||null,host:Boolean(currentPlayer?.host),status:'online',connected:true});
       }
 
-      await installDisconnect();
+      await markRoomMembership();await installDisconnect();
       saveSessionInfo(state.roomCode,state.playerName,state.playerId);
       listenToRoom();
       show('lobby');
@@ -2517,7 +2848,9 @@ const personajes = [
       const currentRound=(Number(data.game?.currentRound||data.game?.round)||0)+1,totalRounds=config.totalRounds;
       const scores={...(data.game?.scores||{})};const names={};players.forEach(player=>{if(scores[player.id]===undefined)scores[player.id]=0;names[player.id]=player.name;});
       const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      const secureAssignments=Boolean(data.secureAssignments),assignmentUpdates={};
+      if(secureAssignments){players.forEach(player=>{assignmentUpdates[`privateAssignments/${state.roomCode}/${player.id}`]=selection.assignments[player.id];});assignmentUpdates[`publicAssignments/${state.roomCode}`]=selection.assignments;await db.ref().update(assignmentUpdates);}
+      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null, currentTurn:'',turnIndex:-1,turnOrder:[],assignments:secureAssignments?{}:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
       const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='lobby')return;return nextGame;});
       if(!result.committed)notice('La partida ya estaba iniciándose.','error','lobbyNotice');
     }catch(error){console.error('Firebase start game',error);notice('No se pudo iniciar la partida.','error','lobbyNotice');}
@@ -2570,7 +2903,7 @@ const personajes = [
     }catch(error){console.warn('preparation transition',error);state.transitionKey='';}
   }
   function renderReveal(game){
-    const character=game.assignments?.[state.playerId]?.character;
+    const character=state.lastRoomData?.secureAssignments?state.myAssignment?.character:game.assignments?.[state.playerId]?.character;
     setText('revealRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
     setText('revealAudience','PARA TODOS');
     renderCharacterImage('revealCharacterImageBox',character);
@@ -2649,11 +2982,11 @@ const personajes = [
   }
   function renderPlaying(game,data){
     // Regla principal: el jugador actual nunca aparece en esta lista, por lo que su propio personaje queda oculto.
-    const names=playerNames(data,game),companions=normalizeRoomPlayers(data).filter(player=>player.id!==state.playerId);
+    const names=playerNames(data,game),assignments=data.secureAssignments?state.publicAssignments:(game.assignments||{}),companions=normalizeRoomPlayers(data).filter(player=>player.id!==state.playerId);
     setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);
     const list=$('playingCharacterList');list.replaceChildren();
     companions.forEach(player=>{
-      const character=game.assignments?.[player.id]?.character;
+      const character=assignments?.[player.id]?.character;
       const row=document.createElement('div');row.className='friend-row';row.setAttribute('role','listitem');
       const media=document.createElement('div');media.className='friend-character-media';
       const source=imageSource(character);
@@ -2723,7 +3056,9 @@ const personajes = [
       const selection=createAssignments(players,config.categories,data.game.recentCharacterIds||[]);if(!selection){notice('No hay suficientes personajes para comenzar la siguiente ronda.','error','lobbyNotice');return;}
       const currentRound=Number(data.game.currentRound)+1,names={...(data.game.playerNames||{})};players.forEach(player=>{names[player.id]=player.name;});
       const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      const secureAssignments=Boolean(data.secureAssignments),assignmentUpdates={};
+      if(secureAssignments){players.forEach(player=>{assignmentUpdates[`privateAssignments/${state.roomCode}/${player.id}`]=selection.assignments[player.id];});assignmentUpdates[`publicAssignments/${state.roomCode}`]=selection.assignments;await db.ref().update(assignmentUpdates);}
+      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:secureAssignments?{}:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
       await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results'||game.currentRound!==data.game.currentRound)return;return nextGame;});
     }catch(error){console.error('next round',error);notice('No se pudo comenzar la siguiente ronda.','error','lobbyNotice');}
     finally{setBusy('next',false);setButtonBusy('nextRoundBtn','next',false);}
@@ -2738,13 +3073,14 @@ const personajes = [
     if(state.busy.restart||!state.roomRef||state.mode!=='host')return;setBusy('restart',true);setButtonBusy('restartBtn','restart',true,'PREPARANDO…');clearCountdown();
     try{
       const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(player=>{scores[player.id]=0;names[player.id]=player.name;});
-      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
+      if(result.committed&&data.secureAssignments){await db.ref('privateAssignments/'+state.roomCode).remove().catch(()=>{});await db.ref('publicAssignments/'+state.roomCode).remove().catch(()=>{});state.privateAssignment=null;state.publicAssignments={};}
     }catch(error){console.error('new game',error);notice('No se pudo preparar la nueva partida.','error','lobbyNotice');}
     finally{setBusy('restart',false);setButtonBusy('restartBtn','restart',false);}
   }
   async function leaveRoom(){
-    cancelReconnect();clearCountdown();const ref=state.roomRef,mode=state.mode;try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host')await ref.remove();}catch(error){console.warn(error);}
-    stopRoomListener();state.roomRef=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show('home');
+    cancelReconnect();clearCountdown();const ref=state.roomRef,mode=state.mode,roomId=state.roomCode,secure=Boolean(state.lastRoomData?.secureAssignments),authRoomUid=backendUid();try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host'){await ref.remove();if(secure){await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});}}if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});}catch(error){console.warn(error);}
+    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show('home');
   }
   async function copyRoom(){
     const button=$('copyRoomBtn'),original=button?.textContent||'COPIAR';
@@ -2763,9 +3099,12 @@ const personajes = [
     try{
       const snapshot=await state.roomRef.once('value');
       if(!snapshot.exists()){
-        clearSession();state.roomRef=null;state.roomCode='';show('home');return false;
+        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';stopAssignmentListeners();show('home');return false;
       }
-      const data=snapshot.val(),me=data.players?.[state.playerId];
+      const data=snapshot.val();state.lastRoomData=data;
+      const matched=findAccountRoomPlayer(normalizeRoomPlayers(data));
+      if(matched)state.playerId=matched.id;
+      let me=matched||data.players?.[state.playerId];
       if(!me){
         // Recuperación compatible con la V7: versiones anteriores podían eliminar
         // al jugador mediante onDisconnect(). Si todavía tenemos la sesión local,
@@ -2773,28 +3112,29 @@ const personajes = [
         const wasHost=data.hostId===state.playerId;
         await state.roomRef.child('players/'+state.playerId).set({
           name:playerName,
+          accountUid:accountUid()||null,
           host:wasHost,
           joinedAt:firebase.database.ServerValue.TIMESTAMP,
           reconnectedAt:firebase.database.ServerValue.TIMESTAMP,
           status:'online',
           connected:true
         });
-      }
+      }else if(accountUid()&&me.accountUid!==accountUid()||backendUid()&&me.authUid!==backendUid())await state.roomRef.child('players/'+state.playerId).update({accountUid:accountUid()||null,authUid:backendUid()||null});
       const freshSnapshot=me?snapshot:await state.roomRef.once('value');
-      const freshData=freshSnapshot.val(),freshMe=freshData.players?.[state.playerId];
+      const freshData=freshSnapshot.val();state.lastRoomData=freshData;const freshMe=freshData.players?.[state.playerId];
       if(!freshMe){
-        clearSession();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show('home');return false;
+        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;state.playerName='';stopAssignmentListeners();show('home');return false;
       }
       state.mode=freshData.hostId===state.playerId?'host':'player';
       state.playerName=freshMe.name||playerName;
       state.hostName=freshData.hostName||state.hostName;
-      await installDisconnect();
+      await markRoomMembership();await installDisconnect();
       saveSessionInfo(roomId,state.playerName,playerId);
       listenToRoom();
       return true;
     }catch(error){
       console.warn('reconnect player',error);
-      clearSession();state.roomRef=null;state.roomCode='';state.mode=null;show('home');
+      clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;stopAssignmentListeners();show('home');
       return false;
     }finally{
       state.restoring=false;
@@ -2810,7 +3150,7 @@ const personajes = [
     return reconnectPlayer(roomId,playerName,playerId);
   }
   function showSavedSessionBanner(){
-    const session=readSession(),hasSession=Boolean(session&&(session.roomId||session.roomCode)&& (session.playerName||session.name)&&session.playerId);
+    const session=readSession(),sameAccount=!accountUid()||!session?.accountUid||session.accountUid===accountUid(),hasSession=Boolean(session&&(session.roomId||session.roomCode)&& (session.playerName||session.name)&&session.playerId&&sameAccount);
     $('sessionRecoveryBanner')?.classList.toggle('hidden',!hasSession);
   }
   async function resumeSavedSession(){
@@ -2820,8 +3160,15 @@ const personajes = [
     if(restored){$('sessionRecoveryBanner')?.classList.add('hidden');return;}
     button.disabled=false;button.removeAttribute('aria-busy');button.textContent='REANUDAR PARTIDA';showSavedSessionBanner();
   }
-  $('newGameBtn').onclick=()=>{state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';setTotalRounds(3);$('hostNameInput').value='';setCategorySelection([]);openSettings(false);};
-  $('goJoinBtn').onclick=()=>show('join');$('goCreateBtn').onclick=()=>{state.configEditing=false;openSettings(false);};$('backHomeBtn').onclick=()=>state.configEditing?show('lobby'):leaveRoom();
+  $('newGameBtn').onclick=()=>{state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';roomIdentity();setTotalRounds(3);$('hostNameInput').value=accountUid()?accountUsername():'';setCategorySelection([]);openSettings(false);};
+  $('goJoinBtn').onclick=()=>{if(accountUid()&&!$('joinName').value)$('joinName').value=state.profile?.username||accountUsername();show('join');};
+  $('goCreateBtn').onclick=()=>{state.configEditing=false;$('hostNameInput').value=accountUid()?accountUsername():'';openSettings(false);};$('backHomeBtn').onclick=()=>state.configEditing?show('lobby'):leaveRoom();
+  $('loginBtn').onclick=()=>show('authLogin');$('registerBtn').onclick=()=>show('authRegister');$('profileBtn').onclick=()=>{if(accountUid()){renderAccountUI();show('profile');}else show('authLogin');};
+  $('createAccountBtn').onclick=registerAccount;$('signInBtn').onclick=loginAccount;$('toLoginBtn').onclick=()=>show('authLogin');$('toRegisterBtn').onclick=()=>show('authRegister');$('registerBackBtn').onclick=()=>show('home');$('loginBackBtn').onclick=()=>show('home');
+  $('profileFriendsBtn').onclick=()=>{renderFriendsList();show('friends');};$('profileRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('signOutBtn').onclick=logoutAccount;$('profileBackBtn').onclick=()=>show('home');
+  $('friendsRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('requestsFriendsBtn').onclick=()=>{renderFriendsList();show('friends');};$('friendsBackBtn').onclick=()=>show('profile');$('requestsBackBtn').onclick=()=>show('profile');
+  $('searchFriendBtn').onclick=searchFriend;$('friendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void searchFriend();}});
+  $('inviteFriendsBtn').onclick=()=>{$('lobbyInvitePanel').classList.toggle('hidden');renderLobbyFriends();};$('closeInvitePanelBtn').onclick=()=>$('lobbyInvitePanel').classList.add('hidden');
   $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=leaveRoom;
   $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=leaveRoom;
   $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>{chip.classList.toggle('selected',selectAll);chip.setAttribute('aria-pressed',String(selectAll));});updateSelectedCategories();};
@@ -2871,6 +3218,32 @@ const personajes = [
   $('hostNameInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void createRoom();}});
   $('joinName').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void joinRoom();}});
   $('joinRoomCode').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$('joinName').focus();}});
+  ['registerUsername','registerEmail','registerPassword','registerPasswordConfirm'].forEach(id=>$(id).addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void registerAccount();}}));
+  ['loginEmail','loginPassword'].forEach(id=>$(id).addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void loginAccount();}}));
+  auth.onAuthStateChanged(async user=>{
+    state.authReady=true;state.authUser=user;
+    if(user&&!user.isAnonymous){
+      try{state.profile=await ensureUserProfile(user);await startAccountListeners(user);}catch(error){console.error('account bootstrap',error);accountNotice('loginNotice','La cuenta está conectada, pero no se pudo cargar el perfil.','error');}
+    }else{
+      stopAccountListeners();
+      if(!state.roomRef)state.playerId=state.legacyPlayerId;
+      if(!user&&!state.anonymousSignInStarted){
+        state.anonymousSignInStarted=true;
+        try{await authPersistenceReady;await auth.signInAnonymously();}catch(error){console.warn('No se pudo activar el acceso de invitado',error);}finally{state.anonymousSignInStarted=false;}
+      }
+    }
+    renderAccountUI();
+    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){
+      const session=readSession();
+      if(session&&(session.accountUid===undefined||!session.accountUid||session.accountUid===user.uid)){
+        state.autoRestoring=true;
+        const restored=await restoreSession();
+        state.autoRestoring=false;
+        if(restored)$('sessionRecoveryBanner')?.classList.add('hidden');
+      }
+    }
+    showSavedSessionBanner();
+  });
   renderCategories();setTotalRounds(3);show('home');showSavedSessionBanner();
 })();
 </script>
