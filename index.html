@@ -70,23 +70,35 @@ button,input{font:inherit}button{cursor:pointer;border:0}.app{width:min(100%,680
 .connection-dot{width:7px;height:7px;border-radius:50%;background:#aab0b8;flex:none}
 .connection-pill.online{color:#b8e5cc}.connection-pill.online .connection-dot{background:#45b97c;box-shadow:0 0 0 3px rgba(69,185,124,.12)}
 .connection-pill.offline{color:#f2bdc4}.connection-pill.offline .connection-dot{background:#d96a78;box-shadow:0 0 0 3px rgba(217,106,120,.12)}
+.connection-pill.reconnecting{color:#f7d36a}.connection-pill.reconnecting .connection-dot{background:#eab308;box-shadow:0 0 0 3px rgba(234,179,8,.14);animation:pulse-dot 1s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.25);opacity:1}}
 .step:empty{display:none}
 .recovery-banner{display:grid;gap:5px;margin:0 auto 16px;padding:12px;border:1px solid rgba(234,179,8,.38);border-radius:12px;background:var(--accent-soft);color:#ded7bd;font-size:12px;line-height:1.35;text-align:left}
 .recovery-banner strong{color:#fff}.recovery-banner .text-action{margin-top:3px;color:#f7d36a;text-align:left}
 .noscript-warning{max-width:760px;margin:20px auto;padding:16px;border:1px solid #d96a78;border-radius:12px;background:#29171b;color:#f5c9ce;text-align:center;font-size:14px}
 .screen .card{max-width:760px;margin-inline:auto}
-.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:180px;height:180px;margin-bottom:18px;border-radius:18px}
-.friend-row{grid-template-columns:100px minmax(0,1fr);align-items:center}
-.friend-character-media{width:90px;height:90px;display:grid;place-items:center}
-.friend-character-media .character-image,.friend-character-media .image-placeholder{width:90px;height:90px;margin:0;border-radius:14px}
+.friend-row{grid-template-columns:76px minmax(0,1fr);align-items:center}
+.friend-character-media{width:68px;height:68px;display:grid;place-items:center}
+.friend-character-media .character-image,.friend-character-media .image-placeholder{width:68px;height:68px;margin:0;border-radius:12px}
 .friend-character-media .image-placeholder{font-size:8px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 button[aria-busy="true"]{cursor:wait;opacity:.72}
 .input,.select{min-height:50px}
 .character-image{object-fit:cover;aspect-ratio:1}
-@media (max-width:600px){.connection-pill{max-width:112px}.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:160px;height:160px}.friend-row{grid-template-columns:94px minmax(0,1fr)}.friend-character-media,.friend-character-media .character-image,.friend-character-media .image-placeholder{width:84px;height:84px}}
-@media (max-width:380px){.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:140px;height:140px}.friend-row{grid-template-columns:84px minmax(0,1fr)}.friend-character-media,.friend-character-media .character-image,.friend-character-media .image-placeholder{width:76px;height:76px}}
+@media (max-width:600px){.connection-pill{max-width:112px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* Ajuste visual de cartas y transición entre revelar y jugar */
+.reveal-character-media{}
+.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:148px;height:148px;border-radius:16px;margin:2px auto 14px}
+.starting-card{padding:38px 20px 34px}
+.starting-kicker{font-size:11px;color:#7f8690;font-weight:850;letter-spacing:.16em}
+.starting-title{font-size:clamp(36px,10vw,64px);line-height:.95;font-weight:950;letter-spacing:-.05em;margin:12px 0 8px}
+.starting-sub{margin:0;color:#b7bdc6;font-size:16px}
+.starting-countdown{font-size:54px;font-weight:950;line-height:1;margin-top:16px;color:#eab308;animation:pulse .95s ease infinite}
+.friend-character-media{width:88px;height:88px}
+.friend-character-media .character-image,.friend-character-media .image-placeholder{width:88px;height:88px;border-radius:14px}
+@media (max-width:600px){.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:138px;height:138px}.friend-character-media{width:82px;height:82px}.friend-character-media .character-image,.friend-character-media .image-placeholder{width:82px;height:82px}}
   </style>
 </head>
 <body>
@@ -120,6 +132,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
     <div class="card">
       <div class="tag">ANFITRIÓN</div>
       <h1 class="title" style="margin-top:16px">Crea tu sala</h1>
+      <p class="muted">Elige tu nombre y las temáticas para preparar la partida.</p>
       <div class="section">
         <label class="label" for="hostNameInput">Tu nombre</label>
         <input class="input" id="hostNameInput" maxlength="30" placeholder="Ej. Luis" autocomplete="name">
@@ -184,6 +197,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       </div>
       <div class="lobby-list" id="lobbyList" role="list" aria-live="polite"></div>
       <div class="lobby-count" id="lobbyCount">0 jugadores</div>
+      <div class="info">Todos deben tener su propio celular. El anfitrión configura las temáticas y las rondas antes de iniciar.</div>
       <div class="settings-summary" id="settingsSummary"></div>
       <div class="actions">
         <button class="btn secondary" id="editSettingsBtn">CONFIGURAR SALA</button>
@@ -200,7 +214,9 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="small" id="prepRoundLabel">RONDA</div>
       <div class="prep-small">PREPARACIÓN</div>
       <h1 class="prep-title">PREPÁRATE</h1>
+      <p class="prep-message">Da vuelta el teléfono y entrégaselo a otra persona.</p>
       <div class="prep-countdown" id="prepCountdown">10</div>
+      <p class="prep-sub">No se mostrará ningún personaje hasta llegar a 0.</p>
     </div>
   </section>
 
@@ -211,6 +227,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
         <div class="tag" id="revealAudience">PARA TODOS</div>
       </div>
       <h1 class="title" style="margin-top:22px">PREPÁRENSE</h1>
+      <p class="muted">Otra persona debe mirar esta pantalla y colocar la carta. No mires.</p>
       <div class="reveal-box reveal-box-main">
         <div class="small reveal-kicker">COLOCA ESTA CARTA</div>
         <div id="revealCharacterImageBox"></div>
@@ -220,7 +237,17 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="countdown-wrap active">
         <div class="countdown-message">Cambio de pantalla en…</div>
         <div class="countdown" id="revealCountdown">15</div>
+        <p class="prep-sub">Cuenta regresiva sincronizada para toda la sala.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="screen" id="starting">
+    <div class="card center starting-card">
+      <div class="starting-kicker">RONDA</div>
+      <h1 class="starting-title" id="startingTitle">¡COMIENZA LA PARTIDA!</h1>
+      <p class="starting-sub">Prepárense…</p>
+      <div class="starting-countdown" id="startingCountdown">2</div>
     </div>
   </section>
 
@@ -228,11 +255,13 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
     <div class="card center">
       <div class="tag" id="playingRoundTag">RONDA LISTA</div>
       <h1 class="title" style="margin-top:18px">JUEGUEN PRESENCIALMENTE</h1>
+      
       <div class="friend-list" id="playingCharacterList" role="list" aria-live="polite"></div>
+      
       <div class="actions">
-        <button class="btn" id="scoreRoundBtn">REGISTRAR RESULTADO</button>
+        <button class="btn" id="scoreRoundBtn">TERMINAR RONDA</button>
       </div>
-      <div class="waiting-host" id="playingWaiting">Esperando al anfitrión…</div>
+      <div class="waiting-host" id="playingWaiting"></div>
     </div>
   </section>
 
@@ -240,7 +269,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
     <div class="card">
       <div class="small" id="scoringRoundLabel">RONDA</div>
       <h1 class="title" style="margin-top:10px">RESULTADO DE LA RONDA</h1>
-      <p class="muted">Selecciona el orden de llegada.</p>
+      <p class="muted">Selecciona el orden de llegada para sumar los puntos.</p>
       <div id="scoringHostView">
         <div class="section"><label class="label" for="firstPlaceSelect">1° lugar · +3</label><select class="select" id="firstPlaceSelect"></select></div>
         <div class="section"><label class="label" for="secondPlaceSelect">2° lugar · +2</label><select class="select" id="secondPlaceSelect"></select></div>
@@ -1944,11 +1973,12 @@ const personajes = [
   const firebaseApp = firebase.initializeApp(firebaseConfig, 'adivina-quien-final');
   const db = firebase.database(firebaseApp);
   const baseDeDatos = window.baseDeDatos || [];
-  const screens = ['home','setup','join','lobby','prep','reveal','playing','scoring','results','finish'];
+  const screens = ['home','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
   const SESSION_KEY = 'adivina_quien_session';
   const PLAYER_KEY = 'adivina_quien_player_id';
   const PREPARATION_DURATION_MS = 10000;
   const CHARACTER_DISPLAY_DURATION_MS = 15000;
+  const STARTING_TRANSITION_DURATION_MS = 1800;
   const SESSION_BACKUP_KEY = 'adivina_quien_session_backup';
   const state = {
     mode:null, roomCode:'', playerId:getOrCreatePlayerId(), playerName:'', hostName:'',
@@ -2040,7 +2070,7 @@ const personajes = [
   }
 
   function hasActiveCountdown(){
-    const active=['prep','reveal'];
+    const active=['prep','reveal','starting'];
     return active.some(id=>$(id)?.classList.contains('active'));
   }
   async function requestScreenWakeLock(){
@@ -2112,9 +2142,9 @@ const personajes = [
   function show(id){
     clearNotice();
     screens.forEach(screen=>{const el=$(screen);if(el)el.classList.toggle('active',screen===id);});
-    const labels={home:'',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
+    const labels={home:'',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',starting:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
     setText('stepBadge',labels[id]||'');
-    const pageTitles={home:'¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
+    const pageTitles={home:'¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',starting:'Comienza la partida · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
     document.title=pageTitles[id]||'¿Quién soy?';
     const active=$(id);
     if(active){
@@ -2145,9 +2175,10 @@ const personajes = [
   }
   function setConnectionStatus(status,text){
     const pill=$('connectionStatus'),label=$('connectionText');if(!pill||!label)return;
-    pill.classList.remove('online','offline');
+    pill.classList.remove('online','offline','reconnecting');
     if(status==='online')pill.classList.add('online');
     if(status==='offline')pill.classList.add('offline');
+    if(status==='reconnecting')pill.classList.add('reconnecting');
     label.textContent=text;
   }
   function setTotalRounds(value){
@@ -2300,14 +2331,60 @@ const personajes = [
   }
   function attachRoom(code){state.roomCode=code;state.roomRef=db.ref('rooms/'+code);}
   async function installDisconnect(){
-    if(!state.roomRef)return null;
+    if(!state.roomRef || !state.playerId)return null;
     const playerRef=state.roomRef.child('players/'+state.playerId);
     try{
-      await playerRef.onDisconnect().update({status:'offline',connected:false});
-      await playerRef.update({status:'online',connected:true});
-    }catch(error){console.warn('No se pudo configurar la reconexión del jugador',error);}
+      // Registrar onDisconnect antes de marcar al jugador como online evita estados fantasma.
+      await playerRef.onDisconnect().update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+      await playerRef.update({status:'online',connected:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+    }catch(error){console.warn('No se pudo configurar la presencia del jugador',error);}
     return playerRef;
   }
+
+  function cancelReconnect(){
+    if(state.reconnectTimer){clearTimeout(state.reconnectTimer);state.reconnectTimer=null;}
+    state.reconnecting=false;state.reconnectAttempt=0;
+  }
+
+  async function recoverRoomConnection(reason='resume'){
+    if(state.busy.reconnect || state.restoring || !state.roomRef || !state.roomCode || !state.playerId || !state.playerName)return false;
+    state.busy.reconnect=true;state.reconnecting=true;
+    const maxAttempts=5;
+    try{
+      for(let attempt=1;attempt<=maxAttempts;attempt++){
+        state.reconnectAttempt=attempt;
+        try{db.goOnline();}catch(error){}
+        try{
+          const snapshot=await state.roomRef.once('value');
+          if(snapshot.exists()){
+            const data=snapshot.val();
+            const me=data.players?.[state.playerId];
+            if(!me){
+              const wasHost=data.hostId===state.playerId;
+              await state.roomRef.child('players/'+state.playerId).set({
+                name:state.playerName,host:wasHost,joinedAt:firebase.database.ServerValue.TIMESTAMP,
+                reconnectedAt:firebase.database.ServerValue.TIMESTAMP,status:'online',connected:true
+              });
+            }
+            await installDisconnect();
+            saveSessionInfo(state.roomCode,state.playerName,state.playerId);
+            listenToRoom();
+            setConnectionStatus('online','Conectado');
+            cancelReconnect();
+            return true;
+          }
+          console.warn('Sala no encontrada durante reconexión:',reason);
+          break;
+        }catch(error){console.warn(`Reintento de reconexión ${attempt}/${maxAttempts}`,error);}
+        await new Promise(resolve=>setTimeout(resolve,Math.min(9000,700*Math.pow(2,attempt-1))));
+      }
+    }finally{
+      state.busy.reconnect=false;
+      state.reconnecting=false;
+    }
+    return false;
+  }
+
   function handleRoomSnapshot(data){
     if(!data){
       const oldRef=state.roomRef;stopRoomListener();state.roomRef=null;clearSession();
@@ -2325,6 +2402,7 @@ const personajes = [
     if(game.phase==='lobby'){clearCountdown();renderLobby(data);show('lobby');return;}
     if(game.phase==='preparing'){renderPreparation(game);show('prep');schedulePreparation(game);return;}
     if(game.phase==='reveal'){renderReveal(game,data);show('reveal');scheduleReveal(game);return;}
+    if(game.phase==='starting'){renderStarting(game);show('starting');scheduleStarting(game);return;}
     if(game.phase==='friends'){clearCountdown();renderPlaying(game,data);show('playing');migrateLegacyFriendsPhase(game);return;}
     if(game.phase==='playing'){clearCountdown();renderPlaying(game,data);show('playing');return;}
     if(game.phase==='scoring'){clearCountdown();renderScoring(game,data);show('scoring');return;}
@@ -2354,7 +2432,7 @@ const personajes = [
       state.roomCode=code;state.roomRef=ref;
       const timestamp=firebase.database.ServerValue.TIMESTAMP;
       const scores={[state.playerId]:0};const playerNames={[state.playerId]:hostName};
-      const initial={hostId:state.playerId,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
+      const initial={hostId:state.playerId,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
       await state.roomRef.set(initial);await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();renderLobby(initial);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
     }catch(error){console.error('Firebase create room',error);state.roomRef=null;notice('No se pudo crear la sala. Comprueba Realtime Database y sus reglas.','error');}
     finally{setBusy('create',false);setButtonBusy('createRoomBtn','create',false);}
@@ -2439,7 +2517,7 @@ const personajes = [
       const currentRound=(Number(data.game?.currentRound||data.game?.round)||0)+1,totalRounds=config.totalRounds;
       const scores={...(data.game?.scores||{})};const names={};players.forEach(player=>{if(scores[player.id]===undefined)scores[player.id]=0;names[player.id]=player.name;});
       const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
       const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='lobby')return;return nextGame;});
       if(!result.committed)notice('La partida ya estaba iniciándose.','error','lobbyNotice');
     }catch(error){console.error('Firebase start game',error);notice('No se pudo iniciar la partida.','error','lobbyNotice');}
@@ -2512,7 +2590,7 @@ const personajes = [
         clearCountdown();
         void (async()=>{
           try{
-            await transitionRevealToPlaying(game,key);
+            await transitionRevealToStarting(game,key);
           }finally{
             await releaseScreenWakeLock();
           }
@@ -2521,15 +2599,44 @@ const personajes = [
     };
     tick();state.countdownTimer=setInterval(tick,250);
   }
-  async function transitionRevealToPlaying(game,key){
+  async function transitionRevealToStarting(game,key){
     if(state.transitionKey===key||!state.roomRef)return;state.transitionKey=key;
     try{
       await state.roomRef.child('game').transaction(current=>{
         const revealEndsAt=Number(current?.revealEndsAt??current?.revealAt);
         if(!current||current.phase!=='reveal'||current.currentRound!==game.currentRound||revealEndsAt!==Number(game.revealEndsAt??game.revealAt)||serverNow()<revealEndsAt)return;
-        return {...current,phase:'playing',revealedAt:serverNow(),currentTurn:'',turnIndex:-1,turnOrder:[],revealEndsAt:null,friendsStartedAt:null};
+        const startingEndsAt=serverNow()+STARTING_TRANSITION_DURATION_MS;
+        return {...current,phase:'starting',revealedAt:serverNow(),startingEndsAt,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null};
       });
     }catch(error){console.warn('reveal transition',error);state.transitionKey='';}
+  }
+  function renderStarting(game){
+    setText('startingCountdown',Math.max(1,Math.ceil((Number(game.startingEndsAt||serverNow())-serverNow())/1000)));
+  }
+  function scheduleStarting(game){
+    clearCountdown();
+    const startingEndsAt=Number(game.startingEndsAt),key=`starting:${game.currentRound}:${startingEndsAt}`;
+    if(!Number.isFinite(startingEndsAt))return;
+    state.transitionKey='';
+    const tick=()=>{
+      const seconds=Math.max(0,Math.ceil((startingEndsAt-serverNow())/1000));
+      setText('startingCountdown',seconds);
+      if(serverNow()>=startingEndsAt){
+        clearCountdown();
+        void transitionStartingToPlaying(game,key);
+      }
+    };
+    tick();state.countdownTimer=setInterval(tick,250);
+  }
+  async function transitionStartingToPlaying(game,key){
+    if(state.transitionKey===key||!state.roomRef)return;state.transitionKey=key;
+    try{
+      await state.roomRef.child('game').transaction(current=>{
+        const startingEndsAt=Number(current?.startingEndsAt);
+        if(!current||current.phase!=='starting'||current.currentRound!==game.currentRound||startingEndsAt!==Number(game.startingEndsAt)||serverNow()<startingEndsAt)return;
+        return {...current,phase:'playing',startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null};
+      });
+    }catch(error){console.warn('starting transition',error);state.transitionKey='';}
   }
   async function migrateLegacyFriendsPhase(game){
     if(!state.roomRef)return;
@@ -2603,7 +2710,7 @@ const personajes = [
     const result=game.roundResults||{},places=[result.places?.first,result.places?.second,result.places?.third].filter(Boolean);setText('resultsRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
     $('roundResultList').innerHTML=places.map((place,index)=>`<div class="score-row"><div class="score-main"><div class="score-name">${index+1}° ${escapeHtml(place.name)}</div></div><div class="score-points">+${place.points}</div></div>`).join('');
     $('roundScoreList').innerHTML=sortedScoreRows(game,data).map(row=>`<div class="score-row"><div class="score-name">${escapeHtml(row.name)}</div><div class="score-points">${row.score}</div></div>`).join('');
-    const host=isHost(data),last=Number(game.currentRound)>=Number(game.totalRounds);$('nextRoundBtn').classList.toggle('hidden',!host);$('nextRoundBtn').disabled=false;setText('nextRoundBtn',last?'VER RESULTADOS FINALES':'SIGUIENTE RONDA');setText('resultsWaiting',host?'':'Esperando al anfitrión…');
+    const host=isHost(data),last=Number(game.currentRound)>=Number(game.totalRounds);$('nextRoundBtn').classList.toggle('hidden',!host);$('nextRoundBtn').disabled=false;setText('nextRoundBtn',last?'VER RESULTADOS FINALES':'SIGUIENTE RONDA');setText('resultsWaiting',host?'Continúa cuando todos hayan visto el resultado.':'Esperando al anfitrión…');
   }
   async function nextRound(){
     if(state.busy.next||!state.roomRef||state.mode!=='host')return;setBusy('next',true);setButtonBusy('nextRoundBtn','next',true,'CARGANDO…');
@@ -2616,7 +2723,7 @@ const personajes = [
       const selection=createAssignments(players,config.categories,data.game.recentCharacterIds||[]);if(!selection){notice('No hay suficientes personajes para comenzar la siguiente ronda.','error','lobbyNotice');return;}
       const currentRound=Number(data.game.currentRound)+1,names={...(data.game.playerNames||{})};players.forEach(player=>{names[player.id]=player.name;});
       const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
+      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
       await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results'||game.currentRound!==data.game.currentRound)return;return nextGame;});
     }catch(error){console.error('next round',error);notice('No se pudo comenzar la siguiente ronda.','error','lobbyNotice');}
     finally{setBusy('next',false);setButtonBusy('nextRoundBtn','next',false);}
@@ -2631,12 +2738,12 @@ const personajes = [
     if(state.busy.restart||!state.roomRef||state.mode!=='host')return;setBusy('restart',true);setButtonBusy('restartBtn','restart',true,'PREPARANDO…');clearCountdown();
     try{
       const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(player=>{scores[player.id]=0;names[player.id]=player.name;});
-      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
+      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
     }catch(error){console.error('new game',error);notice('No se pudo preparar la nueva partida.','error','lobbyNotice');}
     finally{setBusy('restart',false);setButtonBusy('restartBtn','restart',false);}
   }
   async function leaveRoom(){
-    clearCountdown();const ref=state.roomRef,mode=state.mode;try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host')await ref.remove();}catch(error){console.warn(error);}
+    cancelReconnect();clearCountdown();const ref=state.roomRef,mode=state.mode;try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host')await ref.remove();}catch(error){console.warn(error);}
     stopRoomListener();state.roomRef=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show('home');
   }
   async function copyRoom(){
@@ -2720,16 +2827,44 @@ const personajes = [
   $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>{chip.classList.toggle('selected',selectAll);chip.setAttribute('aria-pressed',String(selectAll));});updateSelectedCategories();};
   $('roundsMinusBtn').onclick=()=>setTotalRounds(state.totalRounds-1);$('roundsPlusBtn').onclick=()=>setTotalRounds(state.totalRounds+1);
   db.ref('.info/serverTimeOffset').on('value',snapshot=>{state.serverTimeOffset=Number(snapshot.val())||0;});
-  db.ref('.info/connected').on('value',snapshot=>{setConnectionStatus(snapshot.val()===true?'online':'offline',snapshot.val()===true?'Conectado':'Sin conexión');});
+  db.ref('.info/connected').on('value',async snapshot=>{
+    const connected=snapshot.val()===true;
+    state.lastConnected=connected;
+    setConnectionStatus(connected?'online':'offline',connected?'Conectado':'Sin conexión');
+    if(connected && state.roomRef && state.playerId && state.playerName){
+      await recoverRoomConnection('firebase-online');
+    }else if(!connected && state.roomRef){
+      state.reconnecting=true;
+    }
+  });
+
+  let resumeTimer=null;
+  const scheduleResume=reason=>{
+    if(resumeTimer)clearTimeout(resumeTimer);
+    resumeTimer=setTimeout(async()=>{
+      resumeTimer=null;
+      if(!state.roomRef || !state.playerId || !state.playerName)return;
+      try{db.goOnline();}catch(error){}
+      setConnectionStatus('reconnecting','Reconectando…');
+      const ok=await recoverRoomConnection(reason);
+      if(!ok && state.roomRef)setConnectionStatus('offline','Sin conexión');
+    },350);
+  };
+
   document.addEventListener('visibilitychange',async()=>{
     if(document.visibilityState==='hidden'){
       await releaseScreenWakeLock();
       return;
     }
-    if(document.visibilityState==='visible'&&hasActiveCountdown()){
-      await requestScreenWakeLock();
+    if(document.visibilityState==='visible'){
+      if(hasActiveCountdown())await requestScreenWakeLock();
+      scheduleResume('visibilitychange');
     }
   });
+  window.addEventListener('pageshow',()=>scheduleResume('pageshow'));
+  window.addEventListener('focus',()=>scheduleResume('focus'));
+  window.addEventListener('online',()=>scheduleResume('browser-online'));
+  window.addEventListener('offline',()=>{if(state.roomRef)setConnectionStatus('offline','Sin conexión');});
   $('resumeSessionBtn').onclick=resumeSavedSession;
   $('dismissSessionBtn').onclick=()=>{clearSession();showSavedSessionBanner();};
   $('joinRoomCode').addEventListener('input',event=>{event.target.value=event.target.value.toUpperCase().replace(new RegExp('[^'+ROOM_CODE_CHARS+']','g'),'').slice(0,5);});
