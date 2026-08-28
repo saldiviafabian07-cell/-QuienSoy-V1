@@ -71,20 +71,19 @@ button,input{font:inherit}button{cursor:pointer;border:0}.app{width:min(100%,680
 .connection-pill.online{color:#b8e5cc}.connection-pill.online .connection-dot{background:#45b97c;box-shadow:0 0 0 3px rgba(69,185,124,.12)}
 .connection-pill.offline{color:#f2bdc4}.connection-pill.offline .connection-dot{background:#d96a78;box-shadow:0 0 0 3px rgba(217,106,120,.12)}
 .step:empty{display:none}
-.how-it-works{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 auto 20px;max-width:510px}
-.how-step{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 6px;border:1px solid var(--border);border-radius:12px;background:#1b1e23;color:#d7dbe1;text-align:left}
-.how-number{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#17191d;font-size:11px;font-weight:900;flex:none}
-.how-step strong,.how-step small{display:block}.how-step strong{font-size:11px}.how-step small{margin-top:2px;color:#8e949d;font-size:10px}
 .recovery-banner{display:grid;gap:5px;margin:0 auto 16px;padding:12px;border:1px solid rgba(234,179,8,.38);border-radius:12px;background:var(--accent-soft);color:#ded7bd;font-size:12px;line-height:1.35;text-align:left}
 .recovery-banner strong{color:#fff}.recovery-banner .text-action{margin-top:3px;color:#f7d36a;text-align:left}
 .noscript-warning{max-width:760px;margin:20px auto;padding:16px;border:1px solid #d96a78;border-radius:12px;background:#29171b;color:#f5c9ce;text-align:center;font-size:14px}
 .screen .card{max-width:760px;margin-inline:auto}
+.friend-row{grid-template-columns:76px minmax(0,1fr);align-items:center}
+.friend-character-media{width:68px;height:68px;display:grid;place-items:center}
+.friend-character-media .character-image,.friend-character-media .image-placeholder{width:68px;height:68px;margin:0;border-radius:12px}
+.friend-character-media .image-placeholder{font-size:8px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 button[aria-busy="true"]{cursor:wait;opacity:.72}
 .input,.select{min-height:50px}
 .character-image{object-fit:cover;aspect-ratio:1}
-@media (max-width:600px){.connection-pill{max-width:112px}.how-step{padding-inline:3px}.how-step strong{font-size:10px}.how-step small{font-size:9px}}
-@media (max-width:380px){.how-it-works{gap:5px}.how-step{gap:4px}.how-number{width:20px;height:20px}}
+@media (max-width:600px){.connection-pill{max-width:112px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
   </style>
 </head>
@@ -102,12 +101,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   <section class="screen active" id="home">
     <div class="card hero">
       <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
-      <p class="subtitle">Crea una sala, comparte el código y juega con cada celular mirando hacia el grupo.</p>
-      <div class="how-it-works" aria-label="Cómo jugar">
-        <div class="how-step"><span class="how-number">1</span><span><strong>Crea</strong><small>una sala</small></span></div>
-        <div class="how-step"><span class="how-number">2</span><span><strong>Comparte</strong><small>el código</small></span></div>
-        <div class="how-step"><span class="how-number">3</span><span><strong>Jueguen</strong><small>en grupo</small></span></div>
-      </div>
       <div class="recovery-banner hidden" id="sessionRecoveryBanner" role="region" aria-labelledby="sessionRecoveryTitle">
         <strong id="sessionRecoveryTitle">Hay una partida guardada</strong>
         <span>Si quieres volver a ella, hazlo manualmente.</span>
@@ -118,7 +111,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
         <button class="btn" id="newGameBtn" type="button">CREAR SALA</button>
         <button class="btn secondary" id="goJoinBtn" type="button">UNIRME A UNA SALA</button>
       </div>
-      <div class="footer">Una sala · Varios celulares · Personajes sincronizados</div>
     </div>
   </section>
 
@@ -2558,10 +2550,22 @@ const personajes = [
     // Regla principal: el jugador actual nunca aparece en esta lista, por lo que su propio personaje queda oculto.
     const names=playerNames(data,game),companions=normalizeRoomPlayers(data).filter(player=>player.id!==state.playerId);
     setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);
-    $('playingCharacterList').innerHTML=companions.map(player=>{
+    const list=$('playingCharacterList');list.replaceChildren();
+    companions.forEach(player=>{
       const character=game.assignments?.[player.id]?.character;
-      return `<div class="friend-row" role="listitem"><div class="friend-main"><div class="friend-name">${escapeHtml(cleanUiText(names[player.id]||player.name))}</div><div class="friend-character">${escapeHtml(cleanUiText(character?.nombre||'Sin personaje'))}</div><div class="friend-category">${escapeHtml(cleanUiText(character?.categoria||''))}</div></div></div>`;
-    }).join('');
+      const row=document.createElement('div');row.className='friend-row';row.setAttribute('role','listitem');
+      const media=document.createElement('div');media.className='friend-character-media';
+      const source=imageSource(character);
+      if(source){
+        const image=document.createElement('img');image.className='character-image';image.alt=`Imagen del personaje ${cleanUiText(character?.nombre||'')}`;image.loading='lazy';image.decoding='async';image.referrerPolicy='no-referrer';image.src=source;
+        image.onerror=()=>{media.innerHTML=placeholder();};media.appendChild(image);
+      }else media.innerHTML=placeholder();
+      const main=document.createElement('div');main.className='friend-main';
+      const name=document.createElement('div');name.className='friend-name';name.textContent=cleanUiText(names[player.id]||player.name);
+      const characterName=document.createElement('div');characterName.className='friend-character';characterName.textContent=cleanUiText(character?.nombre||'Sin personaje');
+      const category=document.createElement('div');category.className='friend-category';category.textContent=cleanUiText(character?.categoria||'');
+      main.append(name,characterName,category);row.append(media,main);list.appendChild(row);
+    });
     const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'Registra el resultado cuando terminen de jugar.':'Esperando al anfitrión…');
   }
   async function openScoring(){
@@ -2739,38 +2743,6 @@ const personajes = [
   $('joinName').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void joinRoom();}});
   $('joinRoomCode').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$('joinName').focus();}});
   renderCategories();setTotalRounds(3);show('home');showSavedSessionBanner();
-})();
-</script>
-</body>
-</html>
-
-
-  async function restoreSession(){
-    const session=readSession();
-    const roomId=session?.roomId||session?.roomCode;
-    const playerName=session?.playerName||session?.name;
-    const playerId=session?.playerId;
-    if(!roomId||!playerName||!playerId)return;
-    await reconnectPlayer(roomId,playerName,playerId);
-  }
-  $('newGameBtn').onclick=()=>{state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';setTotalRounds(3);$('hostNameInput').value='';setCategorySelection([]);openSettings(false);};
-  $('goJoinBtn').onclick=()=>show('join');$('goCreateBtn').onclick=()=>{state.configEditing=false;openSettings(false);};$('backHomeBtn').onclick=()=>state.configEditing?show('lobby'):leaveRoom();
-  $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=leaveRoom;
-  $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=leaveRoom;
-  $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>chip.classList.toggle('selected',selectAll));updateSelectedCategories();};
-  $('roundsMinusBtn').onclick=()=>setTotalRounds(state.totalRounds-1);$('roundsPlusBtn').onclick=()=>setTotalRounds(state.totalRounds+1);
-  db.ref('.info/serverTimeOffset').on('value',snapshot=>{state.serverTimeOffset=Number(snapshot.val())||0;});
-  document.addEventListener('visibilitychange',async()=>{
-    if(document.visibilityState==='hidden'){
-      await releaseScreenWakeLock();
-      return;
-    }
-    if(document.visibilityState==='visible'&&hasActiveCountdown()){
-      await requestScreenWakeLock();
-    }
-  });
-  renderCategories();setTotalRounds(3);show('home');
-  window.addEventListener('DOMContentLoaded',()=>{void restoreSession();});
 })();
 </script>
 </body>
