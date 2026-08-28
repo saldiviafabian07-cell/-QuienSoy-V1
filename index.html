@@ -2061,7 +2061,7 @@ const personajes = [
      myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
      wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
      busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false},
-    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:''
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:''
   };
 
   const $ = id => document.getElementById(id);
@@ -2281,9 +2281,9 @@ const personajes = [
   function accountNotice(id,message,type=''){const el=$(id);if(!el)return;el.textContent=message||'';el.className='room-notice'+(message?' show ':'')+(type?' '+type:'');}
   function accountError(error){
     const messages={
-      'auth/email-already-in-use':'Ese correo ya está registrado.','auth/invalid-email':'El correo no es válido.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Espera un momento y vuelve a probar.','auth/unauthorized-domain':'Autoriza este dominio en Firebase Authentication.','auth/api-key-not-valid':'La configuración de Firebase no es válida para esta aplicación.','username-taken':'Ese nombre de usuario ya está ocupado.'
+      'auth/email-already-in-use':'Ese correo ya está registrado.','auth/invalid-email':'El correo no es válido.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Espera un momento y vuelve a probar.','auth/unauthorized-domain':'Autoriza este dominio en Firebase Authentication.','auth/api-key-not-valid':'La configuración de Firebase no es válida para esta aplicación.','auth/operation-not-allowed':'El método de acceso está desactivado en Firebase. Activa Correo electrónico/contraseña en Authentication → Sign-in method.','auth/network-request-failed':'Firebase no pudo conectarse. Revisa tu conexión o bloqueadores del navegador.','PERMISSION_DENIED':'Firebase rechazó la operación por las reglas de Realtime Database.','database/permission-denied':'Firebase rechazó la operación por las reglas de Realtime Database.','username-taken':'Ese nombre de usuario ya está ocupado.'
     };
-    return messages[error?.code]||'No se pudo completar la operación. Revisa tu conexión e inténtalo nuevamente.';
+    return messages[error?.code]||`No se pudo completar la operación (${error?.code||'error desconocido'}). Revisa la consola del navegador si necesitas más detalles.`;
   }
   function setPresenceUi(online){
     state.presenceOnline=Boolean(online);
@@ -2423,15 +2423,16 @@ const personajes = [
     if(password.length<6){accountNotice('registerNotice','La contraseña debe tener al menos 6 caracteres.','error');return;}
     if(password!==confirm){accountNotice('registerNotice','Las contraseñas no coinciden.','error');return;}
     setButtonBusy('createAccountBtn','account',true,'CREANDO CUENTA…');
+    state.registeringAccount=true;
     let createdUser=null,claimed=false;
     try{
       await authPersistenceReady;
       const credentials=await auth.createUserWithEmailAndPassword(email,password);createdUser=credentials.user;
       const claim=await db.ref('usernames/'+key).transaction(current=>current===null?createdUser.uid:undefined);if(!claim.committed)throw {code:'username-taken'};claimed=true;
       const profile={username,email:createdUser.email||email,createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};
-      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});show('home');
-    }catch(error){if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});accountNotice('registerNotice',accountError(error),'error');}
-    finally{setButtonBusy('createAccountBtn','account',false);}
+      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});state.profile=profile;await startAccountListeners(createdUser);state.registeringAccount=false;show('home');
+    }catch(error){console.error('Firebase register account',error);if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});state.registeringAccount=false;accountNotice('registerNotice',accountError(error),'error');}
+    finally{state.registeringAccount=false;setButtonBusy('createAccountBtn','account',false);}
   }
   async function loginAccount(){
     const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}
@@ -3223,7 +3224,11 @@ const personajes = [
   auth.onAuthStateChanged(async user=>{
     state.authReady=true;state.authUser=user;
     if(user&&!user.isAnonymous){
-      try{state.profile=await ensureUserProfile(user);await startAccountListeners(user);}catch(error){console.error('account bootstrap',error);accountNotice('loginNotice','La cuenta está conectada, pero no se pudo cargar el perfil.','error');}
+      if(state.registeringAccount){
+        renderAccountUI();
+      }else{
+        try{state.profile=await ensureUserProfile(user);await startAccountListeners(user);}catch(error){console.error('account bootstrap',error);accountNotice('loginNotice','La cuenta está conectada, pero no se pudo cargar el perfil.','error');}
+      }
     }else{
       stopAccountListeners();
       if(!state.roomRef)state.playerId=state.legacyPlayerId;
