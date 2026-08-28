@@ -75,15 +75,17 @@ button,input{font:inherit}button{cursor:pointer;border:0}.app{width:min(100%,680
 .recovery-banner strong{color:#fff}.recovery-banner .text-action{margin-top:3px;color:#f7d36a;text-align:left}
 .noscript-warning{max-width:760px;margin:20px auto;padding:16px;border:1px solid #d96a78;border-radius:12px;background:#29171b;color:#f5c9ce;text-align:center;font-size:14px}
 .screen .card{max-width:760px;margin-inline:auto}
-.friend-row{grid-template-columns:76px minmax(0,1fr);align-items:center}
-.friend-character-media{width:68px;height:68px;display:grid;place-items:center}
-.friend-character-media .character-image,.friend-character-media .image-placeholder{width:68px;height:68px;margin:0;border-radius:12px}
+.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:180px;height:180px;margin-bottom:18px;border-radius:18px}
+.friend-row{grid-template-columns:100px minmax(0,1fr);align-items:center}
+.friend-character-media{width:90px;height:90px;display:grid;place-items:center}
+.friend-character-media .character-image,.friend-character-media .image-placeholder{width:90px;height:90px;margin:0;border-radius:14px}
 .friend-character-media .image-placeholder{font-size:8px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 button[aria-busy="true"]{cursor:wait;opacity:.72}
 .input,.select{min-height:50px}
 .character-image{object-fit:cover;aspect-ratio:1}
-@media (max-width:600px){.connection-pill{max-width:112px}}
+@media (max-width:600px){.connection-pill{max-width:112px}.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:160px;height:160px}.friend-row{grid-template-columns:94px minmax(0,1fr)}.friend-character-media,.friend-character-media .character-image,.friend-character-media .image-placeholder{width:84px;height:84px}}
+@media (max-width:380px){.reveal-box-main .character-image,.reveal-box-main .image-placeholder{width:140px;height:140px}.friend-row{grid-template-columns:84px minmax(0,1fr)}.friend-character-media,.friend-character-media .character-image,.friend-character-media .image-placeholder{width:76px;height:76px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
   </style>
 </head>
@@ -118,7 +120,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
     <div class="card">
       <div class="tag">ANFITRIÓN</div>
       <h1 class="title" style="margin-top:16px">Crea tu sala</h1>
-      <p class="muted">Elige tu nombre y las temáticas. Los demás jugadores se unirán con un código.</p>
       <div class="section">
         <label class="label" for="hostNameInput">Tu nombre</label>
         <input class="input" id="hostNameInput" maxlength="30" placeholder="Ej. Luis" autocomplete="name">
@@ -183,7 +184,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       </div>
       <div class="lobby-list" id="lobbyList" role="list" aria-live="polite"></div>
       <div class="lobby-count" id="lobbyCount">0 jugadores</div>
-      <div class="info">Todos deben tener su propio celular. El anfitrión configura las temáticas y las rondas antes de iniciar.</div>
       <div class="settings-summary" id="settingsSummary"></div>
       <div class="actions">
         <button class="btn secondary" id="editSettingsBtn">CONFIGURAR SALA</button>
@@ -200,9 +200,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="small" id="prepRoundLabel">RONDA</div>
       <div class="prep-small">PREPARACIÓN</div>
       <h1 class="prep-title">PREPÁRATE</h1>
-      <p class="prep-message">Da vuelta el teléfono y entrégaselo a otra persona.</p>
       <div class="prep-countdown" id="prepCountdown">10</div>
-      <p class="prep-sub">No se mostrará ningún personaje hasta llegar a 0.</p>
     </div>
   </section>
 
@@ -213,7 +211,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
         <div class="tag" id="revealAudience">PARA TODOS</div>
       </div>
       <h1 class="title" style="margin-top:22px">PREPÁRENSE</h1>
-      <p class="muted">Otra persona debe mirar esta pantalla y colocar la carta. No mires.</p>
       <div class="reveal-box reveal-box-main">
         <div class="small reveal-kicker">COLOCA ESTA CARTA</div>
         <div id="revealCharacterImageBox"></div>
@@ -223,7 +220,6 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="countdown-wrap active">
         <div class="countdown-message">Cambio de pantalla en…</div>
         <div class="countdown" id="revealCountdown">15</div>
-        <p class="prep-sub">Cuenta regresiva sincronizada para toda la sala.</p>
       </div>
     </div>
   </section>
@@ -232,9 +228,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
     <div class="card center">
       <div class="tag" id="playingRoundTag">RONDA LISTA</div>
       <h1 class="title" style="margin-top:18px">JUEGUEN PRESENCIALMENTE</h1>
-      <p class="muted">Tu personaje está oculto. Estos son los personajes que sí puedes ver:</p>
       <div class="friend-list" id="playingCharacterList" role="list" aria-live="polite"></div>
-      <p class="muted tiny">Dejen el celular y jueguen con preguntas y respuestas.</p>
       <div class="actions">
         <button class="btn" id="scoreRoundBtn">REGISTRAR RESULTADO</button>
       </div>
@@ -2566,7 +2560,7 @@ const personajes = [
       const category=document.createElement('div');category.className='friend-category';category.textContent=cleanUiText(character?.categoria||'');
       main.append(name,characterName,category);row.append(media,main);list.appendChild(row);
     });
-    const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'Registra el resultado cuando terminen de jugar.':'Esperando al anfitrión…');
+    const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'':'Esperando al anfitrión…');
   }
   async function openScoring(){
     if(state.busy.score||!state.roomRef) return;setBusy('score',true);setButtonBusy('scoreRoundBtn','score',true,'ABRIENDO…');
@@ -2609,7 +2603,7 @@ const personajes = [
     const result=game.roundResults||{},places=[result.places?.first,result.places?.second,result.places?.third].filter(Boolean);setText('resultsRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
     $('roundResultList').innerHTML=places.map((place,index)=>`<div class="score-row"><div class="score-main"><div class="score-name">${index+1}° ${escapeHtml(place.name)}</div></div><div class="score-points">+${place.points}</div></div>`).join('');
     $('roundScoreList').innerHTML=sortedScoreRows(game,data).map(row=>`<div class="score-row"><div class="score-name">${escapeHtml(row.name)}</div><div class="score-points">${row.score}</div></div>`).join('');
-    const host=isHost(data),last=Number(game.currentRound)>=Number(game.totalRounds);$('nextRoundBtn').classList.toggle('hidden',!host);$('nextRoundBtn').disabled=false;setText('nextRoundBtn',last?'VER RESULTADOS FINALES':'SIGUIENTE RONDA');setText('resultsWaiting',host?'Continúa cuando todos hayan visto el resultado.':'Esperando al anfitrión…');
+    const host=isHost(data),last=Number(game.currentRound)>=Number(game.totalRounds);$('nextRoundBtn').classList.toggle('hidden',!host);$('nextRoundBtn').disabled=false;setText('nextRoundBtn',last?'VER RESULTADOS FINALES':'SIGUIENTE RONDA');setText('resultsWaiting',host?'':'Esperando al anfitrión…');
   }
   async function nextRound(){
     if(state.busy.next||!state.roomRef||state.mode!=='host')return;setBusy('next',true);setButtonBusy('nextRoundBtn','next',true,'CARGANDO…');
