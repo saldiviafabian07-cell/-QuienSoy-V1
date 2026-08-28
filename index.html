@@ -2046,8 +2046,8 @@ if(false){(() => {
         game:{phase:'lobby',round:0}
       };
       await state.roomRef.set(initial);
-      await state.roomRef.child('players/'+state.playerId).onDisconnect().remove();
-      await state.roomRef.onDisconnect().remove();
+      await installDisconnect();
+      // La sala no se elimina al cerrar la pestaña. Solo se elimina mediante SALIR DE LA SALA.
       listenToRoom();
       renderLobby(initial);
       show('lobby');
@@ -2248,8 +2248,9 @@ if(false){(() => {
       }
       const active=sessionStorage.getItem(SESSION_KEY);
       if(active)return JSON.parse(active);
-      const backup=localStorage.getItem(SESSION_BACKUP_KEY);
-      return backup?JSON.parse(backup):null;
+      // No recuperar automáticamente una sesión desde localStorage al abrir la portada.
+      // Así una sesión vieja no puede cambiar la pantalla varios segundos/minutos después.
+      return null;
     }catch(error){
       console.warn('read session',error);
       return null;
