@@ -2378,8 +2378,8 @@ const personajes = [
       const uid=String(target.uid).trim(),me=String(accountUid()).trim();if(!uid||uid==='undefined'||uid==='null'){accountNotice('quickFriendsNotice','La cuenta encontrada no tiene un ID válido.','error');return;}
       if(uid===me){accountNotice('quickFriendsNotice','No puedes agregarte a ti mismo.','error');return;}
       if(state.friendData[uid]){accountNotice('quickFriendsNotice','Ese usuario ya es tu amigo.','error');return;}
-      const [sent,reverse,received]=await Promise.all([db.ref(`friendRequests/sent/${me}/${uid}`).once('value'),db.ref(`friendRequests/sent/${uid}/${me}`).once('value'),db.ref(`friendRequests/received/${me}/${uid}`).once('value')]);
-      if(sent.exists()||reverse.exists()||received.exists()){accountNotice('quickFriendsNotice','Ya existe una solicitud entre ambos.','error');return;}
+      const [sent,received]=await Promise.all([db.ref(`friendRequests/sent/${me}/${uid}`).once('value'),db.ref(`friendRequests/received/${me}/${uid}`).once('value')]);
+      if(sent.exists()||received.exists()){accountNotice('quickFriendsNotice','Ya existe una solicitud entre ambos.','error');return;}
       target.uid=uid;target.username=String(target.username||input.replace(/^@+/,'')).trim();state.searchTarget=target;
       const box=document.createElement('div');box.className='search-result';const text=document.createElement('strong');text.textContent=`¿Quieres agregar a ${visibleUsername(target.username)}?`;const actions=document.createElement('div');actions.className='row-actions';const send=document.createElement('button');send.className='small-btn success';send.type='button';send.textContent='ENVIAR SOLICITUD';send.onclick=()=>{haptic([24]);void sendQuickFriendRequest();};const cancel=document.createElement('button');cancel.className='small-btn';cancel.type='button';cancel.textContent='CANCELAR';cancel.onclick=clearQuickFriendSearch;actions.append(send,cancel);box.append(text,actions);result?.appendChild(box);
     }catch(error){console.error('quickSearchFriend',error);accountNotice('quickFriendsNotice',accountError(error),'error');}
@@ -2738,23 +2738,14 @@ const personajes = [
     const key=normalizeUsername(raw);
     if(!raw||!key)return null;
 
-    // Camino principal: el índice usernames/{usernameLower} devuelve directamente el UID.
+    // Camino principal: el índice privado usernames/{usernameLower} devuelve el UID.
+    // No intentamos leer users/{uid}: ese nodo es privado y hacerlo para otra cuenta
+    // provoca PERMISSION_DENIED cuando el perfil público histórico todavía no existe.
     try{
       const uidSnapshot=await db.ref('usernames/'+key).once('value');
       if(uidSnapshot.exists()){
         const uid=String(uidSnapshot.val()??'').trim();
-        if(uid){
-          const publicSnapshot=await db.ref('publicUsers/'+uid).once('value');
-          const publicData=publicSnapshot.val()||{};
-          if(publicData.username||publicData.usernameLower){
-            return {uid, ...publicData, username:publicData.username||raw, usernameLower:publicData.usernameLower||key};
-          }
-          const userSnapshot=await db.ref('users/'+uid).once('value');
-          const userData=userSnapshot.val()||{};
-          if(userData.username){
-            return {uid, username:userData.username, usernameLower:normalizeUsername(userData.username)};
-          }
-        }
+        if(uid && uid!==accountUid()) return {uid,username:raw,usernameLower:key};
       }
     }catch(error){console.warn('Búsqueda por índice de nombre',error);}
 
@@ -2816,20 +2807,17 @@ const personajes = [
     if(uid===target)throw {code:'self-friend-request'};
     const username=String(targetUsername||'').trim().replace(/^@+/,'').slice(0,20)||'usuario';
     if(!USERNAME_PATTERN.test(username))throw {code:'invalid-target'};
-    const [targetProfile,sent,reverse,link]=await Promise.all([
-      db.ref(`publicUsers/${target}`).once('value'),
+    if(state.friendData[target])throw {code:'already-friends'};
+    const [sent,received]=await Promise.all([
       db.ref(`friendRequests/sent/${uid}/${target}`).once('value'),
-      db.ref(`friendRequests/sent/${target}/${uid}`).once('value'),
-      db.ref(`friendLinks/${pairKey(uid,target)}`).once('value')
+      db.ref(`friendRequests/received/${uid}/${target}`).once('value')
     ]);
-    if(!targetProfile.exists())throw {code:'invalid-target'};
-    if(state.friendData[target]||rootFriendshipKnown(uid,target))throw {code:'already-friends'};
-    if(sent.exists()||reverse.exists()||link.exists())throw {code:'request-exists'};
+    if(sent.exists()||received.exists())throw {code:'request-exists'};
     const payload={fromUid:uid,fromUsername:accountUsername(),toUid:target,toUsername:username,createdAt:firebase.database.ServerValue.TIMESTAMP};
-    const updates={};
-    updates[`friendLinks/${pairKey(uid,target)}`]={...payload,status:'pending'};
-    updates[`friendRequests/received/${target}/${uid}`]=payload;
-    updates[`friendRequests/sent/${uid}/${target}`]=payload;
+    const updates={
+      [`friendRequests/received/${target}/${uid}`]:payload,
+      [`friendRequests/sent/${uid}/${target}`]:payload
+    };
     await db.ref().update(updates);
     return payload;
   }
@@ -2864,15 +2852,30 @@ const personajes = [
     }
   }
   async function acceptFriendRequest(fromUid){
-    const uid=accountUid();if(!uid||!fromUid)return;const linkRef=db.ref('friendLinks/'+pairKey(uid,fromUid));
+    const uid=String(accountUid()||'').trim(),from=String(fromUid||'').trim();
+    if(!uid||!from||uid===from)return;
     try{
-      const result=await linkRef.transaction(link=>link&&link.status==='pending'&&link.toUid===uid?{...link,status:'accepted',acceptedAt:firebase.database.ServerValue.TIMESTAMP}:undefined);if(!result.committed){accountNotice('requestsNotice','La solicitud ya no está disponible.','error');return;}
-      const updates={};updates[`friends/${uid}/${fromUid}`]=true;updates[`friends/${fromUid}/${uid}`]=true;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;await db.ref().update(updates);accountNotice('requestsNotice','Ahora son amigos.','success');showSocialToast('¡Solicitud aceptada! Ahora son amigos.');haptic([35]);renderQuickFriendsPanel();
-    }catch(error){accountNotice('requestsNotice','No se pudo aceptar la solicitud.','error');}
+      const requestSnap=await db.ref(`friendRequests/received/${uid}/${from}`).once('value');
+      const request=requestSnap.val();
+      if(!request||String(request.fromUid)!==from||String(request.toUid)!==uid){accountNotice('requestsNotice','La solicitud ya no está disponible.','error');return;}
+      if(state.friendData[from]){
+        const cleanup={};cleanup[`friendRequests/received/${uid}/${from}`]=null;cleanup[`friendRequests/sent/${from}/${uid}`]=null;await db.ref().update(cleanup);accountNotice('requestsNotice','Ya eran amigos.','success');renderQuickFriendsPanel();return;
+      }
+      const updates={};
+      updates[`friends/${uid}/${from}`]=true;
+      updates[`friends/${from}/${uid}`]=true;
+      updates[`friendRequests/received/${uid}/${from}`]=null;
+      updates[`friendRequests/sent/${from}/${uid}`]=null;
+      await db.ref().update(updates);
+      accountNotice('requestsNotice','Ahora son amigos.','success');showSocialToast('¡Solicitud aceptada! Ahora son amigos.');haptic([35]);renderQuickFriendsPanel();
+    }catch(error){console.error('acceptFriendRequest',error);accountNotice('requestsNotice',accountError(error),'error');}
   }
   async function rejectFriendRequest(fromUid){
-    const uid=accountUid();if(!uid||!fromUid)return;const updates={};updates[`friendLinks/${pairKey(uid,fromUid)}`]=null;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;
-    try{await db.ref().update(updates);accountNotice('requestsNotice','Solicitud rechazada.','success');showSocialToast('Solicitud rechazada.');haptic([18]);renderQuickFriendsPanel();}catch(error){accountNotice('requestsNotice','No se pudo rechazar la solicitud.','error');}
+    const uid=String(accountUid()||'').trim(),from=String(fromUid||'').trim();
+    if(!uid||!from||uid===from)return;
+    const updates={};updates[`friendRequests/received/${uid}/${from}`]=null;updates[`friendRequests/sent/${from}/${uid}`]=null;
+    try{await db.ref().update(updates);accountNotice('requestsNotice','Solicitud rechazada.','success');showSocialToast('Solicitud rechazada.');haptic([18]);renderQuickFriendsPanel();}
+    catch(error){console.error('rejectFriendRequest',error);accountNotice('requestsNotice',accountError(error),'error');}
   }
   async function removeFriend(friendUid){
     const uid=accountUid();if(!uid||!friendUid)return;const updates={};updates[`friends/${uid}/${friendUid}`]=null;updates[`friends/${friendUid}/${uid}`]=null;updates[`friendLinks/${pairKey(uid,friendUid)}`]=null;
@@ -3704,3 +3707,4 @@ const personajes = [
 </script>
 </body>
 </html>
+
