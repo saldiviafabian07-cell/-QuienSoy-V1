@@ -205,7 +205,23 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   .splash-line{margin-top:16px}
   .splash-by{margin-top:13px;font-size:10px}
   @media (prefers-reduced-motion:reduce){.app-splash{transition:none}.splash-content{animation:none!important}.splash-title span,.splash-by,.splash-line{animation:none!important}}
-  </style>
+  
+  /* Microinteracciones de la pantalla inicial: conservan la identidad visual y son táctiles/ligeras. */
+  .access-card,.game-home-card{position:relative;overflow:hidden;isolation:isolate}
+  .access-card::before,.game-home-card::before{content:'';position:absolute;inset:-35% auto auto -18%;width:180px;height:180px;border-radius:50%;background:rgba(234,179,8,.07);filter:blur(2px);pointer-events:none;z-index:-1;animation:homeFloat 5.5s ease-in-out infinite}
+  .access-mark{box-shadow:0 8px 24px rgba(234,179,8,.08);animation:homeMark .9s ease both,homeMarkBreath 3.2s ease-in-out 1s infinite}
+  .party-cta,.game-home-actions .btn{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+  .party-cta:hover,.game-home-actions .btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.22)}
+  .party-cta:active,.game-home-actions .btn:active{transform:translateY(0) scale(.985);box-shadow:0 6px 14px rgba(0,0,0,.16)}
+  .access-sub,.game-home-sub,.home-guest-link{animation:homeFadeUp .55s ease .08s both}
+  @keyframes homeFloat{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,10px,0) scale(1.08)}}
+  @keyframes homeMark{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes homeMarkBreath{0%,100%{box-shadow:0 8px 24px rgba(234,179,8,.08)}50%{box-shadow:0 10px 30px rgba(234,179,8,.18)}}
+  @keyframes homeFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){.access-card::before,.game-home-card::before,.access-mark,.party-cta,.game-home-actions .btn,.access-sub,.game-home-sub,.home-guest-link{animation:none!important;transition:none!important}}
+
+  .game-home-intro{position:relative;margin-bottom:26px}.game-home-status{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:#17191d;color:#aeb4bc;font-size:10px}.game-home-status strong{color:#f1f2f4}.game-home-status span:last-child{color:#7f8690;letter-spacing:.08em}.game-home-status .presence-dot{width:7px;height:7px}
+</style>
 </head>
 <body>
 <noscript><div class="noscript-warning">Activa JavaScript para crear o unirte a una sala.</div></noscript>
@@ -254,10 +270,17 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
 
   <section class="screen" id="gameHome">
     <div class="card hero game-home-card game-home-only-actions">
+      <div class="game-home-intro">
+        <div class="tag">PARTY GAME</div>
+        <h1 class="game-home-title">¿LISTOS PARA JUGAR?</h1>
+        <p class="game-home-sub">Crea una sala, invita a tus amigos y descubre quién conoce mejor al resto.</p>
+        <div class="game-home-status"><span class="presence-dot online" id="gameHomePresenceDot"></span><strong id="gameHomeUsername">@invitado</strong><span id="gameHomeAccountType">INVITADO</span></div>
+      </div>
       <div class="actions game-home-actions">
         <button class="btn" id="newGameBtn" type="button">CREAR SALA</button>
         <button class="btn secondary" id="goJoinBtn" type="button">UNIRME A UNA SALA</button>
       </div>
+      <div class="home-rule" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -2220,22 +2243,22 @@ const personajes = [
   const firebaseApp = firebase.initializeApp(firebaseConfig, 'adivina-quien-final');
   const db = firebase.database(firebaseApp);
   const auth = firebase.auth(firebaseApp);
-  const authPersistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error=>{console.warn('No se pudo activar la persistencia de sesión',error);});
+  const authPersistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error=>{console.warn('No se pudo activar la persistencia local de Firebase Auth',error);});
+  let anonymousPersistenceReady=null;
   const baseDeDatos = window.baseDeDatos || [];
   const screens = ['home','gameHome','authRegister','authLogin','profile','requests','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
   const SESSION_KEY = 'adivina_quien_session';
-  const PLAYER_KEY = 'adivina_quien_player_id';
   const PREPARATION_DURATION_MS = 10000;
   const CHARACTER_DISPLAY_DURATION_MS = 15000;
   const STARTING_TRANSITION_DURATION_MS = 1800;
   const SESSION_BACKUP_KEY = 'adivina_quien_session_backup';
   const state = {
-    mode:null, roomCode:'', legacyPlayerId:getOrCreatePlayerId(), playerId:getOrCreatePlayerId(), playerName:'', hostName:'',
-     categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
-     myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
-     wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
-     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false,finishGame:false},
-    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false,friendsLoaded:false,splashDone:false
+    mode:null, roomCode:'', playerId:'', playerName:'', hostName:'',
+    categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
+    myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
+    wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
+    busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false,finishGame:false,leave:false},
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,privateAssignmentRef:null,privateAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,privateAssignmentRecoveryTimer:null,privateAssignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false,friendsLoaded:false,splashDone:false,hostTransferAttemptKey:'',pendingRoundToken:'',pendingAssignments:null,assignmentRetryToken:'',assignmentRetryCount:0,roundWriteInProgress:false
   };
 
   const $ = id => document.getElementById(id);
@@ -2243,16 +2266,11 @@ const personajes = [
   const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const cleanUiText = s => String(s ?? '').replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F]/gu,'').replace(/\s{2,}/g,' ').trim();
   const serverNow = () => Date.now() + (Number(state.serverTimeOffset)||0);
-  const nameKey = name => String(name||'').trim().toLocaleLowerCase('es');
   const isHost = data => Boolean(data && data.hostId === state.playerId);
   const ROOM_CODE_CHARS='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const ROOM_CODE_PATTERN=/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{5}$/;
 
-  function getOrCreatePlayerId(){
-    let id=localStorage.getItem(PLAYER_KEY);
-    if(!id){id='p_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(PLAYER_KEY,id);}
-    return id;
-  }
+  
   function roomCode(){
     let value='';
     for(let i=0;i<5;i++) value+=ROOM_CODE_CHARS[Math.floor(Math.random()*ROOM_CODE_CHARS.length)];
@@ -2262,52 +2280,25 @@ const personajes = [
   // RECUPERACIÓN DE SESIÓN
   // ============================================================
   function saveSessionInfo(roomId, playerName, playerId){
-    const session={
-      roomId:String(roomId||''),
-      playerName:String(playerName||''),
-      playerId:String(playerId||''),
-      // Alias internos para mantener compatibilidad con la V7 actual.
-      roomCode:String(roomId||''),
-      name:String(playerName||''),
-      mode:state.mode||null,
-      accountUid:accountUid()||null
-    };
+    const finalPlayerId=String(state.playerId||playerId||'');
+    const finalPlayerName=String(state.playerName||playerName||'');
+    const session={roomId:String(roomId||state.roomCode||''),playerName:finalPlayerName,playerId:finalPlayerId,roomCode:String(roomId||state.roomCode||''),name:finalPlayerName,mode:state.mode||null,accountUid:accountUid()||null,authUid:backendUid()||null};
     try{
       const serialized=JSON.stringify(session);
-      sessionStorage.setItem('aq_roomId',session.roomId);
-      sessionStorage.setItem('aq_playerName',session.playerName);
-      sessionStorage.setItem('aq_playerId',session.playerId);
-      sessionStorage.setItem(SESSION_KEY,serialized);
-      // Respaldo para recuperar tras cierre completo de la pestaña.
-      localStorage.setItem(SESSION_BACKUP_KEY,serialized);
-    }catch(error){
-      console.warn('save session',error);
-    }
+      sessionStorage.setItem('aq_roomId',session.roomId);sessionStorage.setItem('aq_playerName',session.playerName);sessionStorage.setItem('aq_playerId',session.playerId);sessionStorage.setItem(SESSION_KEY,serialized);
+      if(accountUid())localStorage.setItem(SESSION_BACKUP_KEY,serialized);
+    }catch(error){console.warn('save session',error);}
   }
 
   function readSession(){
     try{
-      const aqRoomId=sessionStorage.getItem('aq_roomId');
-      const aqPlayerName=sessionStorage.getItem('aq_playerName');
-      const aqPlayerId=sessionStorage.getItem('aq_playerId');
-      if(aqRoomId&&aqPlayerName&&aqPlayerId){
-        const active=sessionStorage.getItem(SESSION_KEY);let parsed={};try{parsed=active?JSON.parse(active):{};}catch(error){}
-        return {...parsed,roomId:aqRoomId,playerName:aqPlayerName,playerId:aqPlayerId};
-      }
-      const active=sessionStorage.getItem(SESSION_KEY);
+      const active=sessionStorage.getItem(SESSION_KEY),aqRoomId=sessionStorage.getItem('aq_roomId'),aqPlayerName=sessionStorage.getItem('aq_playerName'),aqPlayerId=sessionStorage.getItem('aq_playerId');
+      if(aqRoomId&&aqPlayerName&&aqPlayerId){let parsed={};try{parsed=active?JSON.parse(active):{};}catch(error){}return {...parsed,roomId:aqRoomId,playerName:aqPlayerName,playerId:aqPlayerId};}
       if(active)return JSON.parse(active);
       const backup=localStorage.getItem(SESSION_BACKUP_KEY);
-      if(backup){
-        const parsed=JSON.parse(backup);
-        // Las cuentas sí pueden recuperar automáticamente su sala tras cerrar Safari;
-        // los invitados sin cuenta conservan el botón manual para evitar sorpresas.
-        if(accountUid()&&parsed.accountUid===accountUid())return parsed;
-      }
+      if(backup&&accountUid()){const parsed=JSON.parse(backup);if(parsed.accountUid===accountUid())return parsed;}
       return null;
-    }catch(error){
-      console.warn('read session',error);
-      return null;
-    }
+    }catch(error){console.warn('read session',error);return null;}
   }
 
   function saveSession(){
@@ -2471,10 +2462,8 @@ const personajes = [
     area.append(label,button);card.appendChild(area);
   }
   async function requestLeaveRoom(){
-    if(!state.roomRef){show(accountUid()?'gameHome':'home');return;}
-    const confirmed=window.confirm('¿Salir de la sala por ahora?\n\nTu jugador quedará guardado. Podrás volver con tu cuenta y el código. Si la partida sigue, tu personaje de la ronda actual se conservará.');
-    if(!confirmed)return;
-    await leaveRoom(true);
+    if(state.busy.leave)return;if(!state.roomRef){show(accountUid()?'gameHome':'home');return;}
+    const confirmed=window.confirm('¿Salir de la sala por ahora?\n\nTu jugador quedará guardado. Podrás volver con tu cuenta y el código. Si la partida sigue, tu personaje de la ronda actual se conservará.');if(!confirmed)return;await leaveRoom(true);
   }
   function show(id){
     clearNotice();
@@ -2534,21 +2523,45 @@ const personajes = [
   function visibleUsername(value){const clean=String(value||'').trim().replace(/^@+/,'');return clean?'@'+clean:'@usuario';}
   function accountUid(){return state.authUser&&!state.authUser.isAnonymous?state.authUser.uid:'';}
   function backendUid(){return auth.currentUser?.uid||'';}
-  function roomIdentity(){const uid=accountUid();state.playerId=uid||state.legacyPlayerId;return state.playerId;}
-  function createRandomRoomPlayerId(roomCode){
-    const code=String(roomCode||'').toUpperCase();
-    const random=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-5);
-    return `p_${code}_${random}`;
+  function roomIdentity(){
+    const uid=backendUid();
+    if(uid){state.playerId=uid;return uid;}
+    state.playerId=state.playerId||`p_tab_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
+    return state.playerId;
   }
-  function getSavedRoomPlayerId(roomCode){
-    try{const value=localStorage.getItem(`aq_room_player_${String(roomCode||'').toUpperCase()}`);return value||'';}catch(error){return '';}
+  
+  
+  
+  function findAccountRoomPlayer(players){
+    const uid=backendUid(),account=accountUid();
+    if(!uid)return null;
+    return players.find(player=>String(player.id)===uid)||players.find(player=>String(player.authUid||'')===uid)||(account?players.find(player=>String(player.accountUid||'')===account):null)||null;
   }
-  function saveRoomPlayerId(roomCode,playerId){
-    try{if(roomCode&&playerId)localStorage.setItem(`aq_room_player_${String(roomCode).toUpperCase()}`,String(playerId));}catch(error){}
+  async function ensureRoomAuth(){
+    const current=auth.currentUser;
+    if(current&&!current.isAnonymous)return current;
+    if(current?.isAnonymous){
+      const marker=sessionStorage.getItem('aq_guest_auth_uid'),session=readSession();
+      if(marker===current.uid||session?.authUid===current.uid||state.roomRef)return current;
+      try{await auth.signOut();}catch(error){console.warn('No se pudo aislar una identidad anónima anterior',error);}
+      sessionStorage.removeItem('aq_guest_auth_uid');
+    }
+    if(state.anonymousSignInStarted)throw new Error('La autenticación todavía no está disponible.');
+    state.anonymousSignInStarted=true;
+    try{
+      if(!anonymousPersistenceReady)anonymousPersistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(error=>{console.warn('No se pudo activar persistencia de sesión anónima',error);});
+      await anonymousPersistenceReady;
+      const credentials=await auth.signInAnonymously();
+      sessionStorage.setItem('aq_guest_auth_uid',credentials.user.uid);
+      return credentials.user;
+    }finally{state.anonymousSignInStarted=false;}
   }
-  function findAccountRoomPlayer(players){const uid=accountUid();return (uid&&players.find(player=>player.accountUid===uid))||players.find(player=>player.id===state.playerId)||players.find(player=>player.id===state.legacyPlayerId)||null;}
-  async function ensureRoomAuth(){await authPersistenceReady;if(auth.currentUser)return auth.currentUser;if(state.anonymousSignInStarted)throw new Error('La autenticación todavía no está disponible.');state.anonymousSignInStarted=true;try{return (await auth.signInAnonymously()).user;}finally{state.anonymousSignInStarted=false;}}
-  async function markRoomMembership(){const uid=backendUid();if(!uid||!state.roomCode)return;try{await db.ref(`roomMembers/${state.roomCode}/${uid}`).set(true);}catch(error){console.warn('No se pudo registrar la membresía de la sala',error);}}
+  async function markRoomMembership(){
+    const uid=backendUid();
+    if(!uid||!state.roomCode||!state.playerId)return;
+    try{await db.ref(`roomMembers/${state.roomCode}/${uid}`).set(String(state.playerId));}
+    catch(error){console.warn('No se pudo registrar la membresía de la sala',error);}
+  }
   function pairKey(first,second){return [String(first),String(second)].sort().join('__');}
   function accountUsername(){return state.profile?.username||state.authUser?.displayName||state.authUser?.email?.split('@')[0]||'usuario';}
   function accountNotice(id,message,type=''){const el=$(id);if(!el)return;el.textContent=message||'';el.className='room-notice'+(message?' show ':'')+(type?' '+type:'');}
@@ -2600,16 +2613,8 @@ const personajes = [
     modal.classList.add('show');
   }
   async function discardReconnect(){
-    hideReconnectModal();
-    cancelReconnect();
-    clearCountdown();
-    const ref=state.roomRef,roomId=state.roomCode,mode=state.mode,secure=Boolean(state.lastRoomData?.secureAssignments),authRoomUid=backendUid();
-    try{
-      try{db.goOffline();}catch(error){}
-      if(ref&&mode==='player')await ref.child('players/'+String(state.playerId)).remove().catch(()=>{});
-      if(ref&&mode==='host'){await ref.remove().catch(()=>{});if(secure){await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});}}
-      if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
-    }catch(error){console.warn('discard reconnect',error);}
+    hideReconnectModal();cancelReconnect();clearCountdown();
+    if(state.roomRef&&state.playerId){try{await state.roomRef.child('players/'+state.playerId).update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});}catch(error){console.warn('discard reconnect presence',error);}}
     stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.playerName='';state.myAssignment=null;state.roomConnectionPaused=false;clearSession();show(accountUid()?'gameHome':'home');
   }
   async function manualReconnect(){
@@ -2639,11 +2644,9 @@ const personajes = [
     const logged=Boolean(accountUid()),quickBtn=$('quickFriendsBtn');
     if(quickBtn)quickBtn.classList.toggle('visible',logged);
     const username=logged?accountUsername():'Invitado';
-    $('guestAccountCta')?.classList.toggle('hidden',logged);
     document.body.classList.toggle('guest-mode',!logged);
     setText('gameHomeUsername',visibleUsername(username));
     setText('gameHomeAccountType',logged?'CUENTA':'INVITADO');
-    $('guestAccountCta')?.classList.toggle('hidden',logged);document.body.classList.toggle('guest-mode',!logged);
     const gamePresence=$('gameHomePresenceDot');if(gamePresence){gamePresence.classList.toggle('online',logged?state.presenceOnline:true);gamePresence.classList.toggle('offline',logged?!state.presenceOnline:false);}
     ['hostNameInput','joinName'].forEach(id=>{const field=$(id);if(field)field.readOnly=logged;});
     if(!logged){setPresenceUi(false);setRequestBadge(0);return;}
@@ -2790,44 +2793,34 @@ const personajes = [
     if(action==='create')$('newGameBtn').click();else show('join');
   }
   async function registerAccount(){
-    const username=String($('registerUsername').value||'').trim().replace(/^@+/,'');
-    const key=normalizeUsername(username),email=String($('registerEmail').value||'').trim(),password=$('registerPassword').value||'',confirm=$('registerPasswordConfirm').value||'';
+    const username=String($('registerUsername').value||'').trim().replace(/^@+/,'');const key=normalizeUsername(username),email=String($('registerEmail').value||'').trim(),password=$('registerPassword').value||'',confirm=$('registerPasswordConfirm').value||'';
     if(!USERNAME_PATTERN.test(username)||username.length<3||username.length>20){accountNotice('registerNotice','El nombre debe tener entre 3 y 20 caracteres y terminar en letra o número.','error');return;}
-    if(!email){accountNotice('registerNotice','Escribe tu correo electrónico.','error');return;}
-    if(password.length<6){accountNotice('registerNotice','La contraseña debe tener al menos 6 caracteres.','error');return;}
-    if(password!==confirm){accountNotice('registerNotice','Las contraseñas no coinciden.','error');return;}
-    setButtonBusy('createAccountBtn','account',true,'CREANDO CUENTA…');
-    state.registeringAccount=true;
-    let createdUser=null,claimed=false;
-    try{
-      await authPersistenceReady;
-      const credentials=await auth.createUserWithEmailAndPassword(email,password);createdUser=credentials.user;
-      const claim=await db.ref('usernames/'+key).transaction(current=>current===null?createdUser.uid:undefined);if(!claim.committed)throw {code:'username-taken'};claimed=true;
-      const profile={username,email:createdUser.email||email,createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};
-      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});state.profile=profile;await startAccountListeners(createdUser);state.registeringAccount=false;state.guestMode=false;show('gameHome');
-    }catch(error){console.error('Firebase register account',error);if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});state.registeringAccount=false;accountNotice('registerNotice',accountError(error),'error');}
-    finally{state.registeringAccount=false;setButtonBusy('createAccountBtn','account',false);}
+    if(!email){accountNotice('registerNotice','Escribe tu correo electrónico.','error');return;}if(password.length<6){accountNotice('registerNotice','La contraseña debe tener al menos 6 caracteres.','error');return;}if(password!==confirm){accountNotice('registerNotice','Las contraseñas no coinciden.','error');return;}
+    setButtonBusy('createAccountBtn','account',true,'CREANDO CUENTA…');state.registeringAccount=true;let createdUser=null,claimed=false;
+    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);const credentials=await auth.createUserWithEmailAndPassword(email,password);createdUser=credentials.user;const claim=await db.ref('usernames/'+key).transaction(current=>current===null?createdUser.uid:undefined);if(!claim.committed)throw {code:'username-taken'};claimed=true;
+      const profile={username,email:createdUser.email||email,createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});state.profile=profile;await startAccountListeners(createdUser);state.guestMode=false;sessionStorage.removeItem('aq_guest_auth_uid');show('gameHome');
+    }catch(error){console.error('Firebase register account',error);if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});accountNotice('registerNotice',accountError(error),'error');}finally{state.registeringAccount=false;setButtonBusy('createAccountBtn','account',false);}
   }
   async function loginAccount(){
-    const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}
-    setButtonBusy('signInBtn','account',true,'INICIANDO…');
-    try{await authPersistenceReady;const credentials=await auth.signInWithEmailAndPassword(email,password);state.authUser=credentials.user;state.guestMode=false;renderAccountUI();show('gameHome');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
+    const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}setButtonBusy('signInBtn','account',true,'INICIANDO…');
+    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);const credentials=await auth.signInWithEmailAndPassword(email,password);state.authUser=credentials.user;state.guestMode=false;sessionStorage.removeItem('aq_guest_auth_uid');renderAccountUI();show('gameHome');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
   }
   async function enterGuest(){
     setButtonBusy('guestBtn','account',true,'ENTRANDO…');
-    try{await authPersistenceReady;if(auth.currentUser&&!auth.currentUser.isAnonymous){state.guestMode=false;state.authUser=auth.currentUser;renderAccountUI();show('gameHome');return true;}state.anonymousSignInStarted=true;const credentials=await auth.signInAnonymously();state.authUser=credentials.user;state.guestMode=true;renderAccountUI();show('gameHome');haptic([28]);return true;}
-    catch(error){accountNotice('accessNotice',accountError(error),'error');return false;}
-    finally{state.anonymousSignInStarted=false;setButtonBusy('guestBtn','account',false);}
+    try{
+      await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+      const existing=auth.currentUser;const session=readSession();
+      if(existing&&!existing.isAnonymous){state.guestMode=false;state.authUser=existing;renderAccountUI();show('gameHome');return true;}
+      if(existing?.isAnonymous&&session?.authUid!==existing.uid&&!state.roomRef){await auth.signOut();sessionStorage.removeItem('aq_guest_auth_uid');}
+      const current=auth.currentUser;const credentials=current?.isAnonymous?{user:current}:await auth.signInAnonymously();
+      sessionStorage.setItem('aq_guest_auth_uid',credentials.user.uid);state.authUser=credentials.user;state.guestMode=true;renderAccountUI();show('gameHome');haptic([28]);return true;
+    }catch(error){accountNotice('accessNotice',accountError(error),'error');return false;}finally{setButtonBusy('guestBtn','account',false);}
   }
-  async function switchAccess(){
-    if(state.roomRef){accountNotice('lobbyNotice','Sal de la sala antes de cambiar de usuario.','error');return;}
-    try{await auth.signOut();}catch(error){}
-    state.guestMode=false;clearFriendSearch();closeQuickFriends();show('home');
-  }
+  
   async function logoutAccount(){
     if(state.roomRef){accountNotice('profileNotice','Sal de la sala antes de cerrar sesión para conservar la partida.','error');return;}
     setButtonBusy('signOutBtn','account',true,'CERRANDO…');
-    try{await auth.signOut();state.guestMode=false;closeQuickFriends();show('home');}
+    try{await auth.signOut();state.guestMode=false;sessionStorage.removeItem('aq_guest_auth_uid');closeQuickFriends();show('home');}
     catch(error){accountNotice('profileNotice','No se pudo cerrar la sesión.','error');}
     finally{setButtonBusy('signOutBtn','account',false);}
   }
@@ -3024,33 +3017,48 @@ const personajes = [
     for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
     return result;
   }
-  function characterKey(character,index=0){
-    if(character && character.id!==undefined && character.id!==null)return String(character.id);
-    return `${character?.categoria||''}|${character?.nombre||''}|${index}`;
+  function characterKey(character){
+    const category=normalizarNombrePersonaje(character?.categoria||'');
+    const name=normalizarNombrePersonaje(character?.nombre||'');
+    if(category&&name)return `${category}|${name}`;
+    if(character?.id!==undefined&&character?.id!==null)return `id|${String(character.id)}`;
+    return 'unknown|';
   }
   function uniqueCharacters(characters){
-    const seen=new Set();
-    return characters.filter((character,index)=>{const key=characterKey(character,index);if(seen.has(key))return false;seen.add(key);return true;});
+    const seen=new Set(),result=[];
+    for(const character of characters||[]){const key=characterKey(character);if(!key||seen.has(key))continue;seen.add(key);result.push(character);}
+    return result;
   }
+  function dedupeBaseCharacterCatalog(){
+    const seen=new Set(),duplicates=[];
+    const unique=baseDeDatos.filter(character=>{const key=characterKey(character);if(seen.has(key)){duplicates.push(`${character?.categoria||''}/${character?.nombre||''}`);return false;}seen.add(key);return true;});
+    if(duplicates.length)console.warn('Personajes duplicados eliminados del catálogo:',duplicates);
+    baseDeDatos.splice(0,baseDeDatos.length,...unique);
+  }
+  dedupeBaseCharacterCatalog();
   function characterPool(categories){
     return uniqueCharacters(baseDeDatos.filter(character=>categories.includes(character.categoria)));
   }
   function createAssignments(players,categories,recentKeys){
-    const pool=characterPool(categories);const recent=new Set(recentKeys||[]);
+    const pool=uniqueCharacters(characterPool(categories)),recent=new Set((recentKeys||[]).map(String));
+    if(pool.length<players.length)return null;
     const fresh=shuffle(pool.filter(character=>!recent.has(characterKey(character))));
     const old=shuffle(pool.filter(character=>recent.has(characterKey(character))));
     const available=[...fresh,...old];
     if(available.length<players.length)return null;
-    const assignments={};const usedKeys=[];
-    players.forEach((player,index)=>{
-      const character=available[index];const key=characterKey(character);
-      usedKeys.push(key);
-      assignments[player.id]={playerId:player.id,player:player.name,character};
-    });
+    const assignments={},usedKeys=[];
+    players.forEach((player,index)=>{const character=available[index];assignments[String(player.id)]={playerId:String(player.id),player:player.name,character};usedKeys.push(characterKey(character));});
     return {assignments,usedKeys};
   }
   function normalizeRoomPlayers(data){
     return Object.entries(data?.players||{}).map(([id,player])=>({id,...player})).sort((a,b)=>(Number(a.joinedAt)||0)-(Number(b.joinedAt)||0));
+  }
+  function isPlayerOnline(player){return Boolean(player&&player.status==='online'&&player.connected===true);}
+  function onlineRoomPlayers(data){return normalizeRoomPlayers(data).filter(isPlayerOnline);}
+  function activeGamePlayers(data){
+    const ids=Object.keys(data?.game?.activePlayers||{}).filter(id=>data.game.activePlayers[id]);
+    if(ids.length)return ids.map(id=>data.players?.[id]?{id,...data.players[id]}:null).filter(Boolean);
+    return onlineRoomPlayers(data);
   }
   function playerNames(data,game){
     const names={...(game?.playerNames||{})};
@@ -3063,13 +3071,8 @@ const personajes = [
     return {categories,totalRounds};
   }
   function validateCardStock(playersCount,categories,totalRounds){
-    const players=Math.max(0,Number(playersCount)||0);
-    const rounds=Math.max(1,Number(totalRounds)||1);
-    const cards=characterPool(categories||[]);
-    const totalRequired=players*rounds;
-    const totalAvailable=cards.length;
-    const valid=totalRequired<=totalAvailable;
-    return {available:totalAvailable,required:totalRequired,valid};
+    const players=Math.max(0,Number(playersCount)||0),cards=characterPool(categories||[]),available=cards.length;
+    return {available,required:players,rounds:Math.max(1,Number(totalRounds)||1),valid:players>0&&players<=available};
   }
 
   function applyCardStockValidation(validation,target='errorStock'){
@@ -3091,42 +3094,25 @@ const personajes = [
 
   async function refreshSetupStockValidation(){
     let playersCount=1;
-    if(state.roomRef&&state.configEditing&&state.mode==='host'){
-      try{
-        const snapshot=await state.roomRef.once('value');
-        playersCount=Math.max(1,normalizeRoomPlayers(snapshot.val()).length);
-      }catch(error){
-        playersCount=1;
-      }
-    }
-    const validation=validateCardStock(playersCount,state.categories,state.totalRounds);
-    const button=$('createRoomBtn');
-    if(button)button.disabled=!state.categories.length||!validation.valid;
-    return applyCardStockValidation(validation,'errorStock');
+    if(state.roomRef&&state.configEditing&&state.mode==='host'){try{const snapshot=await state.roomRef.once('value');playersCount=Math.max(1,onlineRoomPlayers(snapshot.val()).length);}catch(error){playersCount=1;}}
+    const validation=validateCardStock(playersCount,state.categories,state.totalRounds);const button=$('createRoomBtn');if(button)button.disabled=!state.categories.length||!validation.valid;return applyCardStockValidation(validation,'errorStock');
   }
 
   function getCardStockMessage(validation){
-    return `No hay suficientes personajes únicos para esta configuración. Hay ${validation.available} disponibles y necesitas ${validation.required} (${Math.max(0,validation.required-validation.available)} faltantes).`;
+    return `No hay suficientes personajes únicos para esta ronda. Hay ${validation.available} disponibles y necesitas ${validation.required}.`;
   }
   function renderLobby(data){
-    state.lastRoomData=data||null;
-    const players=normalizeRoomPlayers(data), host=isHost(data), config=selectedRoomConfig(data);
+    state.lastRoomData=data||null;const players=onlineRoomPlayers(data),allPlayers=normalizeRoomPlayers(data),host=isHost(data),config=selectedRoomConfig(data);
     state.categories=config.categories;state.totalRounds=config.totalRounds;
     setText('roomCodeValue',state.roomCode);setText('lobbyCount',`${players.length} / 20 jugadores`);
-    $('lobbyList').innerHTML=players.map(player=>{const online=player.status!=='offline';const name=cleanUiText(player.name);const initial=escapeHtml((name.replace(/[^A-Za-zÁÉÍÓÚÜÑa-záéíóúüñ0-9]/g,'').slice(0,1)||'?').toUpperCase());const role=player.id===data.hostId?'ANFITRIÓN':(online?'ONLINE':'OFFLINE');return `<div class="lobby-player" role="listitem"><div class="lobby-avatar">${initial}</div><div class="lobby-player-main"><div class="lobby-player-name">${escapeHtml(name)}</div><div class="lobby-player-status ${online?'online':'offline'}">${role==='ANFITRIÓN'?'Host':role}</div></div><span class="lobby-role">${player.id===data.hostId?'👑':''}</span></div>`;}).join('');
+    $('lobbyList').innerHTML=allPlayers.map(player=>{const online=isPlayerOnline(player),name=cleanUiText(player.name),initial=escapeHtml((name.replace(/[^A-Za-zÁÉÍÓÚÜÑa-záéíóúüñ0-9]/g,'').slice(0,1)||'?').toUpperCase()),role=player.id===data.hostId?'ANFITRIÓN':(online?'ONLINE':'OFFLINE');return `<div class="lobby-player" role="listitem"><div class="lobby-avatar">${initial}</div><div class="lobby-player-main"><div class="lobby-player-name">${escapeHtml(name)}</div><div class="lobby-player-status ${online?'online':'offline'}">${role==='ANFITRIÓN'?'Host':role}</div></div><span class="lobby-role">${player.id===data.hostId?'👑':''}</span></div>`;}).join('');
     const categoryChips=config.categories.length?config.categories.map(category=>`<span class="summary-chip">${escapeHtml(cleanUiText(category))}</span>`).join(''):'<span class="summary-chip">Sin temáticas</span>';
     $('settingsSummary').innerHTML=`<div><strong>Temáticas</strong></div><div class="summary-chips">${categoryChips}</div><div><strong>Rondas:</strong> ${config.totalRounds}</div>`;
     const stock=validateCardStock(players.length,config.categories,config.totalRounds);
-    $('startRoomBtn').style.display=host?'block':'none';
-    $('startRoomBtn').disabled=!host||players.length<2||data.game?.phase!=='lobby'||!stock.valid;
-    $('editSettingsBtn').style.display=host?'block':'none';
-    const inviteButton=$('inviteFriendsBtn');if(inviteButton){inviteButton.classList.toggle('hidden',!accountUid());inviteButton.disabled=!accountUid();}
-    $('waitingHost').style.display=host?'none':'block';
-    if(!host)setText('waitingHost','Esperando al anfitrión…');
-    renderLobbyFriends();
-    if(host&&data.game?.phase==='lobby'&&players.length>=2&&!stock.valid){
-      notice(getCardStockMessage(stock),'error','lobbyNotice');
-    }
+    $('startRoomBtn').style.display=host?'block':'none';$('startRoomBtn').disabled=!host||players.length<2||data.game?.phase!=='lobby'||!stock.valid;
+    $('editSettingsBtn').style.display=host?'block':'none';const inviteButton=$('inviteFriendsBtn');if(inviteButton){inviteButton.classList.toggle('hidden',!accountUid());inviteButton.disabled=!accountUid();}
+    $('waitingHost').style.display=host?'none':'block';if(!host)setText('waitingHost','Esperando al anfitrión…');renderLobbyFriends();
+    if(host&&data.game?.phase==='lobby'&&players.length>=2&&!stock.valid)notice(getCardStockMessage(stock),'error','lobbyNotice');
   }
   function openSettings(editing=false){
     state.configEditing=editing;
@@ -3137,9 +3123,8 @@ const personajes = [
   }
   function listenToRoom(){
     stopRoomListener();if(!state.roomRef)return;
-    const ref=state.roomRef;
-    state.roomListener=snapshot=>handleRoomSnapshot(snapshot.val());
-    ref.on('value',state.roomListener,error=>{console.error(error);notice('No se pudo leer la sala. Revisa las reglas de Realtime Database.','error','lobbyNotice');});
+    const ref=state.roomRef;state.roomListener=snapshot=>handleRoomSnapshot(snapshot.val());
+    ref.on('value',state.roomListener,error=>{console.error('room value listener',error);notice('No se pudo leer la sala. Revisa la conexión y las reglas de Realtime Database.','error','lobbyNotice');});
     listenToAssignments();
   }
   function stopRoomListener(){
@@ -3149,21 +3134,18 @@ const personajes = [
   function attachRoom(code){state.roomCode=code;state.roomRef=db.ref('rooms/'+code);}
   function stopAssignmentListeners(){
     if(state.privateAssignmentRef&&state.privateAssignmentListener)state.privateAssignmentRef.off('value',state.privateAssignmentListener);
-    if(state.publicAssignmentRef&&state.publicAssignmentListener)state.publicAssignmentRef.off('value',state.publicAssignmentListener);
-    if(state.assignmentRecoveryTimer){clearTimeout(state.assignmentRecoveryTimer);state.assignmentRecoveryTimer=null;}state.assignmentRecoveryAttempts=0;state.privateAssignmentRef=null;state.privateAssignmentListener=null;state.publicAssignmentRef=null;state.publicAssignmentListener=null;state.privateAssignment=null;state.publicAssignments={};
+    if(state.privateAssignmentRecoveryTimer){clearTimeout(state.privateAssignmentRecoveryTimer);state.privateAssignmentRecoveryTimer=null;}
+    state.privateAssignmentRecoveryAttempts=0;state.privateAssignmentRef=null;state.privateAssignmentListener=null;state.privateAssignment=null;state.myAssignment=null;
   }
   function listenToAssignments(){
-    stopAssignmentListeners();if(!state.roomRef||!state.roomCode||!state.playerId||state.lastRoomData&&!state.lastRoomData.secureAssignments)return;
-    const privateRef=db.ref(`privateAssignments/${state.roomCode}/${state.playerId}`),publicRef=db.ref(`publicAssignments/${state.roomCode}`);
-    const privateListener=snapshot=>{state.privateAssignment=snapshot.val()||null;if(state.lastRoomData?.secureAssignments){state.myAssignment=state.privateAssignment;if(state.lastRoomData.game?.phase==='reveal')renderReveal(state.lastRoomData.game);}};
-    const publicListener=snapshot=>{state.publicAssignments=snapshot.val()||{};state.assignmentRecoveryAttempts=0;if(state.lastRoomData?.secureAssignments&&['playing','scoring','results','finished'].includes(state.lastRoomData.game?.phase))renderPlaying(state.lastRoomData.game,state.lastRoomData);};
-    state.privateAssignmentRef=privateRef;state.privateAssignmentListener=privateListener;state.publicAssignmentRef=publicRef;state.publicAssignmentListener=publicListener;privateRef.on('value',privateListener);publicRef.on('value',publicListener);
+    stopAssignmentListeners();if(!state.roomRef||!state.roomCode||!state.playerId)return;
+    const privateRef=db.ref(`privateAssignments/${state.roomCode}/${state.playerId}`),listener=snapshot=>{const value=snapshot.val()||null;state.privateAssignment=value;const currentRound=Number(state.lastRoomData?.game?.currentRound||0);if(value&&Number(value.round)===currentRound)state.myAssignment=value;else if(!value||Number(value.round)!==currentRound)state.myAssignment=null;if(state.lastRoomData?.game?.phase==='reveal')renderReveal(state.lastRoomData.game);};
+    state.privateAssignmentRef=privateRef;state.privateAssignmentListener=listener;privateRef.on('value',listener);
   }
   async function installDisconnect(){
-    if(!state.roomRef || !state.playerId)return null;
+    if(!state.roomRef||!state.playerId)return null;
     const playerRef=state.roomRef.child('players/'+state.playerId);
     try{
-      // Registrar onDisconnect antes de marcar al jugador como online evita estados fantasma.
       await playerRef.onDisconnect().update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
       await playerRef.update({status:'online',connected:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
     }catch(error){console.warn('No se pudo configurar la presencia del jugador',error);}
@@ -3176,115 +3158,107 @@ const personajes = [
   }
 
   async function recoverRoomConnection(reason='resume'){
-    if(state.busy.reconnect || state.restoring || !state.roomRef || !state.roomCode || !state.playerId || !state.playerName)return false;
-    state.busy.reconnect=true;state.reconnecting=true;
-    const maxAttempts=5;
+    if(state.busy.reconnect||state.restoring||!state.roomRef||!state.roomCode||!backendUid())return false;state.busy.reconnect=true;state.reconnecting=true;
     try{
-      for(let attempt=1;attempt<=maxAttempts;attempt++){
-        state.reconnectAttempt=attempt;
-        try{db.goOnline();}catch(error){}
-        try{
-          const snapshot=await state.roomRef.once('value');
-          if(snapshot.exists()){
-            const data=snapshot.val();
-            const players=normalizeRoomPlayers(data),matched=findAccountRoomPlayer(players);
-            if(matched&&matched.id!==state.playerId)state.playerId=matched.id;
-            const me=matched||data.players?.[state.playerId];
-            if(!me){
-              const wasHost=data.hostId===state.playerId;
-              await state.roomRef.child('players/'+state.playerId).set({
-                name:state.playerName,host:wasHost,joinedAt:firebase.database.ServerValue.TIMESTAMP,
-                accountUid:accountUid()||null,authUid:backendUid()||null,reconnectedAt:firebase.database.ServerValue.TIMESTAMP,status:'online',connected:true
-              });
-            }else if(accountUid()&&me.accountUid!==accountUid()||backendUid()&&me.authUid!==backendUid()){
-              await state.roomRef.child('players/'+state.playerId).update({accountUid:accountUid()||null,authUid:backendUid()||null});
-            }
-            state.lastRoomData=data;await markRoomMembership();await installDisconnect();
-            saveSessionInfo(state.roomCode,state.playerName,state.playerId);
-            listenToRoom();
-            setConnectionStatus('online','Conectado');
-            cancelReconnect();
-            return true;
-          }
-          console.warn('Sala no encontrada durante reconexión:',reason);
-          break;
-        }catch(error){console.warn(`Reintento de reconexión ${attempt}/${maxAttempts}`,error);}
-        await new Promise(resolve=>setTimeout(resolve,Math.min(9000,700*Math.pow(2,attempt-1))));
-      }
-    }finally{
-      state.busy.reconnect=false;
-      state.reconnecting=false;
-    }
-    return false;
+      db.goOnline();const snapshot=await state.roomRef.once('value');if(!snapshot.exists()){console.warn('Sala no encontrada durante reconexión:',reason);return false;}
+      const data=snapshot.val(),matched=findAccountRoomPlayer(normalizeRoomPlayers(data));if(!matched)return false;
+      state.playerId=String(matched.id);state.playerName=matched.name||state.playerName;state.mode=data.hostId===state.playerId?'host':'player';state.lastRoomData=data;
+      await state.roomRef.child('players/'+state.playerId).update({status:'online',connected:true,lastSeen:firebase.database.ServerValue.TIMESTAMP,accountUid:accountUid()||null,authUid:backendUid()});
+      await markRoomMembership();await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();setConnectionStatus('online','Conectado');return true;
+    }catch(error){console.warn('reconnect room',error);return false;}finally{state.busy.reconnect=false;state.reconnecting=false;}
   }
 
   function handleRoomSnapshot(data){
     state.lastRoomData=data||null;
-    if(!data){
-      const oldRef=state.roomRef;stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;clearSession();
-      notice('La sala ya no existe o el anfitrión la cerró.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
-    }
+    if(!data){stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;clearSession();notice('La sala ya no existe o el anfitrión la cerró.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;}
     const players=normalizeRoomPlayers(data),accountPlayer=findAccountRoomPlayer(players);
-    if(accountPlayer&&accountPlayer.id!==state.playerId)state.playerId=accountPlayer.id;
-    const me=accountPlayer||players.find(player=>player.id===state.playerId);
-    const host=isHost(data);if(host)state.mode='host';else if(me)state.mode='player';
-    if(me){state.playerName=me.name;state.hostName=data.hostName||state.hostName;saveSession();}
-    if(!me){
-      if(state.restoring)return;
-      notice('Tu conexión con la sala se perdió. Intenta entrar de nuevo.','error','joinNotice');$('joinRoomBtn').disabled=false;show('join');return;
-    }
+    if(accountPlayer&&accountPlayer.id!==state.playerId)state.playerId=String(accountPlayer.id);
+    const me=accountPlayer||players.find(player=>String(player.id)===String(state.playerId));
+    if(!me){if(state.restoring)return;notice('Tu conexión con la sala se perdió. Vuelve a entrar con tu sesión.','error','joinNotice');show('join');return;}
+    state.playerName=me.name||state.playerName;state.hostName=data.hostName||state.hostName;state.mode=isHost(data)?'host':'player';saveSession();
+    if(!isHost(data)&&data.hostId){const hostPlayer=data.players?.[data.hostId];if(!isPlayerOnline(hostPlayer))void attemptHostTransfer(data);}
+    void migrateLegacyRoomSecrets(data);
     const config=selectedRoomConfig(data);state.categories=config.categories;state.totalRounds=config.totalRounds;
-    const game=data.game||{phase:'lobby'};if(!data.secureAssignments)state.myAssignment=game.assignments?.[state.playerId]||null;else if(state.privateAssignment)state.myAssignment=state.privateAssignment;
+    const game=data.game||{phase:'lobby'};
     if(game.phase==='lobby'){clearCountdown();renderLobby(data);show('lobby');return;}
-    if(game.phase==='preparing'){renderPreparation(game);show('prep');schedulePreparation(game);return;}
-    if(game.phase==='reveal'){renderReveal(game,data);show('reveal');scheduleReveal(game);return;}
+    if(!game.activePlayers?.[state.playerId]&&!['finished'].includes(game.phase)){
+      notice('La partida actual ya estaba iniciada. Espera a la próxima partida.','error','lobbyNotice');show('lobby');return;
+    }
+    if(game.phase==='preparing'){
+      if(state.mode==='host'&&game.assignmentState==='pending'&&game.roundToken)void finalizeRoundAssignments(game.roundToken);
+      if(state.mode==='host'&&game.assignmentState==='writing')void recoverStalledAssignmentWrite(data);
+      renderPreparation(game);show('prep');schedulePreparation(game);return;
+    }
+    if(game.phase==='reveal'){renderReveal(game);show('reveal');scheduleReveal(game);return;}
     if(game.phase==='starting'){renderStarting(game);show('starting');scheduleStarting(game);return;}
-    if(game.phase==='friends'){clearCountdown();renderPlaying(game,data);show('playing');migrateLegacyFriendsPhase(game);return;}
+    if(game.phase==='friends'){clearCountdown();renderPlaying(game,data);show('playing');void migrateLegacyFriendsPhase(game);return;}
     if(game.phase==='playing'){clearCountdown();renderPlaying(game,data);show('playing');return;}
     if(game.phase==='scoring'){clearCountdown();renderScoring(game,data);show('scoring');return;}
     if(game.phase==='results'){clearCountdown();renderResults(game,data);show('results');return;}
-    if(game.phase==='finished'){
-      clearCountdown();
-      if(state.autoRestoring){state.autoRestoring=false;clearSession();stopRoomListener();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show(accountUid()?'gameHome':'home');return;}
-      renderFinished(game,data);
-      show('finish');
-      return;
-    }
+    if(game.phase==='finished'){clearCountdown();renderFinished(game,data);show('finish');return;}
   }
+  async function migrateLegacyRoomSecrets(data){
+    if(!state.roomRef||!data||!isHost(data))return;
+    try{
+      const legacyAssignments=data.game?.assignments||null;
+      if(legacyAssignments){
+        const updates={};Object.entries(legacyAssignments).forEach(([playerId,assignment])=>{if(data.players?.[playerId]&&assignment?.character)updates[`privateAssignments/${state.roomCode}/${playerId}`]={...assignment,round:Number(data.game?.currentRound||data.game?.round||0)};});
+        if(Object.keys(updates).length)await db.ref().update(updates);
+        await state.roomRef.child('game').transaction(game=>{if(!game?.assignments)return;const activePlayers={...(game.activePlayers||{})};Object.keys(game.assignments).forEach(id=>{activePlayers[id]=true;});const migrated={...game};delete migrated.assignments;return {...migrated,secureAssignments:true,activePlayers,assignmentState:['preparing','reveal','starting','playing','scoring','results'].includes(game.phase)?'ready':game.assignmentState||null,assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken:game.roundToken||`legacy_${game.currentRound||game.round||0}`};});
+      }
+      await db.ref(`publicAssignments/${state.roomCode}`).remove().catch(()=>{});
+    }catch(error){console.warn('legacy secret migration',error);}
+  }
+  async function attemptHostTransfer(data){
+    if(!state.roomRef||!data?.hostId)return false;
+    const oldHostId=String(data.hostId),hostKey=`${oldHostId}:${data.players?.[oldHostId]?.status}:${data.players?.[oldHostId]?.connected}`;
+    if(state.hostTransferAttemptKey===hostKey)return false;state.hostTransferAttemptKey=hostKey;
+    const candidates=normalizeRoomPlayers(data).filter(player=>String(player.id)!==oldHostId&&isPlayerOnline(player));
+    const candidate=candidates[0];if(!candidate)return false;
+    try{
+      const result=await state.roomRef.child('hostId').transaction(current=>{
+        if(String(current||'')!==oldHostId)return;
+        const currentHost=data.players?.[oldHostId];const next=data.players?.[candidate.id];
+        if(isPlayerOnline(currentHost)||!isPlayerOnline(next))return;
+        return String(candidate.id);
+      });
+      if(result.committed){state.mode=String(candidate.id)===String(state.playerId)?'host':'player';if(String(candidate.id)===String(state.playerId)){await state.roomRef.update({hostAuthUid:backendUid(),hostName:state.playerName});}showSocialToast('El anfitrión cambió.');return true;}
+    }catch(error){console.warn('host transfer',error);}
+    return false;
+  }
+
   async function createRoom(){
     if(state.configEditing){await saveRoomSettings();return;}
     if(state.busy.create)return;
     const hostName=(accountUid()?accountUsername():($('hostNameInput').value||'').trim()).slice(0,30);
-    if(!hostName){notice('Escribe tu nombre.','error');return;}
-    if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
-    const pool=characterPool(state.categories);if(pool.length<2){notice('Las temáticas seleccionadas deben tener al menos 2 personajes diferentes.','error');return;}
-    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){notice('No se pudo activar la conexión segura para la sala. Habilita el proveedor Anónimo en Firebase Authentication.','error');return;}}
-    preloadCountdownSound();setBusy('create',true);setButtonBusy('createRoomBtn','create',true,state.configEditing?'GUARDANDO…':'CREANDO SALA…');
-    state.mode='host';roomIdentity();state.hostName=hostName;state.playerName=hostName;state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
-    let code=roomCode(),ref=db.ref('rooms/'+code);
+    if(!hostName){notice('Escribe tu nombre.','error');return;}if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
+    if(characterPool(state.categories).length<2){notice('Las temáticas seleccionadas deben tener al menos 2 personajes diferentes.','error');return;}
+    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){console.error('ensure room auth',error);notice('No se pudo activar la conexión segura para la sala.','error');return;}}
+    preloadCountdownSound();setBusy('create',true);setButtonBusy('createRoomBtn','create',true,'CREANDO SALA…');
     try{
-      for(let attempt=0;attempt<5;attempt++){
-        const existing=await ref.once('value');if(!existing.exists())break;
-        code=roomCode();ref=db.ref('rooms/'+code);
+      state.mode='host';roomIdentity();state.hostName=hostName;state.playerName=hostName;state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
+      let committed=false,ref=null,code='';
+      for(let attempt=0;attempt<10&&!committed;attempt++){
+        code=roomCode();ref=db.ref('rooms/'+code);const timestamp=firebase.database.ServerValue.TIMESTAMP,scores={[state.playerId]:0},playerNames={[state.playerId]:hostName};
+        const initial={hostId:state.playerId,hostAuthUid:backendUid(),hostName,secureAssignments:true,createdAt:timestamp,metadata:{lastActiveAt:timestamp,cleanupEligibleAt:null},settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,accountUid:accountUid()||null,authUid:backendUid(),joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],scores,playerNames,roundResults:null,recentCharacterIds:[],activePlayers:{},assignmentState:null,assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken:null}};
+        const result=await ref.transaction(current=>current===null?initial:undefined);if(result.committed){committed=true;state.roomCode=code;state.roomRef=ref;state.lastRoomData=result.snapshot.val()||initial;}
       }
-      state.roomCode=code;state.roomRef=ref;
-      const timestamp=firebase.database.ServerValue.TIMESTAMP;
-      const scores={[state.playerId]:0};const playerNames={[state.playerId]:hostName};
-      const initial={hostId:state.playerId,hostAuthUid:backendUid()||null,secureAssignments:true,hostName,createdAt:timestamp,settings:{categories:state.categories,totalRounds:state.totalRounds},players:{[state.playerId]:{name:hostName,accountUid:accountUid()||null,authUid:backendUid()||null,host:true,joinedAt:timestamp,status:'online',connected:true}},game:{phase:'lobby',round:0,currentRound:0,totalRounds:state.totalRounds,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},scores,playerNames,roundResults:null,recentCharacterIds:[]}};
-      await state.roomRef.set(initial);await markRoomMembership();await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);state.lastRoomData=initial;listenToRoom();renderLobby(initial);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
-    }catch(error){console.error('Firebase create room',error);state.roomRef=null;notice('No se pudo crear la sala. Comprueba Realtime Database y sus reglas.','error');}
+      if(!committed||!state.roomRef)throw new Error('No se pudo reservar un código de sala.');
+      await markRoomMembership();await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();renderLobby(state.lastRoomData);show('lobby');notice('Sala creada. Comparte el código con los demás.','success','lobbyNotice');
+    }catch(error){console.error('Firebase create room',error);state.roomRef=null;state.roomCode='';notice('No se pudo crear la sala. Comprueba Realtime Database y sus reglas.','error');}
     finally{setBusy('create',false);setButtonBusy('createRoomBtn','create',false);}
   }
   async function saveRoomSettings(){
     if(state.busy.create||!state.roomRef||state.mode!=='host')return;
-    const phase=(await state.roomRef.child('game/phase').once('value')).val();if(phase!=='lobby'){notice('La configuración solo puede cambiarse en el lobby.','error');return;}
     if(!state.categories.length){notice('Selecciona al menos una temática.','error');return;}
-    const players=normalizeRoomPlayers((await state.roomRef.once('value')).val());
-    const stock=validateCardStock(players.length,state.categories,state.totalRounds);
+    state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));
+    const data=(await state.roomRef.once('value')).val(),players=onlineRoomPlayers(data),stock=validateCardStock(players.length||1,state.categories,state.totalRounds);
     if(!stock.valid){notice(getCardStockMessage(stock),'error');return;}
     setBusy('create',true);setButtonBusy('createRoomBtn','create',true,'GUARDANDO…');
-    try{state.totalRounds=Math.min(20,Math.max(1,Number(state.totalRounds)||3));await state.roomRef.update({settings:{categories:state.categories,totalRounds:state.totalRounds},'game/totalRounds':state.totalRounds});state.configEditing=false;show('lobby');}
-    catch(error){console.error(error);notice('No se pudo guardar la configuración.','error');}
+    try{
+      const result=await state.roomRef.transaction(room=>{if(!room||room.game?.phase!=='lobby'||room.hostId!==state.playerId)return;return {...room,settings:{categories:state.categories,totalRounds:state.totalRounds},game:{...room.game,totalRounds:state.totalRounds},metadata:{...(room.metadata||{}),lastActiveAt:firebase.database.ServerValue.TIMESTAMP}};});
+      if(!result.committed)throw new Error('La sala cambió de estado antes de guardar la configuración.');state.configEditing=false;show('lobby');
+    }catch(error){console.error('save room settings',error);notice('No se pudo guardar la configuración.','error');}
     finally{setButtonBusy('createRoomBtn','create',false);setBusy('create',false);}
   }
   async function joinRoom(){
@@ -3292,85 +3266,84 @@ const personajes = [
     const code=($('joinRoomCode').value||'').trim().toUpperCase(),name=(accountUid()?accountUsername():($('joinName').value||'').trim()).slice(0,30);
     if(!/^[A-Z2-9]{5}$/.test(code)){notice('Escribe un código de 5 caracteres.','error','joinNotice');return;}
     if(!name){notice('Escribe tu nombre.','error','joinNotice');return;}
-    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){notice('No se pudo activar la conexión segura para la sala. Habilita el proveedor Anónimo en Firebase Authentication.','error','joinNotice');return;}}
-    preloadCountdownSound();
-    setBusy('join',true);setButtonBusy('joinRoomBtn','join',true,'BUSCANDO SALA…');notice('Buscando la sala…','','joinNotice');
-    state.mode='player';
-    // Cada jugador nuevo recibe automáticamente un ID aleatorio por sala.
-    // Si ya existía en esta sala, el código de abajo recupera su ID para conservar puntos/personaje.
-    state.playerId=getSavedRoomPlayerId(code)||createRandomRoomPlayerId(code);
-    saveRoomPlayerId(code,state.playerId);
-    state.playerName=name;attachRoom(code);
+    if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){console.error('ensure room auth',error);notice('No se pudo activar la conexión segura para la sala.','error','joinNotice');return;}}
+    preloadCountdownSound();setBusy('join',true);setButtonBusy('joinRoomBtn','join',true,'BUSCANDO SALA…');notice('Buscando la sala…','','joinNotice');
     try{
+      state.mode='player';roomIdentity();state.playerName=name;attachRoom(code);
       const snapshot=await state.roomRef.once('value');
       if(!snapshot.exists()){notice('No existe una sala con ese código. Verifica el código.','error','joinNotice');return;}
-      const data=snapshot.val();state.lastRoomData=data;const players=normalizeRoomPlayers(data),currentPlayer=findAccountRoomPlayer(players);
-      const savedPlayerId=getSavedRoomPlayerId(code);
-      const savedRoomPlayer=savedPlayerId?players.find(player=>String(player.id)===String(savedPlayerId)):null;
-      const offlineMatch=currentPlayer||savedRoomPlayer||players.find(player=>player.id!==state.playerId&&(!accountUid()||player.accountUid===accountUid())&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
-      const sameNameOnline=players.find(player=>player.id!==state.playerId&&player.id!==currentPlayer?.id&&nameKey(player.name)===nameKey(name)&&player.status!=='offline');
-      const reconnecting=Boolean(offlineMatch||currentPlayer);
-      const targetId=(offlineMatch||currentPlayer)?.id||state.playerId;
-
-      if(data.game?.phase&&data.game.phase!=='lobby'&&!reconnecting){
-        notice('La partida ya comenzó. Espera a la próxima partida.','error','joinNotice');return;
-      }
-      if(players.length>=20&&!reconnecting){
-        notice('La sala está llena.','error','joinNotice');return;
-      }
-      if(sameNameOnline){
-        notice('Ese nombre ya está en la sala y está conectado. Elige otro.','error','joinNotice');return;
-      }
-
-      if(offlineMatch){
-        // Reingreso: recupera exactamente el ID anterior para conservar puntos y personaje.
-        state.playerId=offlineMatch.id;
-        saveRoomPlayerId(code,state.playerId);
-        localStorage.setItem(PLAYER_KEY,state.playerId);
-        state.playerName=offlineMatch.name||name;
-        await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,accountUid:accountUid()||null,authUid:backendUid()||null,status:'online',connected:true});
+      const data=snapshot.val(),players=normalizeRoomPlayers(data),currentPlayer=findAccountRoomPlayer(players),gamePhase=data.game?.phase||'lobby';
+      const reconnecting=Boolean(currentPlayer);
+      if(gamePhase!=='lobby'&&!reconnecting){notice('La partida ya comenzó. Espera a la próxima partida.','error','joinNotice');return;}
+      const onlineCount=onlineRoomPlayers(data).length;if(onlineCount>=20&&!reconnecting){notice('La sala está llena.','error','joinNotice');return;}
+      if(reconnecting){
+        state.playerId=String(currentPlayer.id);state.playerName=currentPlayer.name||name;
+        await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,accountUid:accountUid()||null,authUid:backendUid(),status:'online',connected:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
       }else{
-        state.playerId=targetId;
-        saveRoomPlayerId(code,state.playerId);
-        await state.roomRef.child('players/'+state.playerId).update({name,accountUid:accountUid()||null,authUid:backendUid()||null,host:Boolean(currentPlayer?.host),status:'online',connected:true});
+        const targetId=String(backendUid());state.playerId=targetId;
+        const result=await state.roomRef.child('players/'+targetId).transaction(current=>{
+          if(current)return current;
+          const now=firebase.database.ServerValue.TIMESTAMP;return {name,accountUid:accountUid()||null,authUid:backendUid(),joinedAt:now,status:'online',connected:true};
+        });
+        if(!result.committed)throw {code:'join-conflict'};
       }
-
-      await markRoomMembership();await installDisconnect();
-      saveSessionInfo(state.roomCode,state.playerName,state.playerId);
-      listenToRoom();
-      show('lobby');
-      notice(reconnecting?'Reconectado. Tu jugador y el personaje de la ronda actual se conservaron.':'Conectado. Esperando al anfitrión.','success','lobbyNotice');
-    }catch(error){console.error('Firebase join room',error);notice('No se pudo entrar a la sala. Revisa Realtime Database y sus reglas.','error','joinNotice');}
-    finally{setBusy('join',false);setButtonBusy('joinRoomBtn','join',false);if(!state.roomListener)$('joinRoomBtn').disabled=false;}
+      await markRoomMembership();await installDisconnect();saveSessionInfo(state.roomCode,state.playerName,state.playerId);listenToRoom();show('lobby');notice(reconnecting?'Reconectado. Tu jugador fue recuperado con su identidad segura.':'Conectado. Esperando al anfitrión.','success','lobbyNotice');
+    }catch(error){console.error('Firebase join room',error);notice(error?.code==='join-conflict'?'No se pudo reservar tu jugador. Intenta nuevamente.':'No se pudo entrar a la sala. Revisa Realtime Database y la conexión.','error','joinNotice');}
+    finally{setBusy('join',false);setButtonBusy('joinRoomBtn','join',false);}
   }
 
   async function startGame(){
-    if(state.busy.start||!state.roomRef||state.mode!=='host')return;
-    setBusy('start',true);setButtonBusy('startRoomBtn','start',true,'INICIANDO…');
+    if(state.busy.start||!state.roomRef||state.mode!=='host')return;setBusy('start',true);setButtonBusy('startRoomBtn','start',true,'INICIANDO…');
     try{
-      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;
-      const players=normalizeRoomPlayers(data),config=selectedRoomConfig(data);
-      if(players.length<2){notice('Necesitas al menos 2 jugadores para comenzar.','error','lobbyNotice');return;}
-      if(config.categories.length<1){notice('Selecciona al menos una temática.','error','lobbyNotice');return;}
-      const stock=validateCardStock(players.length,config.categories,config.totalRounds);
-      if(!stock.valid){
-        notice(getCardStockMessage(stock),'error','lobbyNotice');
-        renderLobby(data);
-        return;
-      }
-      const selection=createAssignments(players,config.categories,data.game?.recentCharacterIds||[]);
-      if(!selection){notice(`No hay suficientes personajes únicos: hay ${characterPool(config.categories).length} y necesitas ${players.length}.`,'error','lobbyNotice');return;}
-      const currentRound=(Number(data.game?.currentRound||data.game?.round)||0)+1,totalRounds=config.totalRounds;
-      const scores={...(data.game?.scores||{})};const names={};players.forEach(player=>{if(scores[player.id]===undefined)scores[player.id]=0;names[player.id]=player.name;});
-      const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const secureAssignments=Boolean(data.secureAssignments),assignmentUpdates={};
-      if(secureAssignments){players.forEach(player=>{assignmentUpdates[`privateAssignments/${state.roomCode}/${player.id}`]=selection.assignments[player.id];});assignmentUpdates[`publicAssignments/${state.roomCode}`]=selection.assignments;await db.ref().update(assignmentUpdates);}
-      const nextGame={...(data.game||{}),phase:'preparing',round:currentRound,currentRound,totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null, currentTurn:'',turnIndex:-1,turnOrder:[],assignments:secureAssignments?{}:selection.assignments,friendsStartedAt:null,roundResults:null,scores,playerNames:names,recentCharacterIds:[...(data.game?.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
-      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='lobby')return;return nextGame;});
-      if(!result.committed)notice('La partida ya estaba iniciándose.','error','lobbyNotice');
-    }catch(error){console.error('Firebase start game',error);notice('No se pudo iniciar la partida.','error','lobbyNotice');}
+      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=onlineRoomPlayers(data),config=selectedRoomConfig(data);
+      if(players.length<2){notice('Necesitas al menos 2 jugadores para comenzar.','error','lobbyNotice');return;}if(config.categories.length<1){notice('Selecciona al menos una temática.','error','lobbyNotice');return;}
+      const stock=validateCardStock(players.length,config.categories,config.totalRounds);if(!stock.valid){notice(getCardStockMessage(stock),'error','lobbyNotice');return;}
+      const currentRound=(Number(data.game?.currentRound)||0)+1,roundToken=`r${currentRound}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,7)}`,now=serverNow(),activePlayers={},names={};players.forEach(p=>{activePlayers[p.id]=true;names[p.id]=p.name;});
+      const prepEndsAt=now+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='lobby')return;return {...game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime:now,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],scores:{...(game.scores||{})},playerNames:names,roundResults:null,activePlayers,assignmentState:'pending',assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken,secureAssignments:true};});
+      if(!result.committed){notice('La partida ya está siendo iniciada por otro dispositivo.','error','lobbyNotice');return;}
+      state.pendingRoundToken=roundToken;state.pendingAssignments=null;state.assignmentRetryToken=roundToken;state.assignmentRetryCount=0;void finalizeRoundAssignments(roundToken);
+    }catch(error){console.error('start game',error);notice('No fue posible iniciar la partida. Revisa la conexión.','error','lobbyNotice');}
     finally{setBusy('start',false);setButtonBusy('startRoomBtn','start',false);}
   }
+  async function finalizeRoundAssignments(roundToken){
+    if(!state.roomRef||!roundToken)return false;
+    try{
+      const claim=await state.roomRef.child('game').transaction(game=>{if(!game||game.roundToken!==roundToken||game.assignmentState!=='pending')return;return {...game,assignmentState:'writing',assignmentWriterId:String(state.playerId),assignmentWriteStartedAt:firebase.database.ServerValue.TIMESTAMP};});
+      if(!claim.committed)return false;
+      const snap=await state.roomRef.once('value'),data=snap.val();if(!data||data.game?.roundToken!==roundToken||String(data.game.assignmentWriterId)!==String(state.playerId)||data.game.assignmentState!=='writing')return false;
+      const players=Object.keys(data.game.activePlayers||{}).filter(id=>data.game.activePlayers[id]).map(id=>data.players?.[id]?{id,...data.players[id]}:null).filter(Boolean);if(players.length<2)return false;
+      const config=selectedRoomConfig(data);let assignments=state.pendingRoundToken===roundToken?state.pendingAssignments:null,usedKeys=[];
+      if(!assignments){const selection=createAssignments(players,config.categories,data.game?.recentCharacterIds||[]);if(!selection)return false;assignments=selection.assignments;usedKeys=selection.usedKeys;state.pendingAssignments=assignments;}else usedKeys=players.map(player=>assignments[player.id]?.character).filter(Boolean).map(character=>characterKey(character));
+      if(Object.keys(assignments).length!==players.length)return false;
+      const updates={};players.forEach(player=>{const assignment=assignments[player.id];if(!assignment?.character)throw new Error(`Missing assignment for ${player.id}`);updates[`privateAssignments/${state.roomCode}/${player.id}`]={...assignment,round:Number(data.game.currentRound)};});
+      await db.ref().update(updates);
+      const finalized=await state.roomRef.child('game').transaction(game=>{if(!game||game.roundToken!==roundToken||game.assignmentState!=='writing'||String(game.assignmentWriterId)!==String(state.playerId))return;return {...game,assignmentState:'ready',assignmentWriterId:null,assignmentWriteStartedAt:null,recentCharacterIds:[...(game.recentCharacterIds||[]),...usedKeys].slice(-Math.max(players.length*3,40))};});
+      if(finalized.committed){state.pendingAssignments=null;state.pendingRoundToken='';state.assignmentRetryToken='';state.assignmentRetryCount=0;return true;}
+    }catch(error){
+      console.error('finalize round assignments',error);
+      if(state.roomRef&&state.assignmentRetryToken===roundToken){
+        state.assignmentRetryCount=(state.assignmentRetryCount||0)+1;
+        if(state.assignmentRetryCount<=4){
+          try{
+            const reset=await state.roomRef.child('game').transaction(current=>{if(!current||current.roundToken!==roundToken||current.assignmentState!=='writing'||String(current.assignmentWriterId)!==String(state.playerId))return;return {...current,assignmentState:'pending',assignmentWriterId:null,assignmentWriteStartedAt:null};});
+            if(reset.committed){window.setTimeout(()=>{if(state.roomRef&&state.assignmentRetryToken===roundToken)void finalizeRoundAssignments(roundToken);},Math.min(1800,350*state.assignmentRetryCount));}
+          }catch(retryError){console.warn('assignment retry reset',retryError);}
+        }
+      }
+    }
+    return false;
+  }
+  async function recoverStalledAssignmentWrite(data){
+    const game=data?.game,writerId=game?.assignmentWriterId,started=Number(game?.assignmentWriteStartedAt)||0;
+    if(!state.roomRef||state.mode!=='host'||game?.phase!=='preparing'||game?.assignmentState!=='writing'||!writerId||!started||serverNow()-started<5000)return;
+    const writer=data.players?.[writerId];if(String(data.hostId)===String(writerId)&&isPlayerOnline(writer))return;
+    try{
+      const reset=await state.roomRef.child('game').transaction(current=>{if(!current||current.phase!=='preparing'||current.assignmentState!=='writing'||String(current.assignmentWriterId)!==String(writerId))return;return {...current,assignmentState:'pending',assignmentWriterId:null,assignmentWriteStartedAt:null};});
+      if(reset.committed){const token=reset.snapshot.val()?.roundToken;if(token){state.pendingRoundToken=token;state.pendingAssignments=null;await finalizeRoundAssignments(token);}}
+    }catch(error){console.warn('recover stalled assignment write',error);}
+  }
+  
   function normalizeAssetUrl(value){
     const raw=String(value||'').trim();
     if(!raw)return '';
@@ -3384,53 +3357,31 @@ const personajes = [
   }
   function placeholder(){return '<div class="image-placeholder">SIN IMAGEN</div>';}
   function renderCharacterImage(boxId,character){
-    const box=$(boxId);if(!box)return;
-    box.innerHTML='';const source=imageSource(character);
-    if(!source){box.innerHTML=placeholder();return;}
-    const image=document.createElement('img');image.className='character-image';image.alt='Imagen del personaje';image.loading='lazy';image.decoding='async';image.src=source;image.onerror=()=>{box.innerHTML=placeholder();};box.appendChild(image);
+    const box=$(boxId);if(!box)return;box.innerHTML='';const source=imageSource(character);
+    if(!source){console.warn('Personaje sin imagen válida',character);box.innerHTML=placeholder();return;}
+    const image=document.createElement('img');image.className='character-image';image.alt='Imagen del personaje';image.loading='lazy';image.decoding='async';image.referrerPolicy='no-referrer';image.src=source;
+    image.onerror=()=>{console.warn('No se pudo cargar la imagen del personaje',character?.id,source);box.innerHTML=placeholder();};box.appendChild(image);
   }
   function renderPreparation(game){
     setText('prepRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
   }
   function schedulePreparation(game){
-    clearCountdown();void (async()=>{await releaseScreenWakeLock();await requestScreenWakeLock();})();
-    const prepEndsAt=Number(game.prepEndsAt??game.revealAt),key=`prep:${game.currentRound}:${prepEndsAt}`;
-    if(!Number.isFinite(prepEndsAt))return;
-    state.transitionKey='';state.countdownFeedbackKey='';
-    const tick=()=>{
-      const now=serverNow(),seconds=Math.max(0,Math.ceil((prepEndsAt-now)/1000));
-      setText('prepCountdown',seconds);
-      if(now>=prepEndsAt){
-        clearCountdown();
-        void (async()=>{
-          try{
-            await transitionPreparationToReveal(game,key);
-          }finally{
-            await releaseScreenWakeLock();
-          }
-        })();
-      }
-    };
+    clearCountdown();void (async()=>{await requestScreenWakeLock();})();
+    const prepEndsAt=Number(game.prepEndsAt),key=`prep:${game.currentRound}:${prepEndsAt}`;if(!Number.isFinite(prepEndsAt))return;state.transitionKey='';state.countdownFeedbackKey='';
+    const tick=()=>{const now=serverNow(),seconds=Math.max(0,Math.ceil((prepEndsAt-now)/1000));setText('prepCountdown',seconds);if(now>=prepEndsAt)void transitionPreparationToReveal(game,key);};
     tick();state.countdownTimer=setInterval(tick,250);
   }
   async function transitionPreparationToReveal(game,key){
-    if(state.transitionKey===key||!state.roomRef||!isHost(state.lastRoomData))return;state.transitionKey=key;
+    if(state.transitionKey===key||!state.roomRef||!isHost(state.lastRoomData))return;
     try{
-      await state.roomRef.child('game').transaction(current=>{
-        const prepEndsAt=Number(current?.prepEndsAt??current?.revealAt);
-        if(!current||current.phase!=='preparing'||current.currentRound!==game.currentRound||prepEndsAt!==Number(game.prepEndsAt??game.revealAt)||serverNow()<prepEndsAt||!isHost(state.lastRoomData))return;
-        const configuredRevealEndsAt=Number(current.revealEndsAt),revealEndsAt=Number.isFinite(configuredRevealEndsAt)&&configuredRevealEndsAt>prepEndsAt?configuredRevealEndsAt:prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-        return {...current,phase:'reveal',revealAt:prepEndsAt,revealEndsAt};
-      });
+      const result=await state.roomRef.child('game').transaction(current=>{const prepEndsAt=Number(current?.prepEndsAt);if(!current||current.phase!=='preparing'||current.currentRound!==game.currentRound||prepEndsAt!==Number(game.prepEndsAt)||serverNow()<prepEndsAt||current.assignmentState!=='ready')return;const revealEndsAt=Number(current.revealEndsAt)>prepEndsAt?Number(current.revealEndsAt):prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;return {...current,phase:'reveal',revealAt:prepEndsAt,revealEndsAt};});
+      if(result.committed){state.transitionKey=key;clearCountdown();return;}
+      state.transitionKey='';
     }catch(error){console.warn('preparation transition',error);state.transitionKey='';}
   }
   function renderReveal(game){
-    const character=state.lastRoomData?.secureAssignments?state.myAssignment?.character:game.assignments?.[state.playerId]?.character;
-    setText('revealRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);
-    setText('revealAudience','TU CARTA — NO MIRES');
-    renderCharacterImage('revealCharacterImageBox',character);
-    setText('revealCharacterName',cleanUiText(character?.nombre||''));
-    setText('revealCharacterCategory',cleanUiText(character?.categoria||''));
+    const assignment=(Number(state.myAssignment?.round)===Number(game.currentRound)?state.myAssignment:null)||(Number(state.privateAssignment?.round)===Number(game.currentRound)?state.privateAssignment:null);const character=assignment?.character||null;
+    setText('revealRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);setText('revealAudience','TU CARTA — NO MIRES');renderCharacterImage('revealCharacterImageBox',character);setText('revealCharacterName',cleanUiText(character?.nombre||'Preparando carta…'));setText('revealCharacterCategory',cleanUiText(character?.categoria||''));
   }
   function scheduleReveal(game){
     clearCountdown();void (async()=>{await releaseScreenWakeLock();await requestScreenWakeLock();})();
@@ -3459,7 +3410,7 @@ const personajes = [
     try{
       await state.roomRef.child('game').transaction(current=>{
         const revealEndsAt=Number(current?.revealEndsAt??current?.revealAt);
-        if(!current||current.phase!=='reveal'||current.currentRound!==game.currentRound||revealEndsAt!==Number(game.revealEndsAt??game.revealAt)||serverNow()<revealEndsAt||!isHost(state.lastRoomData))return;
+        if(!current||current.phase!=='reveal'||current.currentRound!==game.currentRound||revealEndsAt!==Number(game.revealEndsAt??game.revealAt)||serverNow()<revealEndsAt)return;
         const startingEndsAt=serverNow()+STARTING_TRANSITION_DURATION_MS;
         return {...current,phase:'starting',revealedAt:serverNow(),startingEndsAt,revealEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null};
       });
@@ -3488,7 +3439,7 @@ const personajes = [
     try{
       await state.roomRef.child('game').transaction(current=>{
         const startingEndsAt=Number(current?.startingEndsAt);
-        if(!current||current.phase!=='starting'||current.currentRound!==game.currentRound||startingEndsAt!==Number(game.startingEndsAt)||serverNow()<startingEndsAt||!isHost(state.lastRoomData))return;
+        if(!current||current.phase!=='starting'||current.currentRound!==game.currentRound||startingEndsAt!==Number(game.startingEndsAt)||serverNow()<startingEndsAt)return;
         return {...current,phase:'playing',startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null};
       });
     }catch(error){console.warn('starting transition',error);state.transitionKey='';}
@@ -3503,56 +3454,30 @@ const personajes = [
     }catch(error){console.warn('legacy friends transition',error);}
   }
   function scheduleAssignmentRecovery(){
-    if(state.assignmentRecoveryTimer||!state.roomRef||!state.roomCode||!state.lastRoomData?.secureAssignments)return;
-    const attempts=state.assignmentRecoveryAttempts||0;
-    if(attempts>=8)return;
-    state.assignmentRecoveryAttempts=attempts+1;
-    state.assignmentRecoveryTimer=setTimeout(async()=>{
-      state.assignmentRecoveryTimer=null;
-      try{
-        const snap=await db.ref(`publicAssignments/${state.roomCode}`).once('value');
-        const value=snap.val()||{};
-        if(Object.keys(value).length){state.publicAssignments=value;state.assignmentRecoveryAttempts=0;renderPlaying(state.lastRoomData.game,state.lastRoomData);return;}
-      }catch(error){console.warn('No se pudieron recuperar las asignaciones públicas',error);}
+    if(state.privateAssignmentRecoveryTimer||!state.roomRef||!state.roomCode||!state.playerId)return;
+    const attempts=state.privateAssignmentRecoveryAttempts||0;if(attempts>=6)return;state.privateAssignmentRecoveryAttempts=attempts+1;
+    state.privateAssignmentRecoveryTimer=setTimeout(async()=>{
+      state.privateAssignmentRecoveryTimer=null;
+      try{const snap=await db.ref(`privateAssignments/${state.roomCode}/${state.playerId}`).once('value');if(snap.exists()){state.privateAssignment=snap.val();state.myAssignment=state.privateAssignment;state.privateAssignmentRecoveryAttempts=0;renderPlaying(state.lastRoomData.game,state.lastRoomData);return;}}catch(error){console.warn('private assignment recovery',error);}
       scheduleAssignmentRecovery();
-    },Math.min(2500,350*state.assignmentRecoveryAttempts));
+    },Math.min(3500,450*state.privateAssignmentRecoveryAttempts));
   }
   function renderPlaying(game,data){
-    const names=playerNames(data,game),assignments=data.secureAssignments?state.publicAssignments:(game.assignments||{}),companions=normalizeRoomPlayers(data).filter(player=>String(player.id)!==String(state.playerId));
-    setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);
-    const list=$('playingCharacterList');list.replaceChildren();
-    let missingAssignment=false;
+    const names=playerNames(data,game),companions=activeGamePlayers(data).filter(player=>String(player.id)!==String(state.playerId));
+    setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);const list=$('playingCharacterList');list.replaceChildren();
     companions.forEach(player=>{
-      const playerId=String(player.id),entry=assignments?.[playerId]||assignments?.[String(player.id)]||null,character=entry?.character||null;
-      if(data.secureAssignments&&!character)missingAssignment=true;
       const row=document.createElement('div');row.className='friend-row';row.setAttribute('role','listitem');
-      const media=document.createElement('div');media.className='friend-character-media';
-      const source=imageSource(character);
-      if(source){
-        const image=document.createElement('img');image.className='character-image';image.alt=`Imagen del personaje ${cleanUiText(character?.nombre||'')}`;image.loading='eager';image.decoding='async';image.referrerPolicy='no-referrer';image.src=source;
-        image.onerror=()=>{media.innerHTML=placeholder();};media.appendChild(image);
-      }else{
-        media.innerHTML='<div class="image-placeholder">CARGANDO…</div>';
-      }
+      const media=document.createElement('div');media.className='friend-character-media';media.innerHTML='<div class="image-placeholder">PRIVADA</div>';
       const main=document.createElement('div');main.className='friend-main';
-      const name=document.createElement('div');name.className='friend-name';name.textContent=cleanUiText(names[playerId]||player.name);
-      const characterName=document.createElement('div');characterName.className='friend-character';characterName.textContent=cleanUiText(character?.nombre||'Cargando personaje…');
-      const category=document.createElement('div');category.className='friend-category';category.textContent=cleanUiText(character?.categoria||'Esperando asignación…');
-      main.append(name,characterName,category);
-      if(accountUid() && player.accountUid && String(player.accountUid)!==String(accountUid()) && !state.friendData[String(player.accountUid)]){
-        const action=document.createElement('div');action.className='game-friend-action';
-        const button=document.createElement('button');button.className='small-btn success';button.type='button';button.textContent='AGREGAR AMIGO';
-        button.addEventListener('click',()=>void addFriendFromGame(String(player.accountUid),String(player.name||'usuario'),button));
-        action.appendChild(button);main.appendChild(action);
-      }else if(accountUid() && player.accountUid && state.friendData[String(player.accountUid)]){
-        const action=document.createElement('div');action.className='game-friend-action';
-        const button=document.createElement('button');button.className='small-btn';button.type='button';button.textContent='AMIGOS';button.disabled=true;action.appendChild(button);main.appendChild(action);
-      }
+      const name=document.createElement('div');name.className='friend-name';name.textContent=cleanUiText(names[player.id]||player.name);
+      const characterName=document.createElement('div');characterName.className='friend-character';characterName.textContent='Carta privada';
+      const category=document.createElement('div');category.className='friend-category';category.textContent=isPlayerOnline(player)?'Personaje oculto':'OFFLINE';main.append(name,characterName,category);
+      if(accountUid()&&player.accountUid&&String(player.accountUid)!==String(accountUid())&&!state.friendData[String(player.accountUid)]){const action=document.createElement('div');action.className='game-friend-action';const button=document.createElement('button');button.className='small-btn success';button.type='button';button.textContent='AGREGAR AMIGO';button.addEventListener('click',()=>void addFriendFromGame(String(player.accountUid),String(player.name||'usuario'),button));action.appendChild(button);main.appendChild(action);}
       row.append(media,main);list.appendChild(row);
     });
-    if(!companions.length)emptyAccountList('playingCharacterList','No hay otros jugadores conectados.');
-    if(missingAssignment)scheduleAssignmentRecovery();
-    const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'':'Esperando al anfitrión…');
+    if(!companions.length)emptyAccountList('playingCharacterList','No hay otros jugadores en esta partida.');
+    if(!state.myAssignment&&['playing','scoring','results'].includes(game.phase))scheduleAssignmentRecovery();
+    const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=!host;setText('playingWaiting',host?'':'Esperando al anfitrión…');
   }
   async function openScoring(){
     if(state.busy.score||!state.roomRef) return;setBusy('score',true);setButtonBusy('scoreRoundBtn','score',true,'ABRIENDO…');
@@ -3566,25 +3491,28 @@ const personajes = [
   }
   function renderScoring(game,data){
     const host=isHost(data);setText('scoringRoundLabel',`RONDA ${game.currentRound} DE ${game.totalRounds}`);$('scoringHostView').classList.toggle('hidden',!host);$('scoringWaiting').classList.toggle('hidden',host);
-    if(host){const players=normalizeRoomPlayers(data);fillPlaceSelect('firstPlaceSelect',players,false);fillPlaceSelect('secondPlaceSelect',players,false);fillPlaceSelect('thirdPlaceSelect',players,players.length<3);$('thirdPlaceSelect').value='';setText('scoringNotice','');}
+    if(host){const players=activeGamePlayers(data);fillPlaceSelect('firstPlaceSelect',players,false);fillPlaceSelect('secondPlaceSelect',players,false);fillPlaceSelect('thirdPlaceSelect',players,players.length<3);$('thirdPlaceSelect').value='';setText('scoringNotice','');}
   }
   async function confirmResult(){
-    if(state.busy.confirm||!state.roomRef)return;const first=$('firstPlaceSelect').value,second=$('secondPlaceSelect').value,third=$('thirdPlaceSelect').value;
+    if(state.busy.confirm||!state.roomRef||state.mode!=='host')return;
+    const first=$('firstPlaceSelect').value,second=$('secondPlaceSelect').value,third=$('thirdPlaceSelect').value;
     if(!first||!second){notice('Debes seleccionar el 1° y el 2° lugar.','error','scoringNotice');return;}
-    const data=(await state.roomRef.once('value')).val(),players=normalizeRoomPlayers(data),valid=new Set(players.map(player=>player.id));
-    if(!valid.has(first)||!valid.has(second)||(third&&!valid.has(third))){notice('Todos los puestos deben pertenecer a la sala.','error','scoringNotice');return;}
-    if(first===second||(third&&(first===third||second===third))){notice('Cada puesto debe ser para un jugador diferente.','error','scoringNotice');return;}
-    if(players.length>=3&&!third){notice('Selecciona el 3° lugar.','error','scoringNotice');return;}
     setBusy('confirm',true);setButtonBusy('confirmResultBtn','confirm',true,'CONFIRMANDO…');
     try{
+      const data=(await state.roomRef.once('value')).val();if(!data||!isHost(data)||data.game?.phase!=='scoring'){notice('La ronda ya no está disponible para confirmar.','error','scoringNotice');return;}
+      const players=activeGamePlayers(data),valid=new Set(players.map(player=>String(player.id)));
+      if(!valid.has(first)||!valid.has(second)||(third&&!valid.has(third))){notice('Todos los puestos deben pertenecer a los jugadores activos de la ronda.','error','scoringNotice');return;}
+      if(first===second||(third&&(first===third||second===third))){notice('Cada puesto debe ser para un jugador diferente.','error','scoringNotice');return;}
+      if(players.length>=3&&!third){notice('Selecciona el 3° lugar.','error','scoringNotice');return;}
       const names=playerNames(data,data.game),places={first:{playerId:first,name:cleanUiText(names[first]),points:3},second:{playerId:second,name:cleanUiText(names[second]),points:2},third:third?{playerId:third,name:cleanUiText(names[third]),points:1}:null};
       const result=await state.roomRef.child('game').transaction(game=>{
         if(!game||game.phase!=='scoring'||game.roundResults)return;
-        const scores={...(game.scores||{})};Object.keys(names).forEach(id=>{if(scores[id]===undefined)scores[id]=0;});
+        const active=new Set(Object.keys(game.activePlayers||{}).filter(id=>game.activePlayers[id]));if(!active.has(first)||!active.has(second)||(third&&!active.has(third))||first===second||(third&&(first===third||second===third)))return;
+        const scores={...(game.scores||{})};active.forEach(id=>{if(scores[id]===undefined)scores[id]=0;});
         scores[first]=(Number(scores[first])||0)+3;scores[second]=(Number(scores[second])||0)+2;if(third)scores[third]=(Number(scores[third])||0)+1;
-        return {...game,phase:'results',scores,roundResults:{round:game.currentRound,places,completedAt:serverNow()}};
+        return {...game,phase:'results',scores,roundResults:{round:game.currentRound,places,completedAt:firebase.database.ServerValue.TIMESTAMP}};
       });
-      if(!result.committed)notice('El resultado ya fue confirmado.','error','scoringNotice');
+      if(!result.committed)notice('El resultado ya fue confirmado o la ronda cambió.','error','scoringNotice');
     }catch(error){console.error('confirm result',error);notice('No se pudo confirmar el resultado.','error','scoringNotice');}
     finally{setBusy('confirm',false);setButtonBusy('confirmResultBtn','confirm',false);}
   }
@@ -3601,17 +3529,14 @@ const personajes = [
     if(state.busy.next||!state.roomRef||state.mode!=='host')return;setBusy('next',true);setButtonBusy('nextRoundBtn','next',true,'CARGANDO…');
     try{
       const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data)||data.game?.phase!=='results')return;
-      if(Number(data.game.currentRound)>=Number(data.game.totalRounds)){await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results')return;return {...game,phase:'finished'};});return;}
-      const players=normalizeRoomPlayers(data),config=selectedRoomConfig(data);
-      const stock=validateCardStock(players.length,config.categories,config.totalRounds);
-      if(!stock.valid){notice(getCardStockMessage(stock),'error','lobbyNotice');return;}
-      const selection=createAssignments(players,config.categories,data.game.recentCharacterIds||[]);if(!selection){notice('No hay suficientes personajes para comenzar la siguiente ronda.','error','lobbyNotice');return;}
-      const currentRound=Number(data.game.currentRound)+1,names={...(data.game.playerNames||{})};players.forEach(player=>{names[player.id]=player.name;});
-      const gameStartTime=serverNow(),prepEndsAt=gameStartTime+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
-      const secureAssignments=Boolean(data.secureAssignments),assignmentUpdates={};
-      if(secureAssignments){players.forEach(player=>{assignmentUpdates[`privateAssignments/${state.roomCode}/${player.id}`]=selection.assignments[player.id];});assignmentUpdates[`publicAssignments/${state.roomCode}`]=selection.assignments;await db.ref().update(assignmentUpdates);}
-      const nextGame={...data.game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:secureAssignments?{}:selection.assignments,friendsStartedAt:null,roundResults:null,playerNames:names,recentCharacterIds:[...(data.game.recentCharacterIds||[]),...selection.usedKeys].slice(-Math.max(players.length*3,40))};
-      await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results'||game.currentRound!==data.game.currentRound)return;return nextGame;});
+      if(Number(data.game.currentRound)>=Number(data.game.totalRounds)){const done=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results')return;return {...game,phase:'finished',assignmentState:null,assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken:null};});if(done.committed)await cleanupPrivateAssignmentsAfterFinish();return;}
+      const players=activeGamePlayers(data),config=selectedRoomConfig(data);if(!players.length){notice('No hay jugadores activos para continuar.','error','lobbyNotice');return;}
+      const stock=validateCardStock(players.length,config.categories,config.totalRounds);if(!stock.valid){notice(getCardStockMessage(stock),'error','lobbyNotice');return;}
+      const currentRound=Number(data.game.currentRound)+1,names={},activePlayers={};players.forEach(p=>{names[p.id]=p.name;activePlayers[p.id]=true;});const roundToken=`r${currentRound}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,7)}`,now=serverNow(),prepEndsAt=now+PREPARATION_DURATION_MS,revealEndsAt=prepEndsAt+CHARACTER_DISPLAY_DURATION_MS;
+      const selection=createAssignments(players,config.categories,data.game?.recentCharacterIds||[]);if(!selection){notice('No hay suficientes personajes únicos para comenzar la siguiente ronda.','error','lobbyNotice');return;}
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='results'||Number(game.currentRound)!==Number(data.game.currentRound))return;return {...game,phase:'preparing',round:currentRound,currentRound,totalRounds:config.totalRounds,gameStartTime:now,prepEndsAt,revealAt:prepEndsAt,revealEndsAt,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],playerNames:names,roundResults:null,activePlayers,assignmentState:'pending',assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken,secureAssignments:true};});
+      if(!result.committed){notice('La siguiente ronda ya está siendo preparada.','error','lobbyNotice');return;}
+      state.pendingRoundToken=roundToken;state.pendingAssignments=selection.assignments;state.assignmentRetryToken=roundToken;state.assignmentRetryCount=0;void finalizeRoundAssignments(roundToken);
     }catch(error){console.error('next round',error);notice('No se pudo comenzar la siguiente ronda.','error','lobbyNotice');}
     finally{setBusy('next',false);setButtonBusy('nextRoundBtn','next',false);}
   }
@@ -3628,6 +3553,12 @@ const personajes = [
     button.disabled=!visible||state.busy.finishGame;
     if(!state.busy.finishGame){button.removeAttribute('aria-busy');button.textContent='FINALIZAR PARTIDA';}
   }
+  async function cleanupPrivateAssignmentsAfterFinish(){
+    if(!state.roomRef||state.mode!=='host')return;
+    try{await db.ref(`privateAssignments/${state.roomCode}`).remove();await db.ref(`publicAssignments/${state.roomCode}`).remove().catch(()=>{});await state.roomRef.child('metadata').update({lastActiveAt:firebase.database.ServerValue.TIMESTAMP,cleanupEligibleAt:firebase.database.ServerValue.TIMESTAMP});}
+    catch(error){console.warn('cleanup private assignments after finish',error);}
+  }
+  
   async function finishGameEarly(){
     if(state.busy.finishGame||!state.roomRef||state.mode!=='host')return;
     if(!canEndGameNow())return;
@@ -3640,11 +3571,10 @@ const personajes = [
       const result=await state.roomRef.child('game').transaction(game=>{
         const phase=game?.phase;
         if(!game||!['preparing','reveal','starting','playing','scoring','results'].includes(phase))return;
-        return {...game,phase:'finished',finishedEarly:true,finishedAt:firebase.database.ServerValue.TIMESTAMP,finishReason:'host'};
+        return {...game,phase:'finished',finishedEarly:true,finishedAt:firebase.database.ServerValue.TIMESTAMP,finishReason:'host',assignmentState:null,assignmentWriterId:null,assignmentWriteStartedAt:null,roundToken:null};
       });
       if(result.committed){
-        showSocialToast('Partida finalizada.');
-        haptic([30,80,30]);
+        await cleanupPrivateAssignmentsAfterFinish();showSocialToast('Partida finalizada.');haptic([30,80,30]);
       }else{
         notice('La partida ya había terminado.','error','lobbyNotice');
       }
@@ -3667,43 +3597,27 @@ const personajes = [
   }
   async function newGame(){
     if(state.busy.restart||!state.roomRef||state.mode!=='host')return;setBusy('restart',true);setButtonBusy('restartBtn','restart',true,'PREPARANDO…');clearCountdown();
-    try{
-      const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(player=>{scores[player.id]=0;names[player.id]=player.name;});
-      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,finishedEarly:false,finishedAt:null,finishReason:null,scores,playerNames:names};});
-      if(result.committed&&data.secureAssignments){await db.ref('privateAssignments/'+state.roomCode).remove().catch(()=>{});await db.ref('publicAssignments/'+state.roomCode).remove().catch(()=>{});state.privateAssignment=null;state.publicAssignments={};}
+    try{const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data)||data.game?.phase!=='finished')return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(p=>{scores[p.id]=0;names[p.id]=p.name;});
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],friendsStartedAt:null,roundResults:null,finishedEarly:false,finishedAt:null,finishReason:null,scores,playerNames:names,activePlayers:{},assignmentState:null,roundToken:null,secureAssignments:true};});
+      if(result.committed){await db.ref(`privateAssignments/${state.roomCode}`).remove().catch(error=>console.warn('cleanup private assignments',error));showSocialToast('Nueva partida preparada.');}
     }catch(error){console.error('new game',error);notice('No se pudo preparar la nueva partida.','error','lobbyNotice');}
     finally{setBusy('restart',false);setButtonBusy('restartBtn','restart',false);}
   }
   async function leaveRoom(preserveRoom=true){
-    cancelReconnect();clearCountdown();
-    const ref=state.roomRef,mode=state.mode,roomId=state.roomCode,authRoomUid=backendUid();
+    if(state.busy.leave)return;setBusy('leave',true);cancelReconnect();clearCountdown();
+    const ref=state.roomRef,roomId=state.roomCode,uid=backendUid();
     try{
-      if(ref&&state.playerId){
-        const playerRef=ref.child('players/'+String(state.playerId));
-        try{await playerRef.onDisconnect().cancel();}catch(error){}
-        if(preserveRoom){
-          await playerRef.update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP,leftAt:firebase.database.ServerValue.TIMESTAMP});
-        }
+      const snapshot=ref?await ref.once('value'):null,data=snapshot?.val()||null,currentPlayer=data?.players?.[state.playerId],currentlyHost=Boolean(data&&data.hostId===state.playerId);
+      if(ref&&state.playerId&&currentPlayer){try{await ref.child('players/'+state.playerId).onDisconnect().cancel();}catch(error){}
+        if(preserveRoom)await ref.child('players/'+state.playerId).update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP,leftAt:firebase.database.ServerValue.TIMESTAMP});
       }
-      if(preserveRoom){
-        if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
-      }else{
-        const secure=Boolean(state.lastRoomData?.secureAssignments);
-        if(ref&&mode==='player')await ref.child('players/'+String(state.playerId)).remove();
-        if(ref&&mode==='host'){
-          await ref.remove();
-          if(secure){
-            await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});
-            await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});
-          }
-        }
-        if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
+      if(uid&&roomId)await db.ref(`roomMembers/${roomId}/${uid}`).remove().catch(()=>{});
+      if(!preserveRoom&&ref){
+        if(currentlyHost){await ref.remove();await db.ref(`privateAssignments/${roomId}`).remove().catch(()=>{});await db.ref(`publicAssignments/${roomId}`).remove().catch(()=>{});}
+        else if(currentPlayer)await ref.child('players/'+state.playerId).remove();
       }
-    }catch(error){console.warn('leaveRoom',error);}
-    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;
-    clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;
-    show(accountUid()?'gameHome':'home');
-    showSocialToast(preserveRoom?'Saliste de la sala. Puedes volver con el código.':'Sala cerrada.');
+    }catch(error){console.error('leaveRoom',error);}
+    finally{stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show(accountUid()?'gameHome':'home');showSocialToast(preserveRoom?'Saliste de la sala. Puedes volver con el código.':'Sala cerrada.');setBusy('leave',false);}
   }
   async function copyRoom(){
     const button=$('copyRoomBtn'),original=button?.textContent||'COPIAR';
@@ -3713,67 +3627,29 @@ const personajes = [
     }catch(error){notice('Código: '+state.roomCode,'success','lobbyNotice');}
   }
   async function reconnectPlayer(roomId,playerName,playerId){
-    console.log('Intentando reconectar a la sala:',roomId);
-    state.restoring=true;
-    state.playerId=playerId;
-    state.playerName=playerName;
-    state.mode=null;
-    attachRoom(String(roomId).toUpperCase());
+    console.log('Intentando reconectar a la sala:',roomId);state.restoring=true;state.playerId=String(playerId||state.playerId||backendUid()||'');state.playerName=playerName||state.playerName;state.mode=null;attachRoom(String(roomId).toUpperCase());
     try{
-      const snapshot=await state.roomRef.once('value');
-      if(!snapshot.exists()){
-        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;
-      }
-      const data=snapshot.val();state.lastRoomData=data;
-      const matched=findAccountRoomPlayer(normalizeRoomPlayers(data));
-      if(matched)state.playerId=matched.id;
-      let me=matched||data.players?.[state.playerId];
-      if(!me){
-        // Recuperación compatible con la V7: versiones anteriores podían eliminar
-        // al jugador mediante onDisconnect(). Si todavía tenemos la sesión local,
-        // restauramos su registro con el mismo playerId para conservar su partida.
-        const wasHost=data.hostId===state.playerId;
-        await state.roomRef.child('players/'+state.playerId).set({
-          name:playerName,
-          accountUid:accountUid()||null,
-          host:wasHost,
-          joinedAt:firebase.database.ServerValue.TIMESTAMP,
-          reconnectedAt:firebase.database.ServerValue.TIMESTAMP,
-          status:'online',
-          connected:true
-        });
-      }else if(accountUid()&&me.accountUid!==accountUid()||backendUid()&&me.authUid!==backendUid())await state.roomRef.child('players/'+state.playerId).update({accountUid:accountUid()||null,authUid:backendUid()||null});
-      const freshSnapshot=me?snapshot:await state.roomRef.once('value');
-      const freshData=freshSnapshot.val();state.lastRoomData=freshData;const freshMe=freshData.players?.[state.playerId];
-      if(!freshMe){
-        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;state.playerName='';stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;
-      }
-      state.mode=freshData.hostId===state.playerId?'host':'player';
-      state.playerName=freshMe.name||playerName;
-      state.hostName=freshData.hostName||state.hostName;
-      await markRoomMembership();await installDisconnect();
-      saveSessionInfo(roomId,state.playerName,playerId);
-      listenToRoom();
-      return true;
-    }catch(error){
-      console.warn('reconnect player',error);
-      clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;stopAssignmentListeners();show(accountUid()?'gameHome':'home');
-      return false;
-    }finally{
-      state.restoring=false;
-    }
+      const snapshot=await state.roomRef.once('value');if(!snapshot.exists()){clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;}
+      const data=snapshot.val(),matched=findAccountRoomPlayer(normalizeRoomPlayers(data));
+      if(!matched){clearSession();notice('No se pudo verificar tu identidad en la sala.','error','joinNotice');return false;}
+      state.playerId=String(matched.id);state.playerName=matched.name||playerName;state.mode=data.hostId===state.playerId?'host':'player';state.hostName=data.hostName||state.hostName;
+      await state.roomRef.child('players/'+state.playerId).update({status:'online',connected:true,lastSeen:firebase.database.ServerValue.TIMESTAMP,accountUid:accountUid()||null,authUid:backendUid()||null});
+      await markRoomMembership();await installDisconnect();saveSessionInfo(roomId,state.playerName,state.playerId);listenToRoom();return true;
+    }catch(error){console.warn('reconnect player',error);clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;}
+    finally{state.restoring=false;}
   }
 
   async function restoreSession(){
-    const session=readSession();
-    const roomId=session?.roomId||session?.roomCode;
-    const playerName=session?.playerName||session?.name;
-    const playerId=session?.playerId;
-    if(!roomId||!playerName||!playerId)return false;
-    return reconnectPlayer(roomId,playerName,playerId);
+    const session=readSession(),roomId=session?.roomId||session?.roomCode,playerName=session?.playerName||session?.name,playerId=session?.playerId,uid=backendUid();
+    if(!roomId||!playerId||!uid)return false;
+    if(accountUid()&&session.accountUid!==accountUid())return false;
+    if(!accountUid()&&(!session.accountUid||session.authUid!==uid))return false;
+    return reconnectPlayer(roomId,playerName||'',playerId);
   }
   function showSavedSessionBanner(){
-    const session=readSession(),sameAccount=!accountUid()||!session?.accountUid||session.accountUid===accountUid(),hasSession=Boolean(session&&(session.roomId||session.roomCode)&& (session.playerName||session.name)&&session.playerId&&sameAccount);
+    const session=readSession(),uid=backendUid();
+    const sameIdentity=Boolean(session&&uid&&((accountUid()&&session.accountUid===accountUid())||(!accountUid()&&!session.accountUid&&session.authUid===uid)));
+    const hasSession=Boolean(session&&session.roomId&&session.playerId&&sameIdentity);
     $('sessionRecoveryBanner')?.classList.toggle('hidden',!hasSession);
   }
   async function resumeSavedSession(){
@@ -3791,7 +3667,7 @@ const personajes = [
   $('profileFriendsBtn').onclick=()=>openQuickFriends();$('profileRequestsBtn').onclick=()=>{renderQuickFriendsPanel();openQuickFriends();};$('signOutBtn').onclick=logoutAccount;$('profileBackBtn').onclick=()=>show('gameHome');
   $('friendsRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('requestsFriendsBtn').onclick=()=>openQuickFriends();$('friendsBackBtn').onclick=()=>openQuickFriends();$('requestsBackBtn').onclick=()=>openQuickFriends();
   $('searchFriendBtn').onclick=searchFriend;$('friendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void searchFriend();}});
-  $('quickFriendsBtn').onclick=openQuickFriends;$('quickFriendsClose').onclick=closeQuickFriends;$('quickFriendsOverlay').addEventListener('click',event=>{if(event.target.id==='quickFriendsOverlay')closeQuickFriends();});$('quickSearchFriendBtn').onclick=quickSearchFriend;$('quickFriendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void quickSearchFriend();}});$('switchAccessBtn')?.addEventListener('click',()=>void switchAccess());
+  $('quickFriendsBtn').onclick=openQuickFriends;$('quickFriendsClose').onclick=closeQuickFriends;$('quickFriendsOverlay').addEventListener('click',event=>{if(event.target.id==='quickFriendsOverlay')closeQuickFriends();});$('quickSearchFriendBtn').onclick=quickSearchFriend;$('quickFriendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void quickSearchFriend();}});
   $('inviteFriendsBtn').onclick=()=>{$('lobbyInvitePanel').classList.toggle('hidden');renderLobbyFriends();};$('closeInvitePanelBtn').onclick=()=>$('lobbyInvitePanel').classList.add('hidden');
   $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=()=>void requestLeaveRoom();
   $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=()=>void requestLeaveRoom();$('finishGameBtn').onclick=finishGameEarly;
@@ -3813,16 +3689,10 @@ const personajes = [
     state.lastConnected=connected;
     clearTimeout(state.connectionWatchdog);
     if(connected){
-      state.roomConnectionPaused=false;
-      setConnectionStatus('online','Conectado');
-      return;
+      state.roomConnectionPaused=false;setConnectionStatus('online','Conectado');if(state.roomRef&&!state.reconnecting&&!state.restoring)void recoverRoomConnection('firebase-connected');return;
     }
     setConnectionStatus('offline','Sin conexión');
-    if(state.roomRef){
-      state.roomConnectionPaused=true;
-      try{db.goOffline();}catch(error){console.warn('db.goOffline',error);}
-      showReconnectModal('connection-lost');
-    }
+    if(state.roomRef){state.roomConnectionPaused=true;showReconnectModal('connection-lost');}
   });
 
   document.addEventListener('visibilitychange',async()=>{
@@ -3832,12 +3702,8 @@ const personajes = [
     }
     if(document.visibilityState==='visible' && hasActiveCountdown())await requestScreenWakeLock();
   });
-  window.addEventListener('offline',()=>{
-    if(state.roomRef){state.roomConnectionPaused=true;setConnectionStatus('offline','Sin conexión');try{db.goOffline();}catch(error){}}
-  });
-  window.addEventListener('online',()=>{
-    if(state.roomRef){setConnectionStatus('offline','Sin conexión · pulsa RECONECTAR');showReconnectModal('connection-lost');}
-  });
+  window.addEventListener('offline',()=>{if(state.roomRef){state.roomConnectionPaused=true;setConnectionStatus('offline','Sin conexión');}});
+  window.addEventListener('online',()=>{if(state.roomRef){setConnectionStatus('reconnecting','Intentando reconectar…');void recoverRoomConnection('browser-online').then(ok=>{if(ok)hideReconnectModal();else showReconnectModal('connection-lost');});}});
   $('manualReconnectBtn').onclick=manualReconnect;
   $('discardReconnectBtn').onclick=()=>void discardReconnect();
   $('resumeSessionBtn')?.addEventListener('click',resumeSavedSession);
@@ -3858,9 +3724,10 @@ const personajes = [
       }
     }else{
       stopAccountListeners();
-      if(!state.roomRef)state.playerId=state.legacyPlayerId;
       if(user?.isAnonymous){
-        state.guestMode=true;
+        const guestMarker=sessionStorage.getItem('aq_guest_auth_uid'),session=readSession();
+        if(!state.roomRef&&!guestMarker&&session?.authUid!==user.uid){try{await auth.signOut();}catch(error){console.warn('anonymous isolation',error);}state.guestMode=false;state.authUser=null;renderAccountUI();showSavedSessionBanner();return;}
+        sessionStorage.setItem('aq_guest_auth_uid',user.uid);state.playerId=state.playerId||user.uid;state.guestMode=true;
       }else if(!user){
         state.guestMode=false;
       }
@@ -3900,3 +3767,4 @@ const personajes = [
 </script>
 </body>
 </html>
+
