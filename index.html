@@ -141,6 +141,16 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
 .quick-friends-actions{display:flex;flex-wrap:wrap;gap:7px}.quick-friends-actions .small-btn{flex:0 0 auto}
 .quick-friends-divider{height:1px;background:var(--border);margin:16px 0}
 .quick-friends-overlay .room-notice{margin-top:10px}
+  .end-game-fab{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9500;width:min(calc(100% - 28px),420px);padding:13px 16px;border-radius:14px;background:#4a2229;color:#fff;border:1px solid rgba(217,106,120,.48);box-shadow:0 18px 50px rgba(0,0,0,.42);font-size:12px;font-weight:950;letter-spacing:.04em;display:none}
+  .end-game-fab.visible{display:block;animation:fadeUp .22s ease both}
+  .end-game-fab:active{transform:translateX(-50%) scale(.985)}
+  .end-game-fab[aria-busy="true"]{opacity:.7}
+  .room-leave-area{display:none;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);text-align:center}
+  .room-leave-area.visible{display:grid;gap:7px;animation:fadeUp .2s ease both}
+  .room-leave-label{font-size:10px;color:#737a84;letter-spacing:.07em;text-transform:uppercase;font-weight:850;line-height:1.35}
+  .room-leave-btn{justify-self:center;min-width:156px;padding:9px 14px;border-radius:10px;background:#17191d;color:#aeb4bc;border:1px solid rgba(255,255,255,.08);font-size:10px;font-weight:900;letter-spacing:.05em}
+  .room-leave-btn:hover{background:#202329;color:#f1f2f4;border-color:rgba(234,179,8,.22)}
+  .room-leave-btn:active{transform:scale(.985)}
 @media (max-width:520px){.quick-friends-panel{width:100%;padding:16px}.quick-friends-head{top:-16px}.quick-friend-row{grid-template-columns:42px 1fr}.quick-friend-row .row-actions{grid-column:2}.quick-friends-search{grid-template-columns:1fr}.quick-friends-search .btn{width:100%}}
 
 
@@ -148,15 +158,71 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   .recovery-banner strong{display:block;color:#fff;font-size:14px}.recovery-banner>span{display:block;margin-top:4px;color:#c8cdd4;font-size:12px;line-height:1.4}.recovery-actions{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:11px}.recovery-actions .btn{padding:12px 14px}.guest-account-cta{display:none;margin-top:8px;color:#9fa6b0;font-size:11px;line-height:1.4}.guest-mode .guest-account-cta{display:block}.lobby-player{grid-template-columns:40px minmax(0,1fr) auto}.lobby-avatar{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#202329;color:#eab308;font-weight:950;border:1px solid var(--border)}.lobby-player-main{min-width:0}.lobby-player-name{font-weight:850;overflow-wrap:anywhere}.lobby-player-status{font-size:10px;color:#818895;margin-top:2px;text-transform:uppercase;letter-spacing:.07em}.lobby-player-status.online{color:#76d19c}.lobby-player-status.offline{color:#d98a95}.lobby-role{justify-self:end}.winner-box-glow{animation:winnerPulse 1.35s ease-in-out 2}.winner-confetti{display:flex;justify-content:center;gap:7px;margin-top:10px;font-size:18px;animation:fadeUp .45s ease both}.drawer-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:8px}.drawer-tab{padding:9px 6px;border-radius:10px;background:#202329;border:1px solid var(--border);color:#aeb4bc;font-size:9px;font-weight:900}.drawer-tab:active{transform:scale(.98)}
   @keyframes winnerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025);box-shadow:0 0 0 6px rgba(234,179,8,.08)}}
   @media (max-width:520px){.recovery-actions{grid-template-columns:1fr}.drawer-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .app-splash{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:#101214;overflow:hidden;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+  .app-splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+  .splash-content{text-align:center;transform:translateY(8px);animation:splashIn .9s cubic-bezier(.2,.8,.2,1) both}
+  .splash-title{font-family:Montserrat,Inter,ui-sans-serif,system-ui,sans-serif;font-size:clamp(52px,15vw,88px);font-weight:800;line-height:.9;letter-spacing:-.055em;text-transform:uppercase;margin:0;color:#f3f4f6}
+  .splash-title span{display:inline-block;color:#eab308;animation:splashWord 2.5s ease-in-out .35s both}
+  .splash-by{margin:16px 0 0;color:#7f8690;font-size:11px;font-weight:800;letter-spacing:.12em;animation:splashBy 1.4s ease .75s both}
+  .splash-line{width:74px;height:2px;margin:18px auto 0;background:#eab308;border-radius:999px;transform-origin:center;animation:splashLine 1.8s ease .55s both}
+  .topbar-account-button{position:relative;width:40px;height:40px;border:1px solid var(--border);border-radius:12px;background:#1b1e23;color:#f1f2f4;display:none;place-items:center;font-size:18px;transition:transform .14s ease,background .14s ease,border-color .14s ease}
+  .topbar-account-button.visible{display:grid}
+  .topbar-account-button:hover{background:#23272d;border-color:rgba(234,179,8,.38);transform:translateY(-1px)}
+  .topbar-account-button:active{transform:scale(.95)}
+  .home-auth-actions .btn:first-child{background:#eab308;color:#111}
+  .home-auth-actions .btn{min-height:54px}
+  .home-guest-link{font-size:11px;margin-top:13px;color:#777e88}
+  .game-home-actions .btn{min-height:58px;font-size:16px}
+  .game-home-actions .btn:first-child{background:#eab308;color:#111}
+  .game-home-card{max-width:560px}
+  @keyframes splashIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes splashWord{0%{transform:translateY(10px);opacity:0}35%{transform:translateY(-2px);opacity:1}55%{transform:translateY(0) rotate(-2deg)}72%{transform:translateY(0) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
+  @keyframes splashBy{from{opacity:0;transform:translateY(6px);letter-spacing:.2em}to{opacity:1;transform:translateY(0);letter-spacing:.12em}}
+  @keyframes splashLine{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.app-splash{transition:none}.splash-content,.splash-title span,.splash-by,.splash-line{animation:none!important}}
+  
+  /* Ajuste final de jerarquía visual: acceso y home de juego */
+  .access-card{max-width:440px!important}
+  .access-mark{width:48px;height:48px;margin:0 auto 18px;border-radius:15px;display:grid;place-items:center;background:rgba(234,179,8,.10);border:1px solid rgba(234,179,8,.20);color:#eab308;font-size:24px;font-weight:950}
+  .access-title{font-size:clamp(31px,8vw,42px);letter-spacing:-.045em;margin:0}
+  .access-sub{margin:9px 0 0;color:#858c97;font-size:12px}
+  .home-auth-actions{gap:10px;margin-top:24px}
+  .home-auth-actions .btn{min-height:56px;font-size:14px}
+  .home-auth-actions .btn:first-child{box-shadow:0 10px 28px rgba(234,179,8,.12)}
+  .home-guest-link{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 8px}
+  .game-home-card{max-width:500px!important;padding:32px 24px}
+  .game-home-title{font-size:clamp(30px,8vw,42px);margin:0;letter-spacing:-.045em}
+  .game-home-sub{margin:8px 0 24px;color:#858c97;font-size:12px}
+  .game-home-actions{gap:12px;margin-top:0}
+  .game-home-actions .btn{min-height:62px;font-size:16px}
+  .game-home-actions .btn:first-child{box-shadow:0 12px 30px rgba(234,179,8,.10)}
+  .game-home-only-actions{padding:28px 24px}
+  .game-home-only-actions .actions{margin-top:0}
+  .home-rule{width:46px;height:2px;background:#eab308;border-radius:999px;margin:20px auto 0;opacity:.72}
+  .app-splash{transition:opacity .38s ease,visibility .38s ease}
+  .splash-content{animation:splashIn .8s cubic-bezier(.2,.8,.2,1) both}
+  .splash-title{font-size:clamp(48px,14vw,84px)}
+  .splash-line{margin-top:16px}
+  .splash-by{margin-top:13px;font-size:10px}
+  @media (prefers-reduced-motion:reduce){.app-splash{transition:none}.splash-content{animation:none!important}.splash-title span,.splash-by,.splash-line{animation:none!important}}
   </style>
 </head>
 <body>
 <noscript><div class="noscript-warning">Activa JavaScript para crear o unirte a una sala.</div></noscript>
+<div class="app-splash" id="appSplash" aria-hidden="true">
+  <div class="splash-content">
+    <h1 class="splash-title">¿QUIÉN <span>SOY?</span></h1>
+    <div class="splash-line"></div>
+    <p class="splash-by">by:@fabian7vj</p>
+  </div>
+</div>
+
 <main class="app" id="app" aria-labelledby="pageBrand">
   <header class="topbar">
     <div class="brand" id="pageBrand">¿QUIÉN SOY?</div>
     <div class="topbar-right">
       <button class="quick-friends-button" id="quickFriendsBtn" type="button" aria-label="Abrir amigos" title="Amigos">👥<span class="request-badge hidden" id="quickFriendsBadge">0</span></button>
+      <button class="topbar-account-button" id="profileBtn" type="button" aria-label="Abrir perfil" title="Perfil">👤</button>
       <div class="connection-pill" id="connectionStatus" role="status" aria-live="polite"><span class="connection-dot" id="connectionDot"></span><span id="connectionText">Comprobando conexión…</span></div>
       <div class="step" id="stepBadge" aria-live="polite"></div>
     </div>
@@ -172,32 +238,25 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   </div>
 
   <section class="screen active" id="home">
-    <div class="card hero">
-      <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
-      <p class="subtitle">Crea una sala, únete con un código o entra a tu cuenta.</p>
-      <div class="actions">
-        <button class="btn party-cta" id="homeCreateBtn" type="button">CREAR SALA</button>
-        <button class="btn party-cta secondary" id="homeJoinBtn" type="button">UNIRME A UNA SALA</button>
-        <button class="btn party-cta secondary" id="homeAccountBtn" type="button">CUENTA</button>
+    <div class="card hero access-card">
+      <div class="access-mark" aria-hidden="true">?</div>
+      <h1 class="access-title">Entra a jugar</h1>
+      <p class="access-sub">Guarda amigos, salas y partidas con tu cuenta.</p>
+      <div class="actions home-auth-actions">
+        <button class="btn party-cta" id="loginBtn" type="button">INICIAR SESIÓN</button>
+        <button class="btn party-cta secondary" id="registerBtn" type="button">CREAR CUENTA</button>
       </div>
-      <button class="text-action home-guest-link" id="guestBtn" type="button">JUGAR COMO INVITADO</button>
+      <button class="text-action home-guest-link" id="guestBtn" type="button">ENTRAR COMO INVITADO</button>
+      <div class="home-rule" aria-hidden="true"></div>
       <div class="room-notice" id="accessNotice" role="status" aria-live="polite"></div>
     </div>
   </section>
 
   <section class="screen" id="gameHome">
-    <div class="card hero">
-      <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
-      <div class="account-area">
-        <div class="account-user-line"><span class="presence-dot" id="gameHomePresenceDot"></span><strong id="gameHomeUsername">Invitado</strong><span class="account-online-label" id="gameHomeAccountType">INVITADO</span></div>
-        <div class="guest-account-cta" id="guestAccountCta">Invitado: crea una cuenta para guardar amigos y recibir invitaciones.</div>
-      </div>
-      <p class="subtitle">Crea una sala para ser anfitrión o únete con el código que te dieron.</p>
-      <div class="actions">
+    <div class="card hero game-home-card game-home-only-actions">
+      <div class="actions game-home-actions">
         <button class="btn" id="newGameBtn" type="button">CREAR SALA</button>
         <button class="btn secondary" id="goJoinBtn" type="button">UNIRME A UNA SALA</button>
-        <button class="text-action" id="gameHomeAccountBtn" type="button">MI CUENTA</button>
-        <button class="text-action" id="switchAccessBtn" type="button">CAMBIAR DE USUARIO</button>
       </div>
     </div>
   </section>
@@ -324,7 +383,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       </div>
       <div class="lobby-list" id="lobbyList" role="list" aria-live="polite"></div>
       <div class="lobby-count" id="lobbyCount">0 jugadores</div>
-      <div class="info">Todos deben tener su propio celular. El anfitrión configura las temáticas y las rondas antes de iniciar.</div>
+      <div class="info">Todos deben tener su propio celular. El anfitrión configura las temáticas y las rondas. Si sales durante una partida, tu jugador queda guardado para que puedas volver con tu cuenta y el código.</div>
       <div class="settings-summary" id="settingsSummary"></div>
       <div class="actions">
         <button class="btn secondary" id="editSettingsBtn">CONFIGURAR SALA</button>
@@ -434,6 +493,8 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       </div>
     </div>
   </section>
+
+  <button class="end-game-fab" id="finishGameBtn" type="button" aria-label="Finalizar partida">FINALIZAR PARTIDA</button>
 
   <div class="quick-friends-overlay" id="quickFriendsOverlay" aria-hidden="true">
     <aside class="quick-friends-panel" role="dialog" aria-modal="true" aria-labelledby="quickFriendsTitle">
@@ -2173,8 +2234,8 @@ const personajes = [
      categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
      myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
      wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
-     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false},
-    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false,friendsLoaded:false
+     busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false,finishGame:false},
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false,friendsLoaded:false,splashDone:false
   };
 
   const $ = id => document.getElementById(id);
@@ -2392,6 +2453,29 @@ const personajes = [
     catch(error){accountNotice('quickFriendsNotice',({ 'invalid-target':'El usuario seleccionado no es válido.','self-friend-request':'No puedes agregarte a ti mismo.','already-friends':'Ese usuario ya es tu amigo.','request-exists':'Ya existe una solicitud entre ambos.'})[error?.code]||'No se pudo enviar la solicitud.','error');haptic([14,50,14]);}
   }
 
+  const ROOM_EXIT_SCREENS=new Set(['lobby','prep','reveal','starting','playing','scoring','results']);
+  function renderRoomExitControl(screenId){
+    const shouldShow=ROOM_EXIT_SCREENS.has(screenId)&&Boolean(state.roomRef);
+    screens.forEach(name=>{
+      const screen=$(name),area=screen?.querySelector('.room-leave-area');
+      if(area)area.remove();
+    });
+    if(!shouldShow)return;
+    const screen=$(screenId),card=screen?.querySelector('.card');
+    if(!card)return;
+    const area=document.createElement('div');area.className='room-leave-area visible';
+    const label=document.createElement('div');label.className='room-leave-label';label.textContent='Salir no borra tu jugador. Puedes volver con tu cuenta y el código.';
+    const button=document.createElement('button');button.className='room-leave-btn';button.type='button';button.textContent='SALIR DE LA SALA';
+    button.setAttribute('aria-label','Salir de la sala y conservar tu jugador');
+    button.addEventListener('click',()=>void requestLeaveRoom());
+    area.append(label,button);card.appendChild(area);
+  }
+  async function requestLeaveRoom(){
+    if(!state.roomRef){show(accountUid()?'gameHome':'home');return;}
+    const confirmed=window.confirm('¿Salir de la sala por ahora?\n\nTu jugador quedará guardado. Podrás volver con tu cuenta y el código. Si la partida sigue, tu personaje de la ronda actual se conservará.');
+    if(!confirmed)return;
+    await leaveRoom(true);
+  }
   function show(id){
     clearNotice();
     screens.forEach(screen=>{const el=$(screen);if(el)el.classList.toggle('active',screen===id);});
@@ -2406,9 +2490,12 @@ const personajes = [
     }
     const authOnly=['home','authRegister','authLogin'];
     $('connectionStatus')?.classList.toggle('hidden',authOnly.includes(id));
-    if(authOnly.includes(id))$('quickFriendsBtn')?.classList.remove('visible');
-    else if(accountUid())$('quickFriendsBtn')?.classList.add('visible');
+    const showTopActions=['gameHome','lobby','prep','reveal','starting','playing','scoring','results','finish'].includes(id);
+    $('quickFriendsBtn')?.classList.toggle('visible',showTopActions&&Boolean(accountUid()));
+    $('profileBtn')?.classList.toggle('visible',showTopActions);
     if(id!=='prep'&&id!=='reveal')void releaseScreenWakeLock();
+    updateFinishButton();
+    renderRoomExitControl(id);
   }
   function notice(msg,type='',target='roomNotice'){
     const el=$(target);if(!el)return;
@@ -2448,6 +2535,17 @@ const personajes = [
   function accountUid(){return state.authUser&&!state.authUser.isAnonymous?state.authUser.uid:'';}
   function backendUid(){return auth.currentUser?.uid||'';}
   function roomIdentity(){const uid=accountUid();state.playerId=uid||state.legacyPlayerId;return state.playerId;}
+  function createRandomRoomPlayerId(roomCode){
+    const code=String(roomCode||'').toUpperCase();
+    const random=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-5);
+    return `p_${code}_${random}`;
+  }
+  function getSavedRoomPlayerId(roomCode){
+    try{const value=localStorage.getItem(`aq_room_player_${String(roomCode||'').toUpperCase()}`);return value||'';}catch(error){return '';}
+  }
+  function saveRoomPlayerId(roomCode,playerId){
+    try{if(roomCode&&playerId)localStorage.setItem(`aq_room_player_${String(roomCode).toUpperCase()}`,String(playerId));}catch(error){}
+  }
   function findAccountRoomPlayer(players){const uid=accountUid();return (uid&&players.find(player=>player.accountUid===uid))||players.find(player=>player.id===state.playerId)||players.find(player=>player.id===state.legacyPlayerId)||null;}
   async function ensureRoomAuth(){await authPersistenceReady;if(auth.currentUser)return auth.currentUser;if(state.anonymousSignInStarted)throw new Error('La autenticación todavía no está disponible.');state.anonymousSignInStarted=true;try{return (await auth.signInAnonymously()).user;}finally{state.anonymousSignInStarted=false;}}
   async function markRoomMembership(){const uid=backendUid();if(!uid||!state.roomCode)return;try{await db.ref(`roomMembers/${state.roomCode}/${uid}`).set(true);}catch(error){console.warn('No se pudo registrar la membresía de la sala',error);}}
@@ -3197,12 +3295,19 @@ const personajes = [
     if(!auth.currentUser){try{await ensureRoomAuth();}catch(error){notice('No se pudo activar la conexión segura para la sala. Habilita el proveedor Anónimo en Firebase Authentication.','error','joinNotice');return;}}
     preloadCountdownSound();
     setBusy('join',true);setButtonBusy('joinRoomBtn','join',true,'BUSCANDO SALA…');notice('Buscando la sala…','','joinNotice');
-    state.mode='player';roomIdentity();state.playerName=name;attachRoom(code);
+    state.mode='player';
+    // Cada jugador nuevo recibe automáticamente un ID aleatorio por sala.
+    // Si ya existía en esta sala, el código de abajo recupera su ID para conservar puntos/personaje.
+    state.playerId=getSavedRoomPlayerId(code)||createRandomRoomPlayerId(code);
+    saveRoomPlayerId(code,state.playerId);
+    state.playerName=name;attachRoom(code);
     try{
       const snapshot=await state.roomRef.once('value');
       if(!snapshot.exists()){notice('No existe una sala con ese código. Verifica el código.','error','joinNotice');return;}
       const data=snapshot.val();state.lastRoomData=data;const players=normalizeRoomPlayers(data),currentPlayer=findAccountRoomPlayer(players);
-      const offlineMatch=!currentPlayer&&players.find(player=>player.id!==state.playerId&&(!accountUid()||player.accountUid===accountUid())&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
+      const savedPlayerId=getSavedRoomPlayerId(code);
+      const savedRoomPlayer=savedPlayerId?players.find(player=>String(player.id)===String(savedPlayerId)):null;
+      const offlineMatch=currentPlayer||savedRoomPlayer||players.find(player=>player.id!==state.playerId&&(!accountUid()||player.accountUid===accountUid())&&nameKey(player.name)===nameKey(name)&&player.status==='offline');
       const sameNameOnline=players.find(player=>player.id!==state.playerId&&player.id!==currentPlayer?.id&&nameKey(player.name)===nameKey(name)&&player.status!=='offline');
       const reconnecting=Boolean(offlineMatch||currentPlayer);
       const targetId=(offlineMatch||currentPlayer)?.id||state.playerId;
@@ -3218,14 +3323,15 @@ const personajes = [
       }
 
       if(offlineMatch){
-        // Reconexión por nombre: recupera exactamente el ID anterior.
-        // No modificamos game/assignments, así que conserva su personaje original.
+        // Reingreso: recupera exactamente el ID anterior para conservar puntos y personaje.
         state.playerId=offlineMatch.id;
+        saveRoomPlayerId(code,state.playerId);
         localStorage.setItem(PLAYER_KEY,state.playerId);
         state.playerName=offlineMatch.name||name;
         await state.roomRef.child('players/'+state.playerId).update({name:state.playerName,accountUid:accountUid()||null,authUid:backendUid()||null,status:'online',connected:true});
       }else{
         state.playerId=targetId;
+        saveRoomPlayerId(code,state.playerId);
         await state.roomRef.child('players/'+state.playerId).update({name,accountUid:accountUid()||null,authUid:backendUid()||null,host:Boolean(currentPlayer?.host),status:'online',connected:true});
       }
 
@@ -3233,7 +3339,7 @@ const personajes = [
       saveSessionInfo(state.roomCode,state.playerName,state.playerId);
       listenToRoom();
       show('lobby');
-      notice(reconnecting?'Reconectado. Tu personaje y la partida se mantienen.':'Conectado. Esperando al anfitrión.','success','lobbyNotice');
+      notice(reconnecting?'Reconectado. Tu jugador y el personaje de la ronda actual se conservaron.':'Conectado. Esperando al anfitrión.','success','lobbyNotice');
     }catch(error){console.error('Firebase join room',error);notice('No se pudo entrar a la sala. Revisa Realtime Database y sus reglas.','error','joinNotice');}
     finally{setBusy('join',false);setButtonBusy('joinRoomBtn','join',false);if(!state.roomListener)$('joinRoomBtn').disabled=false;}
   }
@@ -3509,8 +3615,52 @@ const personajes = [
     }catch(error){console.error('next round',error);notice('No se pudo comenzar la siguiente ronda.','error','lobbyNotice');}
     finally{setBusy('next',false);setButtonBusy('nextRoundBtn','next',false);}
   }
+  function canEndGameNow(){
+    if(!state.roomRef||state.mode!=='host')return false;
+    const phase=state.lastRoomData?.game?.phase||'';
+    return ['preparing','reveal','starting','playing','scoring','results'].includes(phase);
+  }
+  function updateFinishButton(){
+    const button=$('finishGameBtn');
+    if(!button)return;
+    const visible=canEndGameNow();
+    button.classList.toggle('visible',visible);
+    button.disabled=!visible||state.busy.finishGame;
+    if(!state.busy.finishGame){button.removeAttribute('aria-busy');button.textContent='FINALIZAR PARTIDA';}
+  }
+  async function finishGameEarly(){
+    if(state.busy.finishGame||!state.roomRef||state.mode!=='host')return;
+    if(!canEndGameNow())return;
+    const confirmed=window.confirm('¿Finalizar la partida ahora? No se jugarán más rondas y se mostrarán los puntos acumulados.');
+    if(!confirmed)return;
+    setBusy('finishGame',true);setButtonBusy('finishGameBtn','finishGame',true,'FINALIZANDO…');clearCountdown();
+    try{
+      const snapshot=await state.roomRef.once('value'),data=snapshot.val();
+      if(!data||!isHost(data))return;
+      const result=await state.roomRef.child('game').transaction(game=>{
+        const phase=game?.phase;
+        if(!game||!['preparing','reveal','starting','playing','scoring','results'].includes(phase))return;
+        return {...game,phase:'finished',finishedEarly:true,finishedAt:firebase.database.ServerValue.TIMESTAMP,finishReason:'host'};
+      });
+      if(result.committed){
+        showSocialToast('Partida finalizada.');
+        haptic([30,80,30]);
+      }else{
+        notice('La partida ya había terminado.','error','lobbyNotice');
+      }
+    }catch(error){
+      console.error('finish game early',error);
+      notice('No se pudo finalizar la partida. Revisa tu conexión.','error','lobbyNotice');
+    }finally{
+      setBusy('finishGame',false);
+      setButtonBusy('finishGameBtn','finishGame',false);
+      updateFinishButton();
+    }
+  }
   function renderFinished(game,data){
-    const rows=sortedScoreRows(game,data),top=rows[0]?.score??0,winners=rows.filter(row=>row.score===top);setText('finishText',`Puntaje acumulado después de ${game.totalRounds} rondas.`);
+    updateFinishButton();
+    const rows=sortedScoreRows(game,data),top=rows[0]?.score??0,winners=rows.filter(row=>row.score===top);
+    setText('finishText',game.finishedEarly?`Partida finalizada por el anfitrión. Puntaje acumulado tras ${game.currentRound||0} de ${game.totalRounds} rondas.`:`Puntaje acumulado después de ${game.totalRounds} rondas.`);
     $('finalList').innerHTML=rows.map((row,index)=>`<div class="final-row"><span class="final-place">${index+1}°</span><span class="final-name">${escapeHtml(row.name)}</span><span class="final-points">${row.score} puntos</span></div>`).join('');
     if(winners.length>1){$('winnerBox').innerHTML='<div class="winner-card"><div class="winner-crown">🏆</div><div class="tag">EMPATE</div><p class="muted">'+winners.map(row=>`${escapeHtml(row.name)} — ${row.score} puntos`).join('<br>')+'</p><div class="confetti"><span>✦</span><span>✧</span><span>✦</span></div></div>';}else{$('winnerBox').innerHTML='<div class="winner-card"><div class="winner-crown">🏆</div><div class="small">GANADOR</div><div class="personaje" style="margin:8px 0 0">'+escapeHtml(winners[0]?.name||'')+'</div><div class="confetti"><span>✦</span><span>✧</span><span>✦</span></div></div>';}
     const host=isHost(data);$('restartBtn').classList.toggle('hidden',!host);
@@ -3519,14 +3669,41 @@ const personajes = [
     if(state.busy.restart||!state.roomRef||state.mode!=='host')return;setBusy('restart',true);setButtonBusy('restartBtn','restart',true,'PREPARANDO…');clearCountdown();
     try{
       const snapshot=await state.roomRef.once('value'),data=snapshot.val();if(!data||!isHost(data))return;const players=normalizeRoomPlayers(data),scores={},names={};players.forEach(player=>{scores[player.id]=0;names[player.id]=player.name;});
-      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,scores,playerNames:names};});
+      const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='finished')return;return {...game,phase:'lobby',round:0,currentRound:0,gameStartTime:null,prepEndsAt:null,revealAt:null,revealEndsAt:null,startingEndsAt:null,currentTurn:'',turnIndex:-1,turnOrder:[],assignments:{},friendsStartedAt:null,roundResults:null,finishedEarly:false,finishedAt:null,finishReason:null,scores,playerNames:names};});
       if(result.committed&&data.secureAssignments){await db.ref('privateAssignments/'+state.roomCode).remove().catch(()=>{});await db.ref('publicAssignments/'+state.roomCode).remove().catch(()=>{});state.privateAssignment=null;state.publicAssignments={};}
     }catch(error){console.error('new game',error);notice('No se pudo preparar la nueva partida.','error','lobbyNotice');}
     finally{setBusy('restart',false);setButtonBusy('restartBtn','restart',false);}
   }
-  async function leaveRoom(){
-    cancelReconnect();clearCountdown();const ref=state.roomRef,mode=state.mode,roomId=state.roomCode,secure=Boolean(state.lastRoomData?.secureAssignments),authRoomUid=backendUid();try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host'){await ref.remove();if(secure){await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});}}if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});}catch(error){console.warn(error);}
-    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show(accountUid()?'gameHome':'home');
+  async function leaveRoom(preserveRoom=true){
+    cancelReconnect();clearCountdown();
+    const ref=state.roomRef,mode=state.mode,roomId=state.roomCode,authRoomUid=backendUid();
+    try{
+      if(ref&&state.playerId){
+        const playerRef=ref.child('players/'+String(state.playerId));
+        try{await playerRef.onDisconnect().cancel();}catch(error){}
+        if(preserveRoom){
+          await playerRef.update({status:'offline',connected:false,lastSeen:firebase.database.ServerValue.TIMESTAMP,leftAt:firebase.database.ServerValue.TIMESTAMP});
+        }
+      }
+      if(preserveRoom){
+        if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
+      }else{
+        const secure=Boolean(state.lastRoomData?.secureAssignments);
+        if(ref&&mode==='player')await ref.child('players/'+String(state.playerId)).remove();
+        if(ref&&mode==='host'){
+          await ref.remove();
+          if(secure){
+            await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});
+            await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});
+          }
+        }
+        if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
+      }
+    }catch(error){console.warn('leaveRoom',error);}
+    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;
+    clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;
+    show(accountUid()?'gameHome':'home');
+    showSocialToast(preserveRoom?'Saliste de la sala. Puedes volver con el código.':'Sala cerrada.');
   }
   async function copyRoom(){
     const button=$('copyRoomBtn'),original=button?.textContent||'COPIAR';
@@ -3614,10 +3791,10 @@ const personajes = [
   $('profileFriendsBtn').onclick=()=>openQuickFriends();$('profileRequestsBtn').onclick=()=>{renderQuickFriendsPanel();openQuickFriends();};$('signOutBtn').onclick=logoutAccount;$('profileBackBtn').onclick=()=>show('gameHome');
   $('friendsRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('requestsFriendsBtn').onclick=()=>openQuickFriends();$('friendsBackBtn').onclick=()=>openQuickFriends();$('requestsBackBtn').onclick=()=>openQuickFriends();
   $('searchFriendBtn').onclick=searchFriend;$('friendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void searchFriend();}});
-  $('quickFriendsBtn').onclick=openQuickFriends;$('quickFriendsClose').onclick=closeQuickFriends;$('quickFriendsOverlay').addEventListener('click',event=>{if(event.target.id==='quickFriendsOverlay')closeQuickFriends();});$('quickSearchFriendBtn').onclick=quickSearchFriend;$('quickFriendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void quickSearchFriend();}});$('gameHomeAccountBtn').onclick=()=>{if(accountUid()){renderAccountUI();show('profile');}else openQuickFriends();};$('switchAccessBtn').onclick=()=>void switchAccess();
+  $('quickFriendsBtn').onclick=openQuickFriends;$('quickFriendsClose').onclick=closeQuickFriends;$('quickFriendsOverlay').addEventListener('click',event=>{if(event.target.id==='quickFriendsOverlay')closeQuickFriends();});$('quickSearchFriendBtn').onclick=quickSearchFriend;$('quickFriendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void quickSearchFriend();}});$('switchAccessBtn')?.addEventListener('click',()=>void switchAccess());
   $('inviteFriendsBtn').onclick=()=>{$('lobbyInvitePanel').classList.toggle('hidden');renderLobbyFriends();};$('closeInvitePanelBtn').onclick=()=>$('lobbyInvitePanel').classList.add('hidden');
-  $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=leaveRoom;
-  $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=leaveRoom;
+  $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=()=>void requestLeaveRoom();
+  $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=()=>void requestLeaveRoom();$('finishGameBtn').onclick=finishGameEarly;
   $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>{chip.classList.toggle('selected',selectAll);chip.setAttribute('aria-pressed',String(selectAll));});updateSelectedCategories();};
   $('roundsMinusBtn').onclick=()=>setTotalRounds(state.totalRounds-1);$('roundsPlusBtn').onclick=()=>setTotalRounds(state.totalRounds+1);
   db.ref('.info/serverTimeOffset').on('value',snapshot=>{state.serverTimeOffset=Number(snapshot.val())||0;});
@@ -3689,8 +3866,8 @@ const personajes = [
       }
     }
     renderAccountUI();
-    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){show('gameHome');}
-    if(user?.isAnonymous&&state.guestMode&&!state.roomRef){show('gameHome');}
+    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring&&state.splashDone){show('gameHome');}
+    if(user?.isAnonymous&&state.guestMode&&!state.roomRef&&state.splashDone){show('gameHome');}
     if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){
       const session=readSession();
       if(session&&(session.accountUid===undefined||!session.accountUid||session.accountUid===user.uid)){
@@ -3703,8 +3880,23 @@ const personajes = [
     showSavedSessionBanner();
   });
   renderCategories();setTotalRounds(3);show('home');showSavedSessionBanner();
+  async function finishSplash(){
+    if(state.splashDone)return;
+    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if(!state.authReady){
+      const deadline=Date.now()+(reduced?500:1000);
+      while(!state.authReady&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,50));
+    }
+    state.splashDone=true;
+    const splash=$('appSplash');
+    if(splash)splash.classList.add('hide');
+    if(state.roomRef)return;
+    if(accountUid()||state.authUser?.isAnonymous)show('gameHome');else show('home');
+    showSavedSessionBanner();
+  }
+  const splashDuration=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?900:3400;
+  window.setTimeout(()=>{void finishSplash();},splashDuration);
 })();
 </script>
 </body>
 </html>
-
