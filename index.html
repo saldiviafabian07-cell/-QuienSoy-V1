@@ -2157,7 +2157,7 @@ const personajes = [
      myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
      wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
      busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false},
-    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false,friendsLoaded:false
   };
 
   const $ = id => document.getElementById(id);
@@ -2325,7 +2325,8 @@ const personajes = [
     const ids=Object.keys(state.friendData||{});
     setText('quickFriendsCount',String(ids.length));setText('quickRequestsCount',String(Object.keys(state.requestData||{}).length));
     list.replaceChildren();
-    if(!ids.length){const empty=document.createElement('div');empty.className='quick-friends-empty';empty.textContent='Todavía no tienes amigos.';list.appendChild(empty);}
+    if(!state.friendsLoaded){const loading=document.createElement('div');loading.className='quick-friends-empty';loading.textContent='Cargando amigos…';list.appendChild(loading);}
+    else if(!ids.length){const empty=document.createElement('div');empty.className='quick-friends-empty';empty.textContent='Todavía no tienes amigos.';list.appendChild(empty);}
     ids.forEach(uid=>{
       const profile=state.friendProfiles[uid]||{},presence=state.friendPresence[uid]||{};
       const row=document.createElement('div');row.className='quick-friend-row';row.setAttribute('role','listitem');
@@ -2562,7 +2563,7 @@ const personajes = [
     if(state.inviteListener&&uid)db.ref('roomInvites/'+uid).off('value',state.inviteListener);
     Object.values(state.friendProfileRefs||{}).forEach(item=>item.ref.off('value',item.handler));
     Object.values(state.friendPresenceRefs||{}).forEach(item=>item.ref.off('value',item.handler));
-    state.profileListener=null;state.friendListener=null;state.requestListener=null;state.inviteListener=null;state.accountListenerUid='';state.friendProfileRefs={};state.friendPresenceRefs={};state.friendProfiles={};state.friendPresence={};state.friendData={};state.requestData={};state.inviteData={};state.profile=null;state.requestListenerInitialized=false;state.lastRequestKeys=new Set();setRequestBadge(0);stopOwnPresence();
+    state.profileListener=null;state.friendListener=null;state.requestListener=null;state.inviteListener=null;state.accountListenerUid='';state.friendProfileRefs={};state.friendPresenceRefs={};state.friendProfiles={};state.friendPresence={};state.friendData={};state.requestData={};state.inviteData={};state.profile=null;state.friendsLoaded=false;state.requestListenerInitialized=false;state.lastRequestKeys=new Set();setRequestBadge(0);stopOwnPresence();
   }
   function bindFriendDetails(){
     const ids=new Set(Object.keys(state.friendData||{}));
@@ -2640,7 +2641,7 @@ const personajes = [
     const uid=user.uid;
     state.accountListenerUid=uid;
     state.profileListener=snapshot=>{state.profile=snapshot.val()||null;renderAccountUI();};db.ref('users/'+uid).on('value',state.profileListener);
-    state.friendListener=snapshot=>{state.friendData=snapshot.val()||{};bindFriendDetails();renderAccountUI();};db.ref('friends/'+uid).on('value',state.friendListener);
+    state.friendListener=snapshot=>{state.friendsLoaded=true;state.friendData=snapshot.val()||{};bindFriendDetails();renderAccountUI();};db.ref('friends/'+uid).on('value',state.friendListener);
     state.requestListener=snapshot=>{
       const next=snapshot.val()||{};
       const previousKeys=new Set(Object.keys(state.requestData||{}));
@@ -2682,11 +2683,11 @@ const personajes = [
   async function loginAccount(){
     const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}
     setButtonBusy('signInBtn','account',true,'INICIANDO…');
-    try{await authPersistenceReady;await auth.signInWithEmailAndPassword(email,password);state.guestMode=false;show('gameHome');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
+    try{await authPersistenceReady;const credentials=await auth.signInWithEmailAndPassword(email,password);state.authUser=credentials.user;state.guestMode=false;renderAccountUI();show('gameHome');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
   }
   async function enterGuest(){
     setButtonBusy('guestBtn','account',true,'ENTRANDO…');
-    try{await authPersistenceReady;if(auth.currentUser&&!auth.currentUser.isAnonymous){state.guestMode=false;show('gameHome');return;}state.anonymousSignInStarted=true;await auth.signInAnonymously();state.guestMode=true;show('gameHome');haptic([28]);}
+    try{await authPersistenceReady;if(auth.currentUser&&!auth.currentUser.isAnonymous){state.guestMode=false;state.authUser=auth.currentUser;renderAccountUI();show('gameHome');return;}state.anonymousSignInStarted=true;const credentials=await auth.signInAnonymously();state.authUser=credentials.user;state.guestMode=true;renderAccountUI();show('gameHome');haptic([28]);}
     catch(error){accountNotice('accessNotice',accountError(error),'error');}
     finally{state.anonymousSignInStarted=false;setButtonBusy('guestBtn','account',false);}
   }
@@ -2986,6 +2987,7 @@ const personajes = [
   }
   function openSettings(editing=false){
     state.configEditing=editing;
+    renderCategories();
     $('hostNameInput').value=state.playerName||state.hostName||'';
     $('createRoomBtn').textContent=editing?'GUARDAR CONFIGURACIÓN':'CREAR SALA';
     setCategorySelection(state.categories);setTotalRounds(state.totalRounds);show('setup');void refreshSetupStockValidation();
@@ -3609,8 +3611,8 @@ const personajes = [
   });
   $('manualReconnectBtn').onclick=manualReconnect;
   $('discardReconnectBtn').onclick=()=>void discardReconnect();
-  $('resumeSessionBtn').onclick=resumeSavedSession;
-  $('dismissSessionBtn').onclick=()=>{clearSession();showSavedSessionBanner();};
+  $('resumeSessionBtn')?.addEventListener('click',resumeSavedSession);
+  $('dismissSessionBtn')?.addEventListener('click',()=>{clearSession();showSavedSessionBanner();});
   $('joinRoomCode').addEventListener('input',event=>{event.target.value=event.target.value.toUpperCase().replace(new RegExp('[^'+ROOM_CODE_CHARS+']','g'),'').slice(0,5);});
   $('hostNameInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void createRoom();}});
   $('joinName').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void joinRoom();}});
@@ -3628,11 +3630,15 @@ const personajes = [
     }else{
       stopAccountListeners();
       if(!state.roomRef)state.playerId=state.legacyPlayerId;
-      if(user?.isAnonymous)state.guestMode=true;
+      if(user?.isAnonymous){
+        state.guestMode=true;
+      }else if(!user){
+        state.guestMode=false;
+      }
     }
     renderAccountUI();
-    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring)show('gameHome');
-    if(user?.isAnonymous&&!state.roomRef&&state.guestMode)show('gameHome');
+    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){show('gameHome');}
+    if(user?.isAnonymous&&state.guestMode&&!state.roomRef){show('gameHome');}
     if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){
       const session=readSession();
       if(session&&(session.accountUid===undefined||!session.accountUid||session.accountUid===user.uid)){
