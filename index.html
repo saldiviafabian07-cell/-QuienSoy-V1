@@ -105,18 +105,44 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
 .presence-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#7d848f;box-shadow:0 0 0 3px rgba(125,132,143,.12);flex:none}.presence-dot.online{background:#45b97c;box-shadow:0 0 0 3px rgba(69,185,124,.12)}.presence-dot.offline{background:#d96a78;box-shadow:0 0 0 3px rgba(217,106,120,.12)}
 .account-card{max-width:620px!important}.profile-panel{padding:18px;border:1px solid var(--border);border-radius:14px;background:#1d2025}.profile-username{font-size:28px;font-weight:950;letter-spacing:-.04em}.profile-status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:#aeb4bc}.profile-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.profile-stats>div{display:grid;gap:3px;padding:13px;border:1px solid var(--border);border-radius:12px;background:#1b1e23;text-align:center}.profile-stats strong{font-size:23px}.profile-stats span{font-size:10px;color:#8e949d;text-transform:uppercase;letter-spacing:.08em}
 .friends-list,.requests-list,.invite-list{display:grid;gap:8px;margin-top:10px}.account-friend-row,.request-row,.invite-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px;background:#1d2025;text-align:left}.account-friend-name,.request-name,.invite-room{font-weight:850}.account-friend-state{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:11px;color:#8e949d}.row-actions{display:flex;gap:7px;align-items:center}.small-btn{padding:9px 10px;border-radius:10px;background:#202329;color:#e6e9ed;border:1px solid var(--border);font-size:10px;font-weight:850;white-space:nowrap}.small-btn.danger{background:#4a2229;color:#f5c9ce}.small-btn.success{background:#245b43;color:#d8f4e6}.search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.search-row .btn{width:auto;min-width:94px}.search-result{display:grid;gap:10px;margin-top:10px;padding:12px;border:1px solid rgba(234,179,8,.38);border-radius:12px;background:rgba(234,179,8,.08);text-align:left}.search-result .row-actions{justify-content:flex-start}.empty-state{padding:14px;border:1px dashed #454b55;border-radius:12px;color:#8e949d;font-size:12px;text-align:center}.invite-panel{margin-top:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#17191d}.invite-panel .friends-list{margin-top:8px}.invite-panel .text-action{margin-top:10px}
+
+.connection-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(5,7,9,.78);backdrop-filter:blur(6px);z-index:9999}
+.connection-modal.show{display:flex}
+.connection-modal-card{width:min(100%,420px);padding:24px;border:1px solid rgba(234,179,8,.35);border-radius:18px;background:#181a1e;box-shadow:0 24px 80px rgba(0,0,0,.48);text-align:center}
+.connection-modal-icon{width:52px;height:52px;margin:0 auto 12px;border-radius:16px;display:grid;place-items:center;background:rgba(234,179,8,.12);color:#eab308;font-size:25px;font-weight:950}
+.connection-modal-title{margin:0 0 8px;font-size:24px;font-weight:950;letter-spacing:-.035em}
+.connection-modal-text{margin:0;color:#aeb4bd;font-size:13px;line-height:1.5}
+.connection-modal-actions{display:grid;gap:9px;margin-top:18px}
+.connection-modal-actions .btn{width:100%}
+.social-toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);width:min(calc(100% - 28px),430px);padding:12px 14px;border:1px solid rgba(234,179,8,.35);border-radius:14px;background:#1b1e23;color:#f1f2f4;box-shadow:0 18px 50px rgba(0,0,0,.34);font-size:13px;font-weight:750;opacity:0;pointer-events:none;z-index:10000;transition:opacity .18s ease,transform .18s ease}
+.social-toast.show{opacity:1;transform:translate(-50%,0)}
+.request-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:5px;border-radius:999px;background:#eab308;color:#17191d;font-size:10px;font-weight:950;vertical-align:middle}
+.game-friend-action{margin-top:8px}
+.game-friend-action .small-btn{width:100%}
+.assignment-loading{font-size:11px;color:#8e949d;margin-top:5px}
 @media (max-width:520px){.account-actions{align-items:stretch;flex-direction:column}.account-actions .text-action{padding:8px}.search-row{grid-template-columns:1fr}.search-row .btn{width:100%}.account-friend-row,.request-row,.invite-row{grid-template-columns:1fr}.row-actions{justify-content:flex-start;flex-wrap:wrap}}
-    .game-entry-actions.hidden{display:none!important}
-    .guest-note{margin-top:10px;color:#7f8690;font-size:11px;text-align:center;line-height:1.4}
-    .request-badge{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;margin-left:6px;border-radius:999px;background:#eab308;color:#15171a;font-size:10px;font-weight:950;vertical-align:middle}
-    .request-badge.hidden{display:none!important}
-    .notification-toast{position:fixed;left:50%;bottom:20px;z-index:9999;transform:translate(-50%,14px);width:min(calc(100% - 28px),460px);padding:12px 14px;border:1px solid rgba(234,179,8,.35);border-radius:14px;background:rgba(24,26,30,.98);box-shadow:0 14px 40px rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;color:#f3f4f6}
-    .notification-toast.show{opacity:1;transform:translate(-50%,0)}
-    .notification-toast strong{display:block;font-size:13px;margin-bottom:3px}
-    .notification-toast span{display:block;color:#aeb4bd;font-size:11px;line-height:1.35}
-    .friend-action-inline{margin-top:7px}
-    .friend-action-inline .small-btn{font-size:9px;padding:7px 9px}
-    @media (max-width:520px){.notification-toast{bottom:12px}}
+.quick-friends-button{position:relative;width:40px;height:40px;border:1px solid var(--border);border-radius:12px;background:#1b1e23;color:#f1f2f4;display:none;place-items:center;font-size:19px;font-weight:900;transition:transform .14s ease,background .14s ease,border-color .14s ease}
+.quick-friends-button:hover{background:#23272d;border-color:rgba(234,179,8,.38);transform:translateY(-1px)}
+.quick-friends-button:active{transform:scale(.95)}
+.quick-friends-button.visible{display:grid}
+.quick-friends-button .request-badge{position:absolute;top:-5px;right:-5px;margin:0;min-width:18px;height:18px;border:2px solid #101214}
+.quick-friends-overlay{position:fixed;inset:0;display:none;z-index:11000;background:rgba(5,7,9,.64);backdrop-filter:blur(5px)}
+.quick-friends-overlay.show{display:block}
+.quick-friends-panel{position:absolute;top:0;right:0;width:min(430px,100%);height:100%;padding:18px;overflow:auto;background:#181a1e;border-left:1px solid var(--border);box-shadow:-24px 0 70px rgba(0,0,0,.38);transform:translateX(100%);transition:transform .2s ease}
+.quick-friends-overlay.show .quick-friends-panel{transform:translateX(0)}
+.quick-friends-head{display:flex;align-items:center;gap:10px;position:sticky;top:-18px;padding:0 0 14px;background:#181a1e;z-index:2}
+.quick-friends-head .friend-symbol{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(234,179,8,.12);color:#eab308;font-size:20px}
+.quick-friends-head-main{flex:1}.quick-friends-title{font-size:21px;font-weight:950;letter-spacing:-.03em}.quick-friends-sub{font-size:11px;color:#8e949d;margin-top:2px}
+.quick-friends-close{width:40px;height:40px;border-radius:12px;background:#202329;color:#e6e9ed;border:1px solid var(--border);font-size:20px}
+.quick-friends-section{margin-top:14px}.quick-friends-label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;font-weight:900;letter-spacing:.12em;color:#8e949d;text-transform:uppercase;margin-bottom:8px}
+.quick-friends-search{display:grid;grid-template-columns:1fr auto;gap:8px}.quick-friends-search .input{min-width:0}.quick-friends-search .btn{width:auto;min-width:92px}
+.quick-friends-result{margin-top:8px}.quick-friend-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--border);border-radius:13px;background:#1d2025}.quick-friend-avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#202329;color:#eab308;font-weight:950}.quick-friend-main{min-width:0}.quick-friend-name{font-weight:850;overflow-wrap:anywhere}.quick-friend-state{font-size:11px;color:#8e949d;margin-top:3px}.quick-friend-state .presence-dot{margin-right:6px}
+.quick-friends-empty{padding:15px;border:1px dashed #454b55;border-radius:13px;color:#8e949d;font-size:12px;text-align:center}
+.quick-friends-actions{display:flex;flex-wrap:wrap;gap:7px}.quick-friends-actions .small-btn{flex:0 0 auto}
+.quick-friends-divider{height:1px;background:var(--border);margin:16px 0}
+.quick-friends-overlay .room-notice{margin-top:10px}
+@media (max-width:520px){.quick-friends-panel{width:100%;padding:16px}.quick-friends-head{top:-16px}.quick-friend-row{grid-template-columns:42px 1fr}.quick-friend-row .row-actions{grid-column:2}.quick-friends-search{grid-template-columns:1fr}.quick-friends-search .btn{width:100%}}
+
   </style>
 </head>
 <body>
@@ -125,6 +151,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   <header class="topbar">
     <div class="brand" id="pageBrand">¿QUIÉN SOY?</div>
     <div class="topbar-right">
+      <button class="quick-friends-button" id="quickFriendsBtn" type="button" aria-label="Abrir amigos" title="Amigos">👥<span class="request-badge hidden" id="quickFriendsBadge">0</span></button>
       <div class="connection-pill" id="connectionStatus" role="status" aria-live="polite"><span class="connection-dot" id="connectionDot"></span><span id="connectionText">Comprobando conexión…</span></div>
       <div class="step" id="stepBadge" aria-live="polite"></div>
     </div>
@@ -133,27 +160,28 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
   <section class="screen active" id="home">
     <div class="card hero">
       <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
-      <div class="account-area" id="accountArea" role="region" aria-live="polite">
-        <div id="loggedOutView">
-          <div class="account-kicker">JUEGA CON TU CUENTA</div>
-          <div class="account-actions"><button class="btn secondary" id="loginBtn" type="button">INICIAR SESIÓN</button><button class="text-action" id="registerBtn" type="button">CREAR CUENTA</button></div>
-          <button class="btn secondary" id="guestBtn" type="button" style="margin-top:10px">JUGAR COMO INVITADO</button>
-          <p class="guest-note">Como invitado puedes jugar sin crear una cuenta. Para agregar amigos necesitas una cuenta.</p>
-        </div>
-        <div class="hidden" id="loggedInView">
-          <div class="account-user-line"><span class="presence-dot" id="accountPresenceDot"></span><strong id="accountUsername">@usuario</strong><span class="account-online-label" id="accountOnlineLabel">online</span></div>
-          <div class="account-actions"><button class="btn secondary" id="profileBtn" type="button">MI PERFIL</button></div>
-        </div>
+      <p class="subtitle">Inicia sesión para guardar tus amigos y jugar, crea una cuenta nueva o entra como invitado.</p>
+      <div class="actions">
+        <button class="btn" id="loginBtn" type="button">INICIAR SESIÓN</button>
+        <button class="btn secondary" id="registerBtn" type="button">CREAR CUENTA</button>
+        <button class="btn secondary" id="guestBtn" type="button">ENTRAR COMO INVITADO</button>
       </div>
-      <div class="recovery-banner hidden" id="sessionRecoveryBanner" role="region" aria-labelledby="sessionRecoveryTitle">
-        <strong id="sessionRecoveryTitle">Hay una partida guardada</strong>
-        <span>Si quieres volver a ella, hazlo manualmente.</span>
-        <button class="text-action" id="resumeSessionBtn" type="button">REANUDAR PARTIDA</button>
-        <button class="text-action" id="dismissSessionBtn" type="button">DESCARTAR</button>
+      <div class="room-notice" id="accessNotice" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="gameHome">
+    <div class="card hero">
+      <div class="title-container"><h1 class="game-title">¿QUIÉN <span class="highlight">SOY?</span></h1></div>
+      <div class="account-area">
+        <div class="account-user-line"><span class="presence-dot" id="gameHomePresenceDot"></span><strong id="gameHomeUsername">Invitado</strong><span class="account-online-label" id="gameHomeAccountType">INVITADO</span></div>
       </div>
-      <div class="actions game-entry-actions hidden" id="gameEntryActions">
+      <p class="subtitle">Crea una sala para ser anfitrión o únete con el código que te dieron.</p>
+      <div class="actions">
         <button class="btn" id="newGameBtn" type="button">CREAR SALA</button>
         <button class="btn secondary" id="goJoinBtn" type="button">UNIRME A UNA SALA</button>
+        <button class="text-action" id="gameHomeAccountBtn" type="button">MI CUENTA</button>
+        <button class="text-action" id="switchAccessBtn" type="button">CAMBIAR DE USUARIO</button>
       </div>
     </div>
   </section>
@@ -186,7 +214,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="profile-panel"><div class="profile-username" id="profileUsername">@usuario</div><div class="muted" id="profileEmail">correo</div><div class="profile-status"><span class="presence-dot" id="profilePresenceDot"></span><span id="profileStatusText">offline</span></div></div>
       <div class="profile-stats"><div><strong id="profileFriendCount">0</strong><span>amigos</span></div><div><strong id="profileRequestCount">0</strong><span>solicitudes</span></div></div>
       <div class="section"><div class="account-section-title">INVITACIONES A SALAS</div><div class="invite-list" id="profileInviteList"></div></div>
-      <div class="actions"><button class="btn" id="profileFriendsBtn" type="button">AMIGOS</button><button class="btn secondary" id="profileRequestsBtn" type="button">SOLICITUDES <span class="request-badge hidden" id="profileRequestBadge">0</span></button><button class="btn secondary" id="enableNotificationsBtn" type="button">ACTIVAR NOTIFICACIONES</button><button class="btn danger" id="signOutBtn" type="button">CERRAR SESIÓN</button><button class="text-action" id="profileBackBtn" type="button">VOLVER</button></div>
+      <div class="actions"><button class="btn" id="profileFriendsBtn" type="button">AMIGOS</button><button class="btn secondary" id="profileRequestsBtn" type="button">SOLICITUDES</button><button class="btn danger" id="signOutBtn" type="button">CERRAR SESIÓN</button><button class="text-action" id="profileBackBtn" type="button">VOLVER</button></div>
       <div class="room-notice" id="profileNotice" role="status" aria-live="polite"></div>
     </div>
   </section>
@@ -197,7 +225,7 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       <div class="account-section-title">MIS AMIGOS</div><div class="friends-list" id="friendsList" role="list" aria-live="polite"></div>
       <div class="section friend-search-panel"><div class="account-section-title">AGREGAR AMIGO</div><div class="search-row"><input class="input" id="friendSearchInput" maxlength="20" placeholder="@usuario" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="btn" id="searchFriendBtn" type="button">BUSCAR</button></div><div id="friendSearchResult"></div></div>
       <div class="section"><div class="account-section-title">INVITACIONES A SALAS</div><div class="invite-list" id="friendsInviteList"></div></div>
-      <div class="actions"><button class="btn secondary" id="friendsRequestsBtn" type="button">VER SOLICITUDES <span class="request-badge hidden" id="friendsRequestBadge">0</span></button><button class="text-action" id="friendsBackBtn" type="button">VOLVER AL PERFIL</button></div>
+      <div class="actions"><button class="btn secondary" id="friendsRequestsBtn" type="button">VER SOLICITUDES</button><button class="text-action" id="friendsBackBtn" type="button">VOLVER AL PERFIL</button></div>
       <div class="room-notice" id="friendsNotice" role="status" aria-live="polite"></div>
     </div>
   </section>
@@ -390,10 +418,50 @@ button[aria-busy="true"]{cursor:wait;opacity:.72}
       </div>
     </div>
   </section>
-  <div class="notification-toast" id="notificationToast" role="status" aria-live="polite" aria-atomic="true">
-    <strong id="notificationToastTitle"></strong>
-    <span id="notificationToastText"></span>
+
+  <div class="quick-friends-overlay" id="quickFriendsOverlay" aria-hidden="true">
+    <aside class="quick-friends-panel" role="dialog" aria-modal="true" aria-labelledby="quickFriendsTitle">
+      <div class="quick-friends-head">
+        <div class="friend-symbol">👥</div>
+        <div class="quick-friends-head-main"><div class="quick-friends-title" id="quickFriendsTitle">Amigos</div><div class="quick-friends-sub">Gestiona tus amigos sin salir de la partida.</div></div>
+        <button class="quick-friends-close" id="quickFriendsClose" type="button" aria-label="Cerrar amigos">×</button>
+      </div>
+      <div class="quick-friends-section">
+        <div class="quick-friends-label"><span>MIS AMIGOS</span><span id="quickFriendsCount">0</span></div>
+        <div id="quickFriendsList" class="friends-list" role="list" aria-live="polite"></div>
+      </div>
+      <div class="quick-friends-divider"></div>
+      <div class="quick-friends-section">
+        <div class="quick-friends-label"><span>AGREGAR AMIGO</span></div>
+        <div class="quick-friends-search"><input class="input" id="quickFriendSearchInput" maxlength="20" placeholder="@usuario" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="btn" id="quickSearchFriendBtn" type="button">BUSCAR</button></div>
+        <div class="quick-friends-result" id="quickFriendSearchResult"></div>
+      </div>
+      <div class="quick-friends-divider"></div>
+      <div class="quick-friends-section">
+        <div class="quick-friends-label"><span>SOLICITUDES</span><span id="quickRequestsCount">0</span></div>
+        <div class="requests-list" id="quickRequestsList" role="list" aria-live="polite"></div>
+      </div>
+      <div class="quick-friends-section">
+        <div class="quick-friends-label"><span>INVITACIONES</span></div>
+        <div class="invite-list" id="quickFriendsInviteList"></div>
+      </div>
+      <div class="room-notice" id="quickFriendsNotice" role="status" aria-live="polite"></div>
+    </aside>
   </div>
+
+  <div class="connection-modal" id="reconnectModal" role="dialog" aria-modal="true" aria-labelledby="reconnectModalTitle" aria-describedby="reconnectModalText">
+    <div class="connection-modal-card">
+      <div class="connection-modal-icon">↻</div>
+      <h2 class="connection-modal-title" id="reconnectModalTitle">Conexión perdida</h2>
+      <p class="connection-modal-text" id="reconnectModalText">Se perdió la conexión con la partida. No intentaremos reconectar automáticamente.</p>
+      <div class="connection-modal-actions">
+        <button class="btn" id="manualReconnectBtn" type="button">RECONCETAR</button>
+        <button class="btn secondary" id="discardReconnectBtn" type="button">DESCARTAR</button>
+      </div>
+      <div class="room-notice" id="reconnectNotice" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="social-toast" id="socialToast" role="status" aria-live="polite"></div>
 </main>
 
 <script>
@@ -1840,12 +1908,12 @@ const personajes = [
   { nombre: "Mordecai", imagen: "img/075-Mordecai.jpg" },
   { nombre: "Rigby", imagen: "img/076-Rigby.jpg" },
   { nombre: "Gumball Watterson", imagen: "img/077-GumballWatterson.jpg" },
-  { nombre: "Ben 10", imagen: "img/078-ben-10.jpg" },
   { nombre: "Ben 10", imagen: "img/078-Ben10.jpg" },
   { nombre: "Johnny Bravo", imagen: "img/079-JohnnyBravo.jpg" },
   { nombre: "Dexter", imagen: "img/080-Dexter.jpg" },
   { nombre: "Coraje", imagen: "img/081-Coraje.jpg" },
   { nombre: "Bombón", imagen: "img/082-Bombon.png" },
+  { nombre: "Burbuja", imagen: "img/083-Burbuja.png" },
   { nombre: "Bellota", imagen: "img/084-bellota.png" },
   { nombre: "Puro Hueso", imagen: "img/085-PuroHueso.jpg" },
   { nombre: "Billy", imagen: "img/086-Billy.jpg" },
@@ -1853,7 +1921,7 @@ const personajes = [
   { nombre: "Ed", imagen: "img/088-Ed.jpg" },
   { nombre: "Steven Universe", imagen: "img/089-StevenUniverse.webp" },
   { nombre: "Bob Esponja", imagen: "img/090-BobEsponja.png" },
-  { nombre: "Deadpool", imagen: "img/090-Deadpool.webp" },
+  { nombre: "Deadpool", imagen: "img/190-Deadpool.webp" },
   { nombre: "Patricio Estrella", imagen: "img/091-PatricioEstrella.png" },
   { nombre: "Calamardo Tentáculos", imagen: "img/092-CalamardoTentaculos.jpg" },
   { nombre: "Don Cangrejo", imagen: "img/093-DonCangrejo.png" },
@@ -1902,20 +1970,20 @@ const personajes = [
   { nombre: "Junior Playboy", imagen: "img/136-juniorplayboy.jpg" },
   { nombre: "Kike Morandé", imagen: "img/137-KikeMorande.jpg" },
   { nombre: "Martín Cárcamo", imagen: "img/138-MartinCarcamo.jpg" },
-  { nombre: "JB The Voice", imagen: "img/139-jbthevoice.webp" },
+  { nombre: "Sebastián Piñera", imagen: "img/139-SebastianPinera.jpg" },
   { nombre: "José Antonio Kast", imagen: "img/140-JoseAntonioKast.jpg" },
-  { nombre: "Flaitiano", imagen: "img/141-flaitiano.jpg" },
   { nombre: "Karol Dance", imagen: "img/141-KarolDance.jpg" },
-  { nombre: "Papy Micky", imagen: "img/143-papymicky.jpg" },
+  { nombre: "El Papi Micky", imagen: "img/142-papymicky.jpg" },
+  { nombre: "René Puente", imagen: "img/143-renepuente.jpg" },
   { nombre: "Diego González", imagen: "img/144-diegogonzalez.webp" },
   { nombre: "Naya Fácil", imagen: "img/145-NayaFacil.jpg" },
-  { nombre: "René Puente", imagen: "img/146-renepuente.jpg" },
+  { nombre: "JB The Voice", imagen: "img/146-jbthevoice.webp" },
   { nombre: "Carlitos Vera", imagen: "img/147-CarlitosVera.jpg" },
   { nombre: "Don Francisco", imagen: "img/148-DonFrancisco.jpg" },
   { nombre: "Pedro Pascal", imagen: "img/149-PedroPascal.jpg" },
   { nombre: "Bombo Fica", imagen: "img/150-BomboFica.jpg" },
   { nombre: "Luis Jara", imagen: "img/151-LuisJara.jpg" },
-  { nombre: "Carlitos Vera", imagen: "img/152-carlitosvera.jpg" },
+  { nombre: "Flaitiano", imagen: "img/152-Flaitiano.jpg" },
   { nombre: "Goku", imagen: "img/153-Goku.jpg" },
   { nombre: "Vegeta", imagen: "img/154-Vegeta.jpg" },
   { nombre: "Naruto Uzumaki", imagen: "img/155-NarutoUzumaki.png" },
@@ -1994,7 +2062,7 @@ const personajes = [
   
   function normalizarNombrePersonaje(nombre){
     return String(nombre||'')
-      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
       .toLowerCase().replace(/[()¿?¡!.,'"/]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
   }
   
@@ -2020,17 +2088,28 @@ const personajes = [
     'papi micky':'papy micky'
   };
 
+  // Primero se asigna por ID de archivo (01x/0xx/1xx) para evitar colisiones de nombres
+  // como Batman/Joker y garantizar que el personaje reciba su propia imagen.
+  const imagenesPorId = new Map();
   const imagenesPorNombre = new Map();
-  personajes.forEach(item=>imagenesPorNombre.set(normalizarNombrePersonaje(item.nombre), item.imagen));
+  personajes.forEach(item=>{
+    const match=String(item.imagen||'').match(/(?:^|\/)0*(\d+)-/);
+    if(match)imagenesPorId.set(String(Number(match[1])),item.imagen);
+    const key=normalizarNombrePersonaje(item.nombre);
+    if(key&&!imagenesPorNombre.has(key))imagenesPorNombre.set(key,item.imagen);
+  });
 
   window.baseDeDatos.forEach(character=>{
-    const key = normalizarNombrePersonaje(character.nombre);
-    const direct = imagenesPorNombre.get(key);
-    if(direct){ character.imagen = direct; return; }
-    const alias = aliasImagenes[key];
+    const idKey=String(Number(character?.id));
+    const byId=imagenesPorId.get(idKey);
+    if(byId){character.imagen=byId;return;}
+    const key=normalizarNombrePersonaje(character.nombre);
+    const direct=imagenesPorNombre.get(key);
+    if(direct){character.imagen=direct;return;}
+    const alias=aliasImagenes[key];
     if(alias){
-      const mapped = imagenesPorNombre.get(normalizarNombrePersonaje(alias));
-      if(mapped){ character.imagen = mapped; return; }
+      const mapped=imagenesPorNombre.get(normalizarNombrePersonaje(alias));
+      if(mapped){character.imagen=mapped;return;}
     }
   });
   
@@ -2065,7 +2144,7 @@ const personajes = [
   const auth = firebase.auth(firebaseApp);
   const authPersistenceReady=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error=>{console.warn('No se pudo activar la persistencia de sesión',error);});
   const baseDeDatos = window.baseDeDatos || [];
-  const screens = ['home','authRegister','authLogin','profile','friends','requests','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
+  const screens = ['home','gameHome','authRegister','authLogin','profile','requests','setup','join','lobby','prep','reveal','starting','playing','scoring','results','finish'];
   const SESSION_KEY = 'adivina_quien_session';
   const PLAYER_KEY = 'adivina_quien_player_id';
   const PREPARATION_DURATION_MS = 10000;
@@ -2077,10 +2156,8 @@ const personajes = [
      categories:[], totalRounds:3, roomRef:null, roomListener:null, serverTimeOffset:0,
      myAssignment:null, countdownTimer:null, transitionKey:'', configEditing:false,
      wakeLock:null, countdownFeedbackKey:'', soundUnlocked:false,
-     guestMode:false, connectionWatchdog:null, connectionStateSeen:false, notificationTimer:null,
-     lastRequestKeys:new Set(), requestListenerReady:false, publicAssignmentRetryTimer:null, publicAssignmentRetryCount:0, vibrationReady:false,
      busy:{create:false,join:false,start:false,score:false,confirm:false,next:false,restart:false,reconnect:false},
-    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:''
+    restoring:false,autoRestoring:false,authReady:false,authUser:null,anonymousSignInStarted:false,registeringAccount:false,profile:null,accountListenerUid:'',lastRoomData:null,privateAssignment:null,publicAssignments:{},privateAssignmentRef:null,privateAssignmentListener:null,publicAssignmentRef:null,publicAssignmentListener:null,friendData:{},friendProfiles:{},friendPresence:{},requestData:{},inviteData:{},friendPresenceRefs:{},friendProfileRefs:{},profileListener:null,friendListener:null,requestListener:null,inviteListener:null,accountPresenceRef:null,presenceOnline:false,searchTarget:null,pendingInviteRoom:'',lastConnected:null,connectionWatchdog:null,reconnectModalOpen:false,roomConnectionPaused:false,assignmentRecoveryTimer:null,assignmentRecoveryAttempts:0,requestListenerInitialized:false,lastRequestKeys:new Set(),guestMode:false,quickFriendsOpen:false
   };
 
   const $ = id => document.getElementById(id);
@@ -2202,72 +2279,117 @@ const personajes = [
   countdownSound.playsInline=true;
   countdownSound.volume=1;
 
-  function unlockDeviceFeedback(){
-    try{
-      if('vibrate' in navigator){
-        const result=navigator.vibrate(12);state.vibrationReady=result!==false;
-        setTimeout(()=>{try{navigator.vibrate(0);}catch(error){}},25);
-      }
-    }catch(error){state.vibrationReady=false;}
-    preloadCountdownSound();
-  }
   function preloadCountdownSound(){
     try{
-      countdownSound.load();const previousVolume=countdownSound.volume;countdownSound.volume=0;
+      countdownSound.load();
+      const previousVolume=countdownSound.volume;
+      countdownSound.volume=0;
       const warmup=countdownSound.play();
       if(warmup&&typeof warmup.then==='function'){
-        warmup.then(()=>{countdownSound.pause();countdownSound.currentTime=0;countdownSound.volume=previousVolume;state.soundUnlocked=true;})
-          .catch(()=>{countdownSound.pause();countdownSound.currentTime=0;countdownSound.volume=previousVolume;});
+        warmup.then(()=>{
+          countdownSound.pause();
+          countdownSound.currentTime=0;
+          countdownSound.volume=previousVolume;
+          state.soundUnlocked=true;
+        }).catch(()=>{countdownSound.volume=previousVolume;});
+      }else{
+        countdownSound.pause();
+        countdownSound.currentTime=0;
+        countdownSound.volume=previousVolume;
       }
     }catch(error){console.warn('No se pudo precargar el sonido del temporizador',error);}
   }
+
   function playCountdownSound(){
     try{
-      countdownSound.pause();countdownSound.currentTime=0;countdownSound.volume=1;
+      countdownSound.pause();
+      countdownSound.currentTime=0;
       const promise=countdownSound.play();
       if(promise&&typeof promise.catch==='function')promise.catch(error=>console.warn('El navegador bloqueó el sonido',error));
     }catch(error){console.warn('No se pudo reproducir el sonido',error);}
   }
-  function vibratePattern(pattern=[220,80,220,80,320]){
-    try{if(!('vibrate' in navigator))return false;const result=navigator.vibrate(pattern);state.vibrationReady=result!==false;return result!==false;}
-    catch(error){state.vibrationReady=false;return false;}
-  }
+
   function feedbackAtZero(key){
     if(state.countdownFeedbackKey===key)return;
-    state.countdownFeedbackKey=key;playCountdownSound();vibratePattern([220,80,220,80,320]);
+    state.countdownFeedbackKey=key;
+    playCountdownSound();
+    try{
+      if('vibrate' in navigator)navigator.vibrate([200,100,200]);
+    }catch(error){console.warn('Vibración no disponible',error);}
   }
-  function showNotificationToast(title,message=''){
-    const box=$('notificationToast'),titleEl=$('notificationToastTitle'),textEl=$('notificationToastText');
-    if(!box||!titleEl||!textEl)return;
-    titleEl.textContent=title||'Nueva notificación';textEl.textContent=message||'';box.classList.add('show');
-    if(state.notificationTimer)clearTimeout(state.notificationTimer);
-    state.notificationTimer=setTimeout(()=>box.classList.remove('show'),5000);
+  function haptic(pattern=[18]){
+    try{if(typeof navigator.vibrate==='function')navigator.vibrate(pattern);}catch(error){}
   }
-  async function requestBrowserNotifications(){
-    if(!('Notification' in window))return false;
-    if(Notification.permission==='granted')return true;if(Notification.permission==='denied')return false;
-    try{return (await Notification.requestPermission())==='granted';}catch(error){return false;}
+  function renderQuickFriendsPanel(){
+    const list=$('quickFriendsList');if(!list)return;
+    const ids=Object.keys(state.friendData||{});
+    setText('quickFriendsCount',String(ids.length));setText('quickRequestsCount',String(Object.keys(state.requestData||{}).length));
+    list.replaceChildren();
+    if(!ids.length){const empty=document.createElement('div');empty.className='quick-friends-empty';empty.textContent='Todavía no tienes amigos.';list.appendChild(empty);}
+    ids.forEach(uid=>{
+      const profile=state.friendProfiles[uid]||{},presence=state.friendPresence[uid]||{};
+      const row=document.createElement('div');row.className='quick-friend-row';row.setAttribute('role','listitem');
+      const avatar=document.createElement('div');avatar.className='quick-friend-avatar';avatar.textContent=String(profile.username||uid).replace(/^@/,'').slice(0,1).toUpperCase()||'?';
+      const main=document.createElement('div');main.className='quick-friend-main';
+      const name=document.createElement('div');name.className='quick-friend-name';name.textContent=visibleUsername(profile.username||uid);
+      const stateLine=document.createElement('div');stateLine.className='quick-friend-state';const dot=document.createElement('span');dot.className='presence-dot '+(presence.online?'online':'offline');stateLine.append(dot,document.createTextNode(presence.online?'online':'offline'));main.append(name,stateLine);
+      const actions=document.createElement('div');actions.className='row-actions';
+      if(state.roomRef){const invite=document.createElement('button');invite.className='small-btn success';invite.type='button';invite.textContent='INVITAR';invite.disabled=normalizeRoomPlayers(state.lastRoomData||{}).some(player=>String(player.accountUid)===String(uid));invite.onclick=()=>{haptic([22]);void sendRoomInvite(uid);};actions.appendChild(invite);}
+      const remove=document.createElement('button');remove.className='small-btn danger';remove.type='button';remove.textContent='ELIMINAR';remove.onclick=()=>{haptic([18]);void removeFriend(uid);};actions.appendChild(remove);
+      row.append(avatar,main,actions);list.appendChild(row);
+    });
+    const req=$('quickRequestsList');if(req){req.replaceChildren();const requests=Object.values(state.requestData||{});if(!requests.length){const empty=document.createElement('div');empty.className='quick-friends-empty';empty.textContent='No tienes solicitudes pendientes.';req.appendChild(empty);}requests.forEach(request=>{const fromUid=String(request.fromUid||request.uid||'');const row=document.createElement('div');row.className='request-row';row.setAttribute('role','listitem');const name=document.createElement('div');name.className='request-name';name.textContent=visibleUsername(request.fromUsername||fromUid);const actions=document.createElement('div');actions.className='row-actions';const accept=document.createElement('button');accept.className='small-btn success';accept.type='button';accept.textContent='ACEPTAR';accept.onclick=()=>{haptic([25]);void acceptFriendRequest(fromUid);};const reject=document.createElement('button');reject.className='small-btn danger';reject.type='button';reject.textContent='RECHAZAR';reject.onclick=()=>{haptic([18]);void rejectFriendRequest(fromUid);};actions.append(accept,reject);row.append(name,actions);req.appendChild(row);});}
+    renderInviteList('quickFriendsInviteList');
   }
-  function notifyFriendRequest(request){
-    const from=visibleUsername(request?.fromUsername||request?.fromUid);
-    showNotificationToast('Nueva solicitud de amistad',`${from} quiere agregarte como amigo.`);
-    playCountdownSound();vibratePattern([120,60,120,60,220]);
-    if(document.visibilityState!=='visible'&&'Notification' in window&&Notification.permission==='granted'){
-      try{new Notification('¿Quién soy? — Nueva solicitud',{body:`${from} quiere agregarte como amigo.`});}catch(error){}
-    }
+  function openQuickFriends(){
+    if(!accountUid()){haptic([18]);show('authLogin');return;}
+    renderQuickFriendsPanel();const overlay=$('quickFriendsOverlay');if(!overlay)return;overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');state.quickFriendsOpen=true;haptic([22]);try{$('quickFriendSearchInput')?.focus({preventScroll:true});}catch(error){}
   }
+  function closeQuickFriends(){
+    const overlay=$('quickFriendsOverlay');if(!overlay)return;overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');state.quickFriendsOpen=false;haptic([16]);
+  }
+  async function quickSearchFriend(){
+    if(!accountUid()){show('authLogin');return;}
+    const input=String($('quickFriendSearchInput')?.value||'').trim();state.searchTarget=null;
+    const result=$('quickFriendSearchResult');if(result)result.replaceChildren();
+    if(!input||input.replace(/^@+/,'').length<3){accountNotice('quickFriendsNotice','Escribe un nombre de usuario de al menos 3 caracteres.','error');return;}
+    setButtonBusy('quickSearchFriendBtn','account',true,'BUSCANDO…');
+    try{
+      const target=await resolveUserByInput(input);
+      if(!target||!target.uid){accountNotice('quickFriendsNotice','No se encontró ese usuario. Revisa que el nombre sea exactamente igual al de su cuenta.','error');return;}
+      const uid=String(target.uid).trim(),me=String(accountUid()).trim();if(!uid||uid==='undefined'||uid==='null'){accountNotice('quickFriendsNotice','La cuenta encontrada no tiene un ID válido.','error');return;}
+      if(uid===me){accountNotice('quickFriendsNotice','No puedes agregarte a ti mismo.','error');return;}
+      if(state.friendData[uid]){accountNotice('quickFriendsNotice','Ese usuario ya es tu amigo.','error');return;}
+      const [sent,reverse,received]=await Promise.all([db.ref(`friendRequests/sent/${me}/${uid}`).once('value'),db.ref(`friendRequests/sent/${uid}/${me}`).once('value'),db.ref(`friendRequests/received/${me}/${uid}`).once('value')]);
+      if(sent.exists()||reverse.exists()||received.exists()){accountNotice('quickFriendsNotice','Ya existe una solicitud entre ambos.','error');return;}
+      target.uid=uid;target.username=String(target.username||input.replace(/^@+/,'')).trim();state.searchTarget=target;
+      const box=document.createElement('div');box.className='search-result';const text=document.createElement('strong');text.textContent=`¿Quieres agregar a ${visibleUsername(target.username)}?`;const actions=document.createElement('div');actions.className='row-actions';const send=document.createElement('button');send.className='small-btn success';send.type='button';send.textContent='ENVIAR SOLICITUD';send.onclick=()=>{haptic([24]);void sendQuickFriendRequest();};const cancel=document.createElement('button');cancel.className='small-btn';cancel.type='button';cancel.textContent='CANCELAR';cancel.onclick=clearQuickFriendSearch;actions.append(send,cancel);box.append(text,actions);result?.appendChild(box);
+    }catch(error){console.error('quickSearchFriend',error);accountNotice('quickFriendsNotice',accountError(error),'error');}
+    finally{setButtonBusy('quickSearchFriendBtn','account',false);}
+  }
+  function clearQuickFriendSearch(){state.searchTarget=null;const result=$('quickFriendSearchResult');if(result)result.replaceChildren();}
+  async function sendQuickFriendRequest(){
+    const target=state.searchTarget;if(!target||!accountUid())return;
+    try{await sendFriendRequestTo(String(target.uid),String(target.username||'usuario'));accountNotice('quickFriendsNotice','Solicitud enviada correctamente.','success');haptic([35]);showSocialToast(`Solicitud enviada a ${visibleUsername(target.username)}`);clearQuickFriendSearch();renderQuickFriendsPanel();}
+    catch(error){accountNotice('quickFriendsNotice',({ 'invalid-target':'El usuario seleccionado no es válido.','self-friend-request':'No puedes agregarte a ti mismo.','already-friends':'Ese usuario ya es tu amigo.','request-exists':'Ya existe una solicitud entre ambos.'})[error?.code]||'No se pudo enviar la solicitud.','error');haptic([14,50,14]);}
+  }
+
   function show(id){
     clearNotice();
     screens.forEach(screen=>{const el=$(screen);if(el)el.classList.toggle('active',screen===id);});
-    const labels={home:'',authRegister:'CUENTA',authLogin:'CUENTA',profile:'CUENTA',friends:'CUENTA',requests:'CUENTA',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',starting:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
+    const labels={home:'',gameHome:'SALA',authRegister:'CUENTA',authLogin:'CUENTA',profile:'CUENTA',friends:'CUENTA',requests:'CUENTA',setup:'SALA',join:'SALA',lobby:'LOBBY',prep:'PARTIDA',reveal:'PARTIDA',starting:'PARTIDA',playing:'PARTIDA',scoring:'RESULTADO',results:'RESULTADO',finish:'FINAL'};
     setText('stepBadge',labels[id]||'');
-    const pageTitles={home:'¿Quién soy?',authRegister:'Crear cuenta · ¿Quién soy?',authLogin:'Iniciar sesión · ¿Quién soy?',profile:'Mi perfil · ¿Quién soy?',friends:'Amigos · ¿Quién soy?',requests:'Solicitudes · ¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',starting:'Comienza la partida · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
+    const pageTitles={home:'Acceso · ¿Quién soy?',gameHome:'Salas · ¿Quién soy?',authRegister:'Crear cuenta · ¿Quién soy?',authLogin:'Iniciar sesión · ¿Quién soy?',profile:'Mi perfil · ¿Quién soy?',friends:'Amigos · ¿Quién soy?',requests:'Solicitudes · ¿Quién soy?',setup:'Crear sala · ¿Quién soy?',join:'Entrar a una sala · ¿Quién soy?',lobby:'Lobby · ¿Quién soy?',prep:'Preparación · ¿Quién soy?',reveal:'Tu personaje · ¿Quién soy?',starting:'Comienza la partida · ¿Quién soy?',playing:'Partida · ¿Quién soy?',scoring:'Resultado · ¿Quién soy?',results:'Puntajes · ¿Quién soy?',finish:'Resultados finales · ¿Quién soy?'};
     document.title=pageTitles[id]||'¿Quién soy?';
     const active=$(id);
     if(active){
       active.setAttribute('tabindex','-1');
       window.setTimeout(()=>{const heading=active.querySelector('h1');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}},0);
     }
+    const authOnly=['home','authRegister','authLogin'];
+    $('connectionStatus')?.classList.toggle('hidden',authOnly.includes(id));
+    if(authOnly.includes(id))$('quickFriendsBtn')?.classList.remove('visible');
+    else if(accountUid())$('quickFriendsBtn')?.classList.add('visible');
     if(id!=='prep'&&id!=='reveal')void releaseScreenWakeLock();
   }
   function notice(msg,type='',target='roomNotice'){
@@ -2303,7 +2425,7 @@ const personajes = [
   // CUENTAS, AMIGOS, PRESENCIA E INVITACIONES
   // ============================================================
   const USERNAME_PATTERN=/^[A-Za-z0-9][A-Za-z0-9._-]{1,18}[A-Za-z0-9]$/;
-  function normalizeUsername(value){return String(value||'').trim().replace(/^@+/,'').toLowerCase();}
+  function normalizeUsername(value){return String(value??'').trim().replace(/^@+/,'').toLocaleLowerCase('es');}
   function visibleUsername(value){const clean=String(value||'').trim().replace(/^@+/,'');return clean?'@'+clean:'@usuario';}
   function accountUid(){return state.authUser&&!state.authUser.isAnonymous?state.authUser.uid:'';}
   function backendUid(){return auth.currentUser?.uid||'';}
@@ -2314,9 +2436,79 @@ const personajes = [
   function pairKey(first,second){return [String(first),String(second)].sort().join('__');}
   function accountUsername(){return state.profile?.username||state.authUser?.displayName||state.authUser?.email?.split('@')[0]||'usuario';}
   function accountNotice(id,message,type=''){const el=$(id);if(!el)return;el.textContent=message||'';el.className='room-notice'+(message?' show ':'')+(type?' '+type:'');}
+
+  let socialToastTimer=null;
+  function showSocialToast(message){
+    const toast=$('socialToast');if(!toast)return;
+    toast.textContent=message||'';toast.classList.add('show');
+    clearTimeout(socialToastTimer);socialToastTimer=setTimeout(()=>toast.classList.remove('show'),4200);
+  }
+  function getPendingRequestCount(){return Object.keys(state.requestData||{}).length;}
+  function notifyFriendRequest(request){
+    const from=visibleUsername(request?.fromUsername||request?.fromUid||'usuario');
+    showSocialToast(`Nueva solicitud de amistad de ${from}`);
+    playCountdownSound();
+    try{if('vibrate' in navigator)navigator.vibrate([120,70,120]);}catch(error){console.warn('Vibración no disponible',error);}
+    try{
+      if(document.visibilityState==='hidden' && 'Notification' in window && Notification.permission==='granted'){
+        new Notification('¿Quién soy? — Nueva solicitud', {body:`${from} quiere agregarte como amigo.`});
+      }
+    }catch(error){console.warn('Notificación del navegador no disponible',error);}
+  }
+  function requestNotificationPermission(){
+    try{
+      if('Notification' in window && Notification.permission==='default')return Notification.requestPermission();
+    }catch(error){console.warn('No se pudo solicitar permiso de notificaciones',error);}
+    return Promise.resolve('denied');
+  }
+  function setRequestBadge(count){
+    ['profileRequestsBtn','friendsRequestsBtn'].forEach(id=>{
+      const btn=$(id);if(!btn)return;
+      btn.querySelector('.request-badge')?.remove();
+      if(count>0){const badge=document.createElement('span');badge.className='request-badge';badge.textContent=count>99?'99+':String(count);btn.appendChild(badge);}
+    });
+    const quickBadge=$('quickFriendsBadge');
+    if(quickBadge){quickBadge.textContent=count>99?'99+':String(count);quickBadge.classList.toggle('hidden',count<1);}
+    setText('quickRequestsCount',String(count));
+  }
+  function hideReconnectModal(){
+    const modal=$('reconnectModal');if(modal)modal.classList.remove('show');
+    state.reconnectModalOpen=false;
+  }
+  function showReconnectModal(reason='connection-lost'){
+    if(!state.roomRef)return;
+    const modal=$('reconnectModal');if(!modal)return;
+    state.reconnectModalOpen=true;
+    setText('reconnectModalText',reason==='manual-failed'?'No se pudo recuperar la conexión. Pulsa RECONCETAR para volver a intentarlo.':'Se perdió la conexión con la partida. No intentaremos reconectar automáticamente.');
+    const notice=$('reconnectNotice');if(notice){notice.textContent='';notice.className='room-notice';}
+    modal.classList.add('show');
+  }
+  async function discardReconnect(){
+    hideReconnectModal();
+    cancelReconnect();
+    clearCountdown();
+    const ref=state.roomRef,roomId=state.roomCode,mode=state.mode,secure=Boolean(state.lastRoomData?.secureAssignments),authRoomUid=backendUid();
+    try{
+      try{db.goOffline();}catch(error){}
+      if(ref&&mode==='player')await ref.child('players/'+String(state.playerId)).remove().catch(()=>{});
+      if(ref&&mode==='host'){await ref.remove().catch(()=>{});if(secure){await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});}}
+      if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});
+    }catch(error){console.warn('discard reconnect',error);}
+    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.playerName='';state.myAssignment=null;state.roomConnectionPaused=false;clearSession();show(accountUid()?'gameHome':'home');
+  }
+  async function manualReconnect(){
+    if(state.busy.reconnect||!state.roomRef||!state.roomCode||!state.playerId||!state.playerName)return;
+    setBusy('reconnect',true);setButtonBusy('manualReconnectBtn','reconnect',true,'RECONECTANDO…');
+    state.roomConnectionPaused=false;setConnectionStatus('reconnecting','Reconectando…');
+    try{db.goOnline();}catch(error){console.warn('db.goOnline',error);}
+    const ok=await recoverRoomConnection('manual-click');
+    if(ok){hideReconnectModal();setConnectionStatus('online','Conectado');}
+    else{setConnectionStatus('offline','Sin conexión');showReconnectModal('manual-failed');}
+    setBusy('reconnect',false);setButtonBusy('manualReconnectBtn','reconnect',false);
+  }
   function accountError(error){
     const messages={
-      'auth/email-already-in-use':'Ese correo ya está registrado.','auth/invalid-email':'El correo no es válido.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Espera un momento y vuelve a probar.','auth/unauthorized-domain':'Autoriza este dominio en Firebase Authentication.','auth/api-key-not-valid':'La configuración de Firebase no es válida para esta aplicación.','auth/operation-not-allowed':'El método de acceso está desactivado en Firebase. Activa Correo electrónico/contraseña en Authentication → Sign-in method.','auth/network-request-failed':'Firebase no pudo conectarse. Revisa tu conexión o bloqueadores del navegador.','PERMISSION_DENIED':'Firebase rechazó la operación por las reglas de Realtime Database.','database/permission-denied':'Firebase rechazó la operación por las reglas de Realtime Database.','username-taken':'Ese nombre de usuario ya está ocupado.'
+      'auth/email-already-in-use':'Ese correo ya está registrado.','auth/invalid-email':'El correo no es válido.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Espera un momento y vuelve a probar.','auth/unauthorized-domain':'Autoriza este dominio en Firebase Authentication.','auth/api-key-not-valid':'La configuración de Firebase no es válida para esta aplicación.','auth/operation-not-allowed':'El método de acceso está desactivado en Firebase. Activa Correo electrónico/contraseña en Authentication → Sign-in method.','auth/network-request-failed':'Firebase no pudo conectarse. Revisa tu conexión o bloqueadores del navegador.','PERMISSION_DENIED':'Firebase rechazó la operación por las reglas de Realtime Database.','database/permission-denied':'Firebase rechazó la operación por las reglas de Realtime Database.','username-taken':'Ese nombre de usuario ya está ocupado.','invalid-target':'El usuario seleccionado no es válido.','request-exists':'Ya existe una solicitud entre ambos.'
     };
     return messages[error?.code]||`No se pudo completar la operación (${error?.code||'error desconocido'}). Revisa la consola del navegador si necesitas más detalles.`;
   }
@@ -2327,31 +2519,21 @@ const personajes = [
     setText('accountOnlineLabel',text);setText('profileStatusText',text);
     renderFriendsList();
   }
-  function hasGameAccess(){return Boolean(accountUid()||state.guestMode);}
-  function updateGameAccessUI(){
-    const actions=$('gameEntryActions');if(actions)actions.classList.toggle('hidden',!hasGameAccess());
-    const guest=$('guestBtn');if(guest)guest.classList.toggle('hidden',Boolean(accountUid()));
-  }
-  function renderRequestBadge(){
-    const count=Object.keys(state.requestData||{}).length;
-    ['profileRequestBadge','friendsRequestBadge'].forEach(id=>{
-      const el=$(id);if(!el)return;el.textContent=String(count);el.classList.toggle('hidden',count<1);
-    });
-    setText('profileRequestCount',count);
-  }
   function renderAccountUI(){
-    const logged=Boolean(accountUid()),loggedOut=$('loggedOutView'),loggedIn=$('loggedInView');
-    if(loggedOut)loggedOut.classList.toggle('hidden',logged);if(loggedIn)loggedIn.classList.toggle('hidden',!logged);
+    const logged=Boolean(accountUid()),quickBtn=$('quickFriendsBtn');
+    if(quickBtn)quickBtn.classList.toggle('visible',logged);
+    const username=logged?accountUsername():'Invitado';
+    setText('gameHomeUsername',visibleUsername(username));
+    setText('gameHomeAccountType',logged?'CUENTA':'INVITADO');
+    const gamePresence=$('gameHomePresenceDot');if(gamePresence){gamePresence.classList.toggle('online',logged?state.presenceOnline:true);gamePresence.classList.toggle('offline',logged?!state.presenceOnline:false);}
     ['hostNameInput','joinName'].forEach(id=>{const field=$(id);if(field)field.readOnly=logged;});
-    updateGameAccessUI();
-    if(!logged){if(!state.guestMode)setPresenceUi(false);renderRequestBadge();return;}
-    const username=accountUsername(),email=state.authUser?.email||'';
+    if(!logged){setPresenceUi(false);setRequestBadge(0);return;}
+    const email=state.authUser?.email||'';
     setText('accountUsername',visibleUsername(username));setText('profileUsername',visibleUsername(username));setText('profileEmail',email);
     ['hostNameInput','joinName'].forEach(id=>{const field=$(id);if(field){field.readOnly=true;field.value=state.profile?.username||username;}});
-    setText('profileFriendCount',Object.keys(state.friendData||{}).length);renderRequestBadge();
-    setPresenceUi(state.presenceOnline);renderFriendsList();renderRequestsList();renderInviteList('profileInviteList');
+    setText('profileFriendCount',Object.keys(state.friendData||{}).length);setText('profileRequestCount',Object.keys(state.requestData||{}).length);
+    setPresenceUi(state.presenceOnline);renderFriendsList();renderRequestsList();renderInviteList('profileInviteList');renderQuickFriendsPanel();
   }
-
   function stopOwnPresence(){
     const presence=state.accountPresenceRef;if(!presence)return;
     presence.connectedRef.off('value',presence.handler);
@@ -2380,7 +2562,7 @@ const personajes = [
     if(state.inviteListener&&uid)db.ref('roomInvites/'+uid).off('value',state.inviteListener);
     Object.values(state.friendProfileRefs||{}).forEach(item=>item.ref.off('value',item.handler));
     Object.values(state.friendPresenceRefs||{}).forEach(item=>item.ref.off('value',item.handler));
-    state.profileListener=null;state.friendListener=null;state.requestListener=null;state.inviteListener=null;state.lastRequestKeys=new Set();state.requestListenerReady=false;state.accountListenerUid='';state.friendProfileRefs={};state.friendPresenceRefs={};state.friendProfiles={};state.friendPresence={};state.friendData={};state.requestData={};state.inviteData={};state.profile=null;stopOwnPresence();
+    state.profileListener=null;state.friendListener=null;state.requestListener=null;state.inviteListener=null;state.accountListenerUid='';state.friendProfileRefs={};state.friendPresenceRefs={};state.friendProfiles={};state.friendPresence={};state.friendData={};state.requestData={};state.inviteData={};state.profile=null;state.requestListenerInitialized=false;state.lastRequestKeys=new Set();setRequestBadge(0);stopOwnPresence();
   }
   function bindFriendDetails(){
     const ids=new Set(Object.keys(state.friendData||{}));
@@ -2460,17 +2642,21 @@ const personajes = [
     state.profileListener=snapshot=>{state.profile=snapshot.val()||null;renderAccountUI();};db.ref('users/'+uid).on('value',state.profileListener);
     state.friendListener=snapshot=>{state.friendData=snapshot.val()||{};bindFriendDetails();renderAccountUI();};db.ref('friends/'+uid).on('value',state.friendListener);
     state.requestListener=snapshot=>{
-      const next=snapshot.val()||{},nextKeys=new Set(Object.keys(next));
-      if(state.requestListenerReady){
-        for(const key of nextKeys){if(!state.lastRequestKeys.has(key)&&next[key])notifyFriendRequest(next[key]);}
+      const next=snapshot.val()||{};
+      const previousKeys=new Set(Object.keys(state.requestData||{}));
+      state.requestData=next;
+      const currentKeys=new Set(Object.keys(next));
+      setRequestBadge(currentKeys.size);
+      if(state.requestListenerInitialized){
+        for(const key of currentKeys){
+          if(!previousKeys.has(key)){notifyFriendRequest(next[key]);break;}
+        }
       }else{
-        state.requestListenerReady=true;
+        state.requestListenerInitialized=true;
       }
-      state.lastRequestKeys=nextKeys;state.requestData=next;renderRequestsList();renderAccountUI();
+      renderRequestsList();renderAccountUI();
     };
-    db.ref('friendRequests/received/'+uid).on('value',state.requestListener,error=>{
-      console.error('friend request listener',error);accountNotice('friendsNotice','No se pudieron cargar las solicitudes. Revisa las reglas de Firebase.','error');
-    });
+    db.ref('friendRequests/received/'+uid).on('value',state.requestListener);
     state.inviteListener=snapshot=>{state.inviteData=snapshot.val()||{};renderInviteList('profileInviteList');renderInviteList('friendsInviteList');};db.ref('roomInvites/'+uid).on('value',state.inviteListener);
     startOwnPresence(user);renderFriendsList();renderRequestsList();renderInviteList('profileInviteList');
   }
@@ -2489,69 +2675,167 @@ const personajes = [
       const credentials=await auth.createUserWithEmailAndPassword(email,password);createdUser=credentials.user;
       const claim=await db.ref('usernames/'+key).transaction(current=>current===null?createdUser.uid:undefined);if(!claim.committed)throw {code:'username-taken'};claimed=true;
       const profile={username,email:createdUser.email||email,createdAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:firebase.database.ServerValue.TIMESTAMP};
-      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});state.profile=profile;await startAccountListeners(createdUser);state.registeringAccount=false;state.guestMode=false;show('home');
+      await db.ref().update({['users/'+createdUser.uid]:profile,['publicUsers/'+createdUser.uid]:{username,usernameLower:key,createdAt:profile.createdAt}});await createdUser.updateProfile({displayName:username});state.profile=profile;await startAccountListeners(createdUser);state.registeringAccount=false;state.guestMode=false;show('gameHome');
     }catch(error){console.error('Firebase register account',error);if(claimed)await db.ref('usernames/'+key).remove().catch(()=>{});if(createdUser)await createdUser.delete().catch(()=>{});state.registeringAccount=false;accountNotice('registerNotice',accountError(error),'error');}
     finally{state.registeringAccount=false;setButtonBusy('createAccountBtn','account',false);}
   }
   async function loginAccount(){
     const email=String($('loginEmail').value||'').trim(),password=$('loginPassword').value||'';if(!email||!password){accountNotice('loginNotice','Escribe tu correo y contraseña.','error');return;}
     setButtonBusy('signInBtn','account',true,'INICIANDO…');
-    try{await authPersistenceReady;await auth.signInWithEmailAndPassword(email,password);state.guestMode=false;show('home');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
+    try{await authPersistenceReady;await auth.signInWithEmailAndPassword(email,password);state.guestMode=false;show('gameHome');}catch(error){accountNotice('loginNotice',accountError(error),'error');}finally{setButtonBusy('signInBtn','account',false);}
+  }
+  async function enterGuest(){
+    setButtonBusy('guestBtn','account',true,'ENTRANDO…');
+    try{await authPersistenceReady;if(auth.currentUser&&!auth.currentUser.isAnonymous){state.guestMode=false;show('gameHome');return;}state.anonymousSignInStarted=true;await auth.signInAnonymously();state.guestMode=true;show('gameHome');haptic([28]);}
+    catch(error){accountNotice('accessNotice',accountError(error),'error');}
+    finally{state.anonymousSignInStarted=false;setButtonBusy('guestBtn','account',false);}
+  }
+  async function switchAccess(){
+    if(state.roomRef){accountNotice('lobbyNotice','Sal de la sala antes de cambiar de usuario.','error');return;}
+    try{await auth.signOut();}catch(error){}
+    state.guestMode=false;clearFriendSearch();closeQuickFriends();show('home');
   }
   async function logoutAccount(){
     if(state.roomRef){accountNotice('profileNotice','Sal de la sala antes de cerrar sesión para conservar la partida.','error');return;}
-    setButtonBusy('signOutBtn','account',true,'CERRANDO…');try{state.guestMode=false;await auth.signOut();show('home');}catch(error){accountNotice('profileNotice','No se pudo cerrar la sesión.','error');}finally{setButtonBusy('signOutBtn','account',false);}
+    setButtonBusy('signOutBtn','account',true,'CERRANDO…');
+    try{await auth.signOut();state.guestMode=false;closeQuickFriends();show('home');}
+    catch(error){accountNotice('profileNotice','No se pudo cerrar la sesión.','error');}
+    finally{setButtonBusy('signOutBtn','account',false);}
+  }
+  async function resolveUserByInput(input){
+    const raw=String(input??'').trim().replace(/^@+/,'');
+    const key=normalizeUsername(raw);
+    if(!raw||!key)return null;
+
+    // Camino principal: el índice usernames/{usernameLower} devuelve directamente el UID.
+    try{
+      const uidSnapshot=await db.ref('usernames/'+key).once('value');
+      if(uidSnapshot.exists()){
+        const uid=String(uidSnapshot.val()??'').trim();
+        if(uid){
+          const publicSnapshot=await db.ref('publicUsers/'+uid).once('value');
+          const publicData=publicSnapshot.val()||{};
+          if(publicData.username||publicData.usernameLower){
+            return {uid, ...publicData, username:publicData.username||raw, usernameLower:publicData.usernameLower||key};
+          }
+          const userSnapshot=await db.ref('users/'+uid).once('value');
+          const userData=userSnapshot.val()||{};
+          if(userData.username){
+            return {uid, username:userData.username, usernameLower:normalizeUsername(userData.username)};
+          }
+        }
+      }
+    }catch(error){console.warn('Búsqueda por índice de nombre',error);}
+
+    // Compatibilidad con cuentas antiguas: intenta el índice público por usernameLower.
+    try{
+      const snapshot=await db.ref('publicUsers').orderByChild('usernameLower').equalTo(key).limitToFirst(5).once('value');
+      const entries=Object.entries(snapshot.val()||{});
+      if(entries.length){
+        const [uid,data]=entries.find(([candidateUid,value])=>String(value?.usernameLower||'').toLowerCase()===key)||entries[0];
+        if(uid) return {uid:String(uid),...(data||{}),username:data?.username||raw,usernameLower:data?.usernameLower||key};
+      }
+    }catch(error){console.warn('Búsqueda pública de usuario',error);}
+
+    // Permite pegar un UID directamente para facilitar soporte/reparación de cuentas antiguas.
+    if(raw.length>=20){
+      try{
+        const publicSnapshot=await db.ref('publicUsers/'+raw).once('value');
+        if(publicSnapshot.exists())return {uid:raw,...(publicSnapshot.val()||{})};
+      }catch(error){console.warn('Búsqueda directa por UID',error);}
+    }
+    return null;
   }
   async function searchFriend(){
     if(!accountUid()){show('authLogin');return;}
-    const key=normalizeUsername($('friendSearchInput').value);state.searchTarget=null;
-    if(!USERNAME_PATTERN.test(key)){accountNotice('friendsNotice','Escribe un nombre válido de 3 a 20 caracteres.','error');return;}
+    const input=String($('friendSearchInput').value??'').trim();state.searchTarget=null;
+    if(!input||input.replace(/^@+/,'').length<3){accountNotice('friendsNotice','Escribe un nombre de usuario de al menos 3 caracteres.','error');return;}
     setButtonBusy('searchFriendBtn','account',true,'BUSCANDO…');
     try{
-      const snapshot=await db.ref('publicUsers').orderByChild('usernameLower').equalTo(key).limitToFirst(1).once('value'),found=Object.entries(snapshot.val()||{})[0];
-      if(!found){accountNotice('friendsNotice','No se encontró ese usuario.','error');return;}
-      const target={uid:found[0],...(found[1]||{})};if(target.uid===accountUid()){accountNotice('friendsNotice','No puedes agregarte a ti mismo.','error');return;}
-      if(state.friendData[target.uid]){accountNotice('friendsNotice','Ese usuario ya es tu amigo.','error');return;}
-      const [sent,received,incoming]=await Promise.all([db.ref(`friendRequests/sent/${accountUid()}/${target.uid}`).once('value'),db.ref(`friendRequests/received/${accountUid()}/${target.uid}`).once('value'),db.ref(`friendRequests/received/${target.uid}/${accountUid()}`).once('value')]);if(sent.exists()||received.exists()||incoming.exists()){accountNotice('friendsNotice','Ya existe una solicitud entre ambos.','error');return;}
-      state.searchTarget=target;const result=$('friendSearchResult');result.replaceChildren();const box=document.createElement('div');box.className='search-result';const textNode=document.createElement('strong');textNode.textContent=`¿Quieres enviar una solicitud de amistad a ${visibleUsername(target.username)}?`;const actions=document.createElement('div');actions.className='row-actions';const send=document.createElement('button');send.className='small-btn success';send.type='button';send.textContent='ENVIAR SOLICITUD';send.addEventListener('click',()=>void sendFriendRequest());const cancel=document.createElement('button');cancel.className='small-btn';cancel.type='button';cancel.textContent='CANCELAR';cancel.addEventListener('click',clearFriendSearch);actions.append(send,cancel);box.append(textNode,actions);result.appendChild(box);
-    }catch(error){accountNotice('friendsNotice','No se pudo buscar el usuario.','error');}finally{setButtonBusy('searchFriendBtn','account',false);}
+      const target=await resolveUserByInput(input);
+      if(!target||!target.uid){accountNotice('friendsNotice','No se encontró ese usuario. Revisa que el nombre sea exactamente igual al de su cuenta.','error');return;}
+      const uid=String(target.uid),me=String(accountUid());
+      if(!uid||uid==='undefined'||uid==='null'){accountNotice('friendsNotice','La cuenta encontrada no tiene un ID válido.','error');return;}
+      if(uid===me){accountNotice('friendsNotice','No puedes agregarte a ti mismo.','error');return;}
+      if(state.friendData[uid]){accountNotice('friendsNotice','Ese usuario ya es tu amigo.','error');return;}
+      const [sent,reverseReceived,ownReceived]=await Promise.all([
+        db.ref(`friendRequests/sent/${me}/${uid}`).once('value'),
+        db.ref(`friendRequests/sent/${uid}/${me}`).once('value'),
+        db.ref(`friendRequests/received/${me}/${uid}`).once('value')
+      ]);
+      if(sent.exists()||reverseReceived.exists()||ownReceived.exists()){
+        accountNotice('friendsNotice','Ya existe una solicitud entre ambos. Revisa SOLICITUDES por si la otra persona te agregó primero.','error');return;
+      }
+      target.uid=uid;target.username=String(target.username||target.displayName||input.replace(/^@+/,''));
+      state.searchTarget=target;
+      const result=$('friendSearchResult');result.replaceChildren();
+      const box=document.createElement('div');box.className='search-result';
+      const textNode=document.createElement('strong');textNode.textContent=`¿Quieres enviar una solicitud de amistad a ${visibleUsername(target.username)}?`;
+      const actions=document.createElement('div');actions.className='row-actions';
+      const send=document.createElement('button');send.className='small-btn success';send.type='button';send.textContent='ENVIAR SOLICITUD';send.addEventListener('click',()=>void sendFriendRequest());
+      const cancel=document.createElement('button');cancel.className='small-btn';cancel.type='button';cancel.textContent='CANCELAR';cancel.addEventListener('click',clearFriendSearch);
+      actions.append(send,cancel);box.append(textNode,actions);result.appendChild(box);
+    }catch(error){console.error('searchFriend',error);accountNotice('friendsNotice',accountError(error),'error');}
+    finally{setButtonBusy('searchFriendBtn','account',false);}
   }
   function clearFriendSearch(){state.searchTarget=null;const result=$('friendSearchResult');if(result)result.replaceChildren();}
-  async function sendFriendRequestToTarget(target){
-    if(!target?.uid||!accountUid())return false;
-    const uid=accountUid();
-    if(target.uid===uid){accountNotice('friendsNotice','No puedes agregarte a ti mismo.','error');return false;}
-    if(state.friendData[target.uid]){accountNotice('friendsNotice','Ese usuario ya es tu amigo.','error');return false;}
-    const receivedRef=db.ref(`friendRequests/received/${target.uid}/${uid}`),sentRef=db.ref(`friendRequests/sent/${uid}/${target.uid}`);
-    try{
-      const [receivedExisting,sentExisting]=await Promise.all([receivedRef.once('value'),sentRef.once('value')]);
-      if(receivedExisting.exists()||sentExisting.exists()){accountNotice('friendsNotice','Ya existe una solicitud entre ambos.','error');return false;}
-      const payload={fromUid:uid,fromUsername:accountUsername(),toUid:target.uid,toUsername:target.username,createdAt:firebase.database.ServerValue.TIMESTAMP,status:'pending'};
-      await receivedRef.set(payload);
-      await sentRef.set(payload).catch(error=>console.warn('No se pudo guardar copia de enviada',error));
-      showNotificationToast('Solicitud enviada',`Se envió una solicitud a ${visibleUsername(target.username)}.`);clearFriendSearch();return true;
-    }catch(error){console.error('send friend request',error);accountNotice('friendsNotice',accountError(error),'error');return false;}
+  async function sendFriendRequestTo(targetUid,targetUsername){
+    const uid=String(accountUid()||'').trim(),target=String(targetUid??'').trim();
+    if(!uid||!target||target==='undefined'||target==='null')throw {code:'invalid-target'};
+    if(uid===target)throw {code:'self-friend-request'};
+    const username=String(targetUsername||'').trim()||'usuario';
+    const existingFriend=state.friendData[target];if(existingFriend)throw {code:'already-friends'};
+    const [sent,reverse]=await Promise.all([
+      db.ref(`friendRequests/sent/${uid}/${target}`).once('value'),
+      db.ref(`friendRequests/sent/${target}/${uid}`).once('value')
+    ]);
+    if(sent.exists()||reverse.exists())throw {code:'request-exists'};
+    const linkPath='friendLinks/'+pairKey(uid,target),payload={fromUid:uid,fromUsername:accountUsername(),toUid:target,toUsername:username,createdAt:firebase.database.ServerValue.TIMESTAMP};
+    const updates={};
+    updates[linkPath]={...payload,status:'pending'};
+    updates[`friendRequests/received/${target}/${uid}`]=payload;
+    updates[`friendRequests/sent/${uid}/${target}`]=payload;
+    await db.ref().update(updates);
+    return payload;
   }
   async function sendFriendRequest(){
-    const target=state.searchTarget;if(!target||!accountUid())return;await sendFriendRequestToTarget(target);
+    const target=state.searchTarget;if(!target||!accountUid())return;
+    try{
+      await sendFriendRequestTo(target.uid,target.username);
+      accountNotice('friendsNotice','Solicitud enviada correctamente.','success');
+      await requestNotificationPermission();
+      clearFriendSearch();
+    }catch(error){
+      const messages={'invalid-target':'El usuario seleccionado no es válido.','self-friend-request':'No puedes agregarte a ti mismo.','already-friends':'Ese usuario ya es tu amigo.','request-exists':'Ya existe una solicitud entre ambos.'};
+      accountNotice('friendsNotice',messages[error?.code]||'No se pudo enviar la solicitud. Revisa tu conexión y las reglas de Firebase.','error');
+    }
+  }
+  async function addFriendFromGame(targetUid,targetUsername,button){
+    if(!accountUid()||!targetUid)return;
+    if(state.friendData[String(targetUid)]){button.textContent='AMIGOS';button.disabled=true;return;}
+    button.disabled=true;button.textContent='ENVIANDO…';
+    try{
+      await sendFriendRequestTo(String(targetUid),String(targetUsername||'usuario'));
+      button.textContent='SOLICITUD ENVIADA';
+      await requestNotificationPermission();
+      showSocialToast(`Solicitud enviada a ${visibleUsername(targetUsername)}`);
+    }catch(error){
+      if(error?.code==='request-exists'){button.textContent='PENDIENTE';}
+      else if(error?.code==='already-friends'){button.textContent='AMIGOS';}
+      else{button.disabled=false;button.textContent='AGREGAR AMIGO';showSocialToast('No se pudo enviar la solicitud.');}
+    }
   }
   async function acceptFriendRequest(fromUid){
-    const uid=accountUid();if(!uid||!fromUid)return;
+    const uid=accountUid();if(!uid||!fromUid)return;const linkRef=db.ref('friendLinks/'+pairKey(uid,fromUid));
     try{
-      const snap=await db.ref(`friendRequests/received/${uid}/${fromUid}`).once('value'),request=snap.val();
-      if(!request){accountNotice('requestsNotice','La solicitud ya no está disponible.','error');return;}
-      const updates={};updates[`friends/${uid}/${fromUid}`]=true;updates[`friends/${fromUid}/${uid}`]=true;
-      updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;
-      updates[`friendLinks/${pairKey(uid,fromUid)}`]={fromUid:request.fromUid||fromUid,fromUsername:request.fromUsername||fromUid,toUid:request.toUid||uid,toUsername:request.toUsername||accountUsername(),status:'accepted',acceptedAt:firebase.database.ServerValue.TIMESTAMP};
-      await db.ref().update(updates);accountNotice('requestsNotice','Ahora son amigos.','success');renderRequestsList();renderFriendsList();
-    }catch(error){console.error('accept friend request',error);accountNotice('requestsNotice',accountError(error),'error');}
+      const result=await linkRef.transaction(link=>link&&link.status==='pending'&&link.toUid===uid?{...link,status:'accepted',acceptedAt:firebase.database.ServerValue.TIMESTAMP}:undefined);if(!result.committed){accountNotice('requestsNotice','La solicitud ya no está disponible.','error');return;}
+      const updates={};updates[`friends/${uid}/${fromUid}`]=true;updates[`friends/${fromUid}/${uid}`]=true;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;await db.ref().update(updates);accountNotice('requestsNotice','Ahora son amigos.','success');haptic([35]);renderQuickFriendsPanel();
+    }catch(error){accountNotice('requestsNotice','No se pudo aceptar la solicitud.','error');}
   }
   async function rejectFriendRequest(fromUid){
-    const uid=accountUid();if(!uid||!fromUid)return;
-    const updates={};updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;updates[`friendLinks/${pairKey(uid,fromUid)}`]=null;
-    try{await db.ref().update(updates);accountNotice('requestsNotice','Solicitud rechazada.','success');}catch(error){accountNotice('requestsNotice',accountError(error),'error');}
+    const uid=accountUid();if(!uid||!fromUid)return;const updates={};updates[`friendLinks/${pairKey(uid,fromUid)}`]=null;updates[`friendRequests/received/${uid}/${fromUid}`]=null;updates[`friendRequests/sent/${fromUid}/${uid}`]=null;
+    try{await db.ref().update(updates);accountNotice('requestsNotice','Solicitud rechazada.','success');haptic([18]);renderQuickFriendsPanel();}catch(error){accountNotice('requestsNotice','No se pudo rechazar la solicitud.','error');}
   }
-
   async function removeFriend(friendUid){
     const uid=accountUid();if(!uid||!friendUid)return;const updates={};updates[`friends/${uid}/${friendUid}`]=null;updates[`friends/${friendUid}/${uid}`]=null;updates[`friendLinks/${pairKey(uid,friendUid)}`]=null;
     try{await db.ref().update(updates);accountNotice('friendsNotice','Amigo eliminado.','success');}catch(error){accountNotice('friendsNotice','No se pudo eliminar al amigo.','error');}
@@ -2721,16 +3005,14 @@ const personajes = [
   function stopAssignmentListeners(){
     if(state.privateAssignmentRef&&state.privateAssignmentListener)state.privateAssignmentRef.off('value',state.privateAssignmentListener);
     if(state.publicAssignmentRef&&state.publicAssignmentListener)state.publicAssignmentRef.off('value',state.publicAssignmentListener);
-    state.privateAssignmentRef=null;state.privateAssignmentListener=null;state.publicAssignmentRef=null;state.publicAssignmentListener=null;state.privateAssignment=null;state.publicAssignments={};
+    if(state.assignmentRecoveryTimer){clearTimeout(state.assignmentRecoveryTimer);state.assignmentRecoveryTimer=null;}state.assignmentRecoveryAttempts=0;state.privateAssignmentRef=null;state.privateAssignmentListener=null;state.publicAssignmentRef=null;state.publicAssignmentListener=null;state.privateAssignment=null;state.publicAssignments={};
   }
   function listenToAssignments(){
     stopAssignmentListeners();if(!state.roomRef||!state.roomCode||!state.playerId||state.lastRoomData&&!state.lastRoomData.secureAssignments)return;
     const privateRef=db.ref(`privateAssignments/${state.roomCode}/${state.playerId}`),publicRef=db.ref(`publicAssignments/${state.roomCode}`);
     const privateListener=snapshot=>{state.privateAssignment=snapshot.val()||null;if(state.lastRoomData?.secureAssignments){state.myAssignment=state.privateAssignment;if(state.lastRoomData.game?.phase==='reveal')renderReveal(state.lastRoomData.game);}};
-    const publicListener=snapshot=>{const value=snapshot.val()||{};state.publicAssignments=value;if(Object.keys(value).length)state.publicAssignmentRetryCount=0;if(state.lastRoomData?.secureAssignments&&['playing','scoring','results','finished'].includes(state.lastRoomData.game?.phase))renderPlaying(state.lastRoomData.game,state.lastRoomData);};
-    state.privateAssignmentRef=privateRef;state.privateAssignmentListener=privateListener;state.publicAssignmentRef=publicRef;state.publicAssignmentListener=publicListener;
-    privateRef.on('value',privateListener,error=>console.warn('private assignment read',error));
-    publicRef.on('value',publicListener,error=>{console.error('public assignment read',error);if(state.lastRoomData?.game?.phase==='playing')void hydratePublicAssignments();});
+    const publicListener=snapshot=>{state.publicAssignments=snapshot.val()||{};state.assignmentRecoveryAttempts=0;if(state.lastRoomData?.secureAssignments&&['playing','scoring','results','finished'].includes(state.lastRoomData.game?.phase))renderPlaying(state.lastRoomData.game,state.lastRoomData);};
+    state.privateAssignmentRef=privateRef;state.privateAssignmentListener=privateListener;state.publicAssignmentRef=publicRef;state.publicAssignmentListener=publicListener;privateRef.on('value',privateListener);publicRef.on('value',publicListener);
   }
   async function installDisconnect(){
     if(!state.roomRef || !state.playerId)return null;
@@ -2813,24 +3095,18 @@ const personajes = [
     if(game.phase==='reveal'){renderReveal(game,data);show('reveal');scheduleReveal(game);return;}
     if(game.phase==='starting'){renderStarting(game);show('starting');scheduleStarting(game);return;}
     if(game.phase==='friends'){clearCountdown();renderPlaying(game,data);show('playing');migrateLegacyFriendsPhase(game);return;}
-    if(game.phase==='playing'){
-      clearCountdown();renderPlaying(game,data);show('playing');
-      if(data.secureAssignments&&Object.keys(state.publicAssignments||{}).length<Math.max(1,normalizeRoomPlayers(data).length-1))void hydratePublicAssignments();
-      return;
-    }
+    if(game.phase==='playing'){clearCountdown();renderPlaying(game,data);show('playing');return;}
     if(game.phase==='scoring'){clearCountdown();renderScoring(game,data);show('scoring');return;}
     if(game.phase==='results'){clearCountdown();renderResults(game,data);show('results');return;}
     if(game.phase==='finished'){
       clearCountdown();
-      if(state.autoRestoring){state.autoRestoring=false;clearSession();stopRoomListener();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show('home');return;}
+      if(state.autoRestoring){state.autoRestoring=false;clearSession();stopRoomListener();state.roomRef=null;state.roomCode='';state.mode=null;state.playerName='';show(accountUid()?'gameHome':'home');return;}
       renderFinished(game,data);
       show('finish');
       return;
     }
   }
   async function createRoom(){
-    if(!hasGameAccess()){show('authLogin');return;}
-    unlockDeviceFeedback();
     if(state.configEditing){await saveRoomSettings();return;}
     if(state.busy.create)return;
     const hostName=(accountUid()?accountUsername():($('hostNameInput').value||'').trim()).slice(0,30);
@@ -2867,8 +3143,6 @@ const personajes = [
     finally{setButtonBusy('createRoomBtn','create',false);setBusy('create',false);}
   }
   async function joinRoom(){
-    if(!hasGameAccess()){show('authLogin');return;}
-    unlockDeviceFeedback();
     if(state.busy.join)return;
     const code=($('joinRoomCode').value||'').trim().toUpperCase(),name=(accountUid()?accountUsername():($('joinName').value||'').trim()).slice(0,30);
     if(!/^[A-Z2-9]{5}$/.test(code)){notice('Escribe un código de 5 caracteres.','error','joinNotice');return;}
@@ -3068,55 +3342,58 @@ const personajes = [
       });
     }catch(error){console.warn('legacy friends transition',error);}
   }
-  async function hydratePublicAssignments(){
-    if(!state.roomCode)return;
-    const ref=db.ref(`publicAssignments/${state.roomCode}`);
-    for(let attempt=0;attempt<7;attempt++){
+  function scheduleAssignmentRecovery(){
+    if(state.assignmentRecoveryTimer||!state.roomRef||!state.roomCode||!state.lastRoomData?.secureAssignments)return;
+    const attempts=state.assignmentRecoveryAttempts||0;
+    if(attempts>=8)return;
+    state.assignmentRecoveryAttempts=attempts+1;
+    state.assignmentRecoveryTimer=setTimeout(async()=>{
+      state.assignmentRecoveryTimer=null;
       try{
-        const snap=await ref.once('value'),value=snap.val();
-        if(value&&Object.keys(value).length){
-          state.publicAssignments=value;
-          if(state.lastRoomData?.game?.phase==='playing')renderPlaying(state.lastRoomData.game,state.lastRoomData);
-          return value;
-        }
-      }catch(error){console.warn('No se pudieron cargar las asignaciones públicas',error);}
-      await new Promise(resolve=>setTimeout(resolve,250+attempt*250));
-    }
-    return state.publicAssignments;
+        const snap=await db.ref(`publicAssignments/${state.roomCode}`).once('value');
+        const value=snap.val()||{};
+        if(Object.keys(value).length){state.publicAssignments=value;state.assignmentRecoveryAttempts=0;renderPlaying(state.lastRoomData.game,state.lastRoomData);return;}
+      }catch(error){console.warn('No se pudieron recuperar las asignaciones públicas',error);}
+      scheduleAssignmentRecovery();
+    },Math.min(2500,350*state.assignmentRecoveryAttempts));
   }
-
   function renderPlaying(game,data){
-    const names=playerNames(data,game),assignments=data.secureAssignments?state.publicAssignments:(game.assignments||{}),companions=normalizeRoomPlayers(data).filter(player=>player.id!==state.playerId);
-    setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);const list=$('playingCharacterList');list.replaceChildren();
-    let missingAssignments=false;
+    const names=playerNames(data,game),assignments=data.secureAssignments?state.publicAssignments:(game.assignments||{}),companions=normalizeRoomPlayers(data).filter(player=>String(player.id)!==String(state.playerId));
+    setText('playingRoundTag',`RONDA ${game.currentRound} LISTA`);
+    const list=$('playingCharacterList');list.replaceChildren();
+    let missingAssignment=false;
     companions.forEach(player=>{
-      const character=assignments?.[player.id]?.character;if(!character)missingAssignments=true;
+      const playerId=String(player.id),entry=assignments?.[playerId]||assignments?.[String(player.id)]||null,character=entry?.character||null;
+      if(data.secureAssignments&&!character)missingAssignment=true;
       const row=document.createElement('div');row.className='friend-row';row.setAttribute('role','listitem');
-      const media=document.createElement('div');media.className='friend-character-media';const source=imageSource(character);
+      const media=document.createElement('div');media.className='friend-character-media';
+      const source=imageSource(character);
       if(source){
-        const image=document.createElement('img');image.className='character-image';image.alt=`Imagen del personaje ${cleanUiText(character?.nombre||'')}`;image.loading='lazy';image.decoding='async';image.referrerPolicy='no-referrer';image.src=source;
+        const image=document.createElement('img');image.className='character-image';image.alt=`Imagen del personaje ${cleanUiText(character?.nombre||'')}`;image.loading='eager';image.decoding='async';image.referrerPolicy='no-referrer';image.src=source;
         image.onerror=()=>{media.innerHTML=placeholder();};media.appendChild(image);
-      }else media.innerHTML=placeholder();
+      }else{
+        media.innerHTML='<div class="image-placeholder">CARGANDO…</div>';
+      }
       const main=document.createElement('div');main.className='friend-main';
-      const name=document.createElement('div');name.className='friend-name';name.textContent=cleanUiText(names[player.id]||player.name);
-      const characterName=document.createElement('div');characterName.className='friend-character';characterName.textContent=character?.nombre?cleanUiText(character.nombre):'Cargando personaje…';
-      const category=document.createElement('div');category.className='friend-category';category.textContent=cleanUiText(character?.categoria||'Cargando…');
+      const name=document.createElement('div');name.className='friend-name';name.textContent=cleanUiText(names[playerId]||player.name);
+      const characterName=document.createElement('div');characterName.className='friend-character';characterName.textContent=cleanUiText(character?.nombre||'Cargando personaje…');
+      const category=document.createElement('div');category.className='friend-category';category.textContent=cleanUiText(character?.categoria||'Esperando asignación…');
       main.append(name,characterName,category);
-      if(accountUid()&&player.accountUid&&player.accountUid!==accountUid()&&!state.friendData[player.accountUid]){
-        const wrap=document.createElement('div');wrap.className='friend-action-inline';
-        const btn=document.createElement('button');btn.className='small-btn success';btn.type='button';btn.textContent='AGREGAR AMIGO';
-        btn.onclick=async()=>{btn.disabled=true;btn.textContent='ENVIANDO…';const profile=state.friendProfiles[player.accountUid]||{};const ok=await sendFriendRequestToTarget({uid:player.accountUid,username:profile.username||player.name});if(ok)btn.textContent='SOLICITUD ENVIADA';else{btn.disabled=false;btn.textContent='AGREGAR AMIGO';}};
-        wrap.appendChild(btn);main.appendChild(wrap);
+      if(accountUid() && player.accountUid && String(player.accountUid)!==String(accountUid()) && !state.friendData[String(player.accountUid)]){
+        const action=document.createElement('div');action.className='game-friend-action';
+        const button=document.createElement('button');button.className='small-btn success';button.type='button';button.textContent='AGREGAR AMIGO';
+        button.addEventListener('click',()=>void addFriendFromGame(String(player.accountUid),String(player.name||'usuario'),button));
+        action.appendChild(button);main.appendChild(action);
+      }else if(accountUid() && player.accountUid && state.friendData[String(player.accountUid)]){
+        const action=document.createElement('div');action.className='game-friend-action';
+        const button=document.createElement('button');button.className='small-btn';button.type='button';button.textContent='AMIGOS';button.disabled=true;action.appendChild(button);main.appendChild(action);
       }
       row.append(media,main);list.appendChild(row);
     });
+    if(!companions.length)emptyAccountList('playingCharacterList','No hay otros jugadores conectados.');
+    if(missingAssignment)scheduleAssignmentRecovery();
     const host=isHost(data);$('scoreRoundBtn').classList.toggle('hidden',!host);$('scoreRoundBtn').disabled=false;setText('playingWaiting',host?'':'Esperando al anfitrión…');
-    if(missingAssignments&&data.secureAssignments){
-      if(state.publicAssignmentRetryTimer)clearTimeout(state.publicAssignmentRetryTimer);
-      state.publicAssignmentRetryTimer=setTimeout(()=>void hydratePublicAssignments(),150);
-    }
   }
-
   async function openScoring(){
     if(state.busy.score||!state.roomRef) return;setBusy('score',true);setButtonBusy('scoreRoundBtn','score',true,'ABRIENDO…');
     try{const data=(await state.roomRef.once('value')).val();if(!data||!isHost(data)||data.game?.phase!=='playing')return;const result=await state.roomRef.child('game').transaction(game=>{if(!game||game.phase!=='playing')return;return {...game,phase:'scoring'};});if(!result.committed)notice('El resultado ya está siendo registrado.','error','lobbyNotice');}
@@ -3195,7 +3472,7 @@ const personajes = [
   }
   async function leaveRoom(){
     cancelReconnect();clearCountdown();const ref=state.roomRef,mode=state.mode,roomId=state.roomCode,secure=Boolean(state.lastRoomData?.secureAssignments),authRoomUid=backendUid();try{if(ref&&mode==='player')await ref.child('players/'+state.playerId).remove();if(ref&&mode==='host'){await ref.remove();if(secure){await db.ref('privateAssignments/'+roomId).remove().catch(()=>{});await db.ref('publicAssignments/'+roomId).remove().catch(()=>{});}}if(authRoomUid&&roomId)await db.ref(`roomMembers/${roomId}/${authRoomUid}`).remove().catch(()=>{});}catch(error){console.warn(error);}
-    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show('home');
+    stopRoomListener();stopAssignmentListeners();state.roomRef=null;state.lastRoomData=null;state.mode=null;state.roomCode='';state.myAssignment=null;clearSession();$('joinRoomBtn').disabled=false;$('createRoomBtn').disabled=false;show(accountUid()?'gameHome':'home');
   }
   async function copyRoom(){
     const button=$('copyRoomBtn'),original=button?.textContent||'COPIAR';
@@ -3214,7 +3491,7 @@ const personajes = [
     try{
       const snapshot=await state.roomRef.once('value');
       if(!snapshot.exists()){
-        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';stopAssignmentListeners();show('home');return false;
+        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;
       }
       const data=snapshot.val();state.lastRoomData=data;
       const matched=findAccountRoomPlayer(normalizeRoomPlayers(data));
@@ -3238,7 +3515,7 @@ const personajes = [
       const freshSnapshot=me?snapshot:await state.roomRef.once('value');
       const freshData=freshSnapshot.val();state.lastRoomData=freshData;const freshMe=freshData.players?.[state.playerId];
       if(!freshMe){
-        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;state.playerName='';stopAssignmentListeners();show('home');return false;
+        clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;state.playerName='';stopAssignmentListeners();show(accountUid()?'gameHome':'home');return false;
       }
       state.mode=freshData.hostId===state.playerId?'host':'player';
       state.playerName=freshMe.name||playerName;
@@ -3249,7 +3526,7 @@ const personajes = [
       return true;
     }catch(error){
       console.warn('reconnect player',error);
-      clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;stopAssignmentListeners();show('home');
+      clearSession();state.roomRef=null;state.lastRoomData=null;state.roomCode='';state.mode=null;stopAssignmentListeners();show(accountUid()?'gameHome':'home');
       return false;
     }finally{
       state.restoring=false;
@@ -3275,87 +3552,63 @@ const personajes = [
     if(restored){$('sessionRecoveryBanner')?.classList.add('hidden');return;}
     button.disabled=false;button.removeAttribute('aria-busy');button.textContent='REANUDAR PARTIDA';showSavedSessionBanner();
   }
-  $('newGameBtn').onclick=()=>{if(!hasGameAccess()){show('authLogin');return;}state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';roomIdentity();setTotalRounds(3);$('hostNameInput').value=accountUid()?accountUsername():'';setCategorySelection([]);openSettings(false);};
-  $('goJoinBtn').onclick=()=>{if(!hasGameAccess()){show('authLogin');return;}if(accountUid()&&!$('joinName').value)$('joinName').value=state.profile?.username||accountUsername();show('join');};
+  $('newGameBtn').onclick=()=>{haptic([18]);state.mode='host';state.roomRef=null;state.roomCode='';state.configEditing=false;state.categories=[];state.playerName='';state.hostName='';roomIdentity();setTotalRounds(3);$('hostNameInput').value=accountUid()?accountUsername():'';setCategorySelection([]);openSettings(false);};
+  $('goJoinBtn').onclick=()=>{haptic([18]);if(accountUid()&&!$('joinName').value)$('joinName').value=state.profile?.username||accountUsername();show('join');};
   $('goCreateBtn').onclick=()=>{state.configEditing=false;$('hostNameInput').value=accountUid()?accountUsername():'';openSettings(false);};$('backHomeBtn').onclick=()=>state.configEditing?show('lobby'):leaveRoom();
-  $('loginBtn').onclick=()=>show('authLogin');$('registerBtn').onclick=()=>show('authRegister');$('guestBtn').onclick=async()=>{
-    const btn=$('guestBtn');if(!btn)return;btn.disabled=true;btn.setAttribute('aria-busy','true');btn.textContent='PREPARANDO…';
-    try{await ensureRoomAuth();state.guestMode=true;renderAccountUI();show('home');showNotificationToast('Modo invitado activado','Puedes crear o unirte a una sala.');unlockDeviceFeedback();}
-    catch(error){accountNotice('loginNotice',accountError(error),'error');show('authLogin');}
-    finally{btn.disabled=false;btn.removeAttribute('aria-busy');btn.textContent='JUGAR COMO INVITADO';}
-  };$('profileBtn').onclick=()=>{if(accountUid()){renderAccountUI();show('profile');}else if(state.guestMode)show('home');else show('authLogin');};
-  $('createAccountBtn').onclick=registerAccount;$('signInBtn').onclick=loginAccount;$('toLoginBtn').onclick=()=>show('authLogin');$('toRegisterBtn').onclick=()=>show('authRegister');$('registerBackBtn').onclick=()=>show('home');$('loginBackBtn').onclick=()=>show('home');
-  $('profileFriendsBtn').onclick=()=>{renderFriendsList();show('friends');};$('profileRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('enableNotificationsBtn').onclick=async()=>{
-    const ok=await requestBrowserNotifications();
-    accountNotice('profileNotice',ok?'Notificaciones activadas en este dispositivo.':'El navegador no permitió las notificaciones. Puedes revisarlo en los permisos del sitio.',ok?'success':'error');
-  };$('signOutBtn').onclick=logoutAccount;$('profileBackBtn').onclick=()=>show('home');
-  $('friendsRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('requestsFriendsBtn').onclick=()=>{renderFriendsList();show('friends');};$('friendsBackBtn').onclick=()=>show('profile');$('requestsBackBtn').onclick=()=>show('profile');
+  $('loginBtn').onclick=()=>{haptic([18]);show('authLogin');};$('registerBtn').onclick=()=>{haptic([18]);show('authRegister');};$('guestBtn').onclick=()=>void enterGuest();$('profileBtn')?.addEventListener('click',()=>{if(accountUid()){renderAccountUI();show('profile');}else show('authLogin');});
+  $('createAccountBtn').onclick=registerAccount;$('signInBtn').onclick=loginAccount;$('toLoginBtn').onclick=()=>show('authLogin');$('toRegisterBtn').onclick=()=>show('authRegister');$('registerBackBtn').onclick=()=>show(accountUid()?'gameHome':'home');$('loginBackBtn').onclick=()=>show(accountUid()?'gameHome':'home');
+  $('profileFriendsBtn').onclick=()=>openQuickFriends();$('profileRequestsBtn').onclick=()=>{renderQuickFriendsPanel();openQuickFriends();};$('signOutBtn').onclick=logoutAccount;$('profileBackBtn').onclick=()=>show('gameHome');
+  $('friendsRequestsBtn').onclick=()=>{renderRequestsList();show('requests');};$('requestsFriendsBtn').onclick=()=>openQuickFriends();$('friendsBackBtn').onclick=()=>openQuickFriends();$('requestsBackBtn').onclick=()=>openQuickFriends();
   $('searchFriendBtn').onclick=searchFriend;$('friendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void searchFriend();}});
+  $('quickFriendsBtn').onclick=openQuickFriends;$('quickFriendsClose').onclick=closeQuickFriends;$('quickFriendsOverlay').addEventListener('click',event=>{if(event.target.id==='quickFriendsOverlay')closeQuickFriends();});$('quickSearchFriendBtn').onclick=quickSearchFriend;$('quickFriendSearchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void quickSearchFriend();}});$('gameHomeAccountBtn').onclick=()=>{if(accountUid()){renderAccountUI();show('profile');}else openQuickFriends();};$('switchAccessBtn').onclick=()=>void switchAccess();
   $('inviteFriendsBtn').onclick=()=>{$('lobbyInvitePanel').classList.toggle('hidden');renderLobbyFriends();};$('closeInvitePanelBtn').onclick=()=>$('lobbyInvitePanel').classList.add('hidden');
   $('createRoomBtn').onclick=createRoom;$('joinRoomBtn').onclick=joinRoom;$('startRoomBtn').onclick=startGame;$('editSettingsBtn').onclick=()=>openSettings(true);$('copyRoomBtn').onclick=copyRoom;$('leaveRoomBtn').onclick=leaveRoom;
   $('scoreRoundBtn').onclick=openScoring;$('confirmResultBtn').onclick=confirmResult;$('nextRoundBtn').onclick=nextRound;$('restartBtn').onclick=newGame;$('finishHomeBtn').onclick=leaveRoom;
   $('toggleCategoriesBtn').onclick=()=>{const chips=[...document.querySelectorAll('#categoryBox .chip')],selectAll=chips.some(chip=>!chip.classList.contains('selected'));chips.forEach(chip=>{chip.classList.toggle('selected',selectAll);chip.setAttribute('aria-pressed',String(selectAll));});updateSelectedCategories();};
   $('roundsMinusBtn').onclick=()=>setTotalRounds(state.totalRounds-1);$('roundsPlusBtn').onclick=()=>setTotalRounds(state.totalRounds+1);
   db.ref('.info/serverTimeOffset').on('value',snapshot=>{state.serverTimeOffset=Number(snapshot.val())||0;});
-  function startConnectionWatchdog(){
-    if(state.connectionWatchdog)clearTimeout(state.connectionWatchdog);
-    state.connectionStateSeen=false;
-    setConnectionStatus('reconnecting','Comprobando conexión…');
+  const startConnectionWatchdog=()=>{
+    clearTimeout(state.connectionWatchdog);
     state.connectionWatchdog=setTimeout(()=>{
-      if(!state.connectionStateSeen){
-        setConnectionStatus('offline','Sin conexión con Firebase');
-        if(!state.roomRef)showNotificationToast('Firebase no responde','Revisa la conexión, la configuración de Firebase o bloqueadores.');
+      if(state.lastConnected===null){
+        setConnectionStatus('offline','Firebase no responde');
+        if(state.roomRef)showReconnectModal('connection-lost');
       }
-    },9000);
-  }
+    },8000);
+  };
   startConnectionWatchdog();
-  db.ref('.info/connected').on('value',async snapshot=>{
-    state.connectionStateSeen=true;
-    if(state.connectionWatchdog){clearTimeout(state.connectionWatchdog);state.connectionWatchdog=null;}
+  db.ref('.info/connected').on('value',snapshot=>{
     const connected=snapshot.val()===true;
     state.lastConnected=connected;
-    setConnectionStatus(connected?'online':'offline',connected?'Conectado':'Sin conexión');
-    if(connected && state.roomRef && state.playerId && state.playerName){
-      await recoverRoomConnection('firebase-online');
-    }else if(!connected && state.roomRef){
-      state.reconnecting=true;
+    clearTimeout(state.connectionWatchdog);
+    if(connected){
+      state.roomConnectionPaused=false;
+      setConnectionStatus('online','Conectado');
+      return;
     }
-  },error=>{
-    console.error('Firebase .info/connected',error);
-    state.connectionStateSeen=true;
-    if(state.connectionWatchdog)clearTimeout(state.connectionWatchdog);
-    state.connectionWatchdog=null;
-    setConnectionStatus('offline','Error de conexión Firebase');
-    showNotificationToast('No se pudo conectar a Firebase',accountError(error));
+    setConnectionStatus('offline','Sin conexión');
+    if(state.roomRef){
+      state.roomConnectionPaused=true;
+      try{db.goOffline();}catch(error){console.warn('db.goOffline',error);}
+      showReconnectModal('connection-lost');
+    }
   });
-
-  let resumeTimer=null;
-  const scheduleResume=reason=>{
-    if(resumeTimer)clearTimeout(resumeTimer);
-    resumeTimer=setTimeout(async()=>{
-      resumeTimer=null;
-      if(!state.roomRef || !state.playerId || !state.playerName)return;
-      try{db.goOnline();}catch(error){}
-      setConnectionStatus('reconnecting','Reconectando…');
-      const ok=await recoverRoomConnection(reason);
-      if(!ok && state.roomRef)setConnectionStatus('offline','Sin conexión');
-    },350);
-  };
 
   document.addEventListener('visibilitychange',async()=>{
     if(document.visibilityState==='hidden'){
       await releaseScreenWakeLock();
       return;
     }
-    if(document.visibilityState==='visible'){
-      if(hasActiveCountdown())await requestScreenWakeLock();
-      scheduleResume('visibilitychange');
-    }
+    if(document.visibilityState==='visible' && hasActiveCountdown())await requestScreenWakeLock();
   });
-  window.addEventListener('pageshow',()=>scheduleResume('pageshow'));
-  window.addEventListener('focus',()=>scheduleResume('focus'));
-  window.addEventListener('online',()=>scheduleResume('browser-online'));
-  window.addEventListener('offline',()=>{if(state.roomRef)setConnectionStatus('offline','Sin conexión');});
+  window.addEventListener('offline',()=>{
+    if(state.roomRef){state.roomConnectionPaused=true;setConnectionStatus('offline','Sin conexión');try{db.goOffline();}catch(error){}}
+  });
+  window.addEventListener('online',()=>{
+    if(state.roomRef){setConnectionStatus('offline','Sin conexión · pulsa Reconectar');showReconnectModal('connection-lost');}
+  });
+  $('manualReconnectBtn').onclick=manualReconnect;
+  $('discardReconnectBtn').onclick=()=>void discardReconnect();
   $('resumeSessionBtn').onclick=resumeSavedSession;
   $('dismissSessionBtn').onclick=()=>{clearSession();showSavedSessionBanner();};
   $('joinRoomCode').addEventListener('input',event=>{event.target.value=event.target.value.toUpperCase().replace(new RegExp('[^'+ROOM_CODE_CHARS+']','g'),'').slice(0,5);});
@@ -3367,18 +3620,19 @@ const personajes = [
   auth.onAuthStateChanged(async user=>{
     state.authReady=true;state.authUser=user;
     if(user&&!user.isAnonymous){
-       state.guestMode=false;
-       if(state.registeringAccount){
+      if(state.registeringAccount){
         renderAccountUI();
       }else{
         try{state.profile=await ensureUserProfile(user);await startAccountListeners(user);}catch(error){console.error('account bootstrap',error);accountNotice('loginNotice','La cuenta está conectada, pero no se pudo cargar el perfil.','error');}
       }
     }else{
-       stopAccountListeners();
-       if(!state.roomRef)state.playerId=state.legacyPlayerId;
-       if(!user)state.guestMode=false;
-      }
+      stopAccountListeners();
+      if(!state.roomRef)state.playerId=state.legacyPlayerId;
+      if(user?.isAnonymous)state.guestMode=true;
+    }
     renderAccountUI();
+    if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring)show('gameHome');
+    if(user?.isAnonymous&&!state.roomRef&&state.guestMode)show('gameHome');
     if(user&&!user.isAnonymous&&!state.roomRef&&!state.autoRestoring){
       const session=readSession();
       if(session&&(session.accountUid===undefined||!session.accountUid||session.accountUid===user.uid)){
@@ -3390,12 +3644,6 @@ const personajes = [
     }
     showSavedSessionBanner();
   });
-  document.addEventListener('pointerdown',()=>unlockDeviceFeedback(),{once:true,passive:true});
-  document.addEventListener('keydown',()=>unlockDeviceFeedback(),{once:true});
-  updateGameAccessUI();
-  document.addEventListener('pointerdown',()=>unlockDeviceFeedback(),{once:true,passive:true});
-  document.addEventListener('keydown',()=>unlockDeviceFeedback(),{once:true});
-  updateGameAccessUI();
   renderCategories();setTotalRounds(3);show('home');showSavedSessionBanner();
 })();
 </script>
