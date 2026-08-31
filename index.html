@@ -3318,6 +3318,11 @@ const personajes = [
     try{
       try{
         if(!auth.currentUser)await ensureRoomAuth();
+        console.log('[AUTH DEBUG]', {
+  authUid: auth.currentUser?.uid,
+  anonymous: auth.currentUser?.isAnonymous,
+  playerId: state.playerId
+});
         if(!auth.currentUser?.uid)throw Object.assign(new Error('Firebase Authentication no devolvió un usuario.'),{code:'auth/no-current-user'});
         if(auth.currentUser.isAnonymous||accountUid()||auth.currentUser)console.log('[CREATE ROOM] auth OK',{uid:auth.currentUser.uid,anonymous:auth.currentUser.isAnonymous});
       }catch(error){fail('auth',error,'auth.currentUser');notice(error?.code==='auth/operation-not-allowed'?'No se pudo iniciar la autenticación de Firebase. Activa el inicio de sesión anónimo en Firebase Authentication.':'No se pudo iniciar la autenticación de Firebase.','error');return;}
